@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* SolaimanLipi font setup: place font files under public/fonts/ */
+@font-face {
+  font-family: 'SolaimanLipi';
+  src: url('/fonts/SolaimanLipi.woff2') format('woff2'),
+       url('/fonts/SolaimanLipi.woff') format('woff');
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+html, body, #__next { height: 100%; }
+
+/* Smooth transitions for hoverable components */
+.transition-base { @apply transition duration-200 ease-out; }
+
+/* Hide scrollbar utility */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+
