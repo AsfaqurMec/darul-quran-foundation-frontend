@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import * as React from 'react';
 import Button from '@/components/ui/Button';
 import Container from '@/components/layout/Container';
@@ -26,6 +27,7 @@ export default function Header(): JSX.Element {
   const [open, setOpen] = React.useState(false);
   const { lang, setLang, t } = useI18n();
   const [langOpen, setLangOpen] = React.useState(false);
+  const pathname = usePathname();
 
   return (
     <header className="sticky top-0 z-40 w-full backdrop-blur supports-[backdrop-filter]:bg-white/70 bg-white/90 border-b border-gray-200">
@@ -41,9 +43,22 @@ export default function Header(): JSX.Element {
         </div>
 
         <nav className="hidden sm:flex items-center gap-6 text-sm">
-          {navItems.map((item: NavItem, index: number) => (
-            <Link key={index} className="hover:text-brand transition-base" href={`/${item.href}` as Route}>{item.label}</Link>
-          ))}
+          {navItems.map((item: NavItem, index: number) => {
+            const href = `/${item.href}`;
+            const isActive = pathname === href || (href === '/' && pathname === '/') || (href !== '/' && pathname.startsWith(href));
+            return (
+              <Link
+                key={index}
+                className={`relative hover:text-brand transition-base ${isActive ? 'text-brand' : ''}`}
+                href={href as Route}
+              >
+                {item.label}
+                {isActive && (
+                  <span className="absolute bottom-0 top-6 left-0 right-0 h-0.5 bg-brand"></span>
+                )}
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="hidden sm:flex items-center gap-2">
@@ -93,11 +108,25 @@ export default function Header(): JSX.Element {
               </button>
             </div>
             <nav className="flex-1 space-y-1">
-              {navItems.map((item: NavItem) => (
-                <Link key={item.href} onClick={() => setOpen(false)} className="block rounded-lg px-3 py-2 hover:bg-gray-100" ref={`/${item.href}`} href={'/'}>
-                  {item.label}
-                </Link>
-              ))}
+              {navItems.map((item: NavItem) => {
+                const href = `/${item.href}`;
+                const isActive = pathname === href || (href === '/' && pathname === '/') || (href !== '/' && pathname.startsWith(href));
+                return (
+                  <Link
+                    key={item.href}
+                    onClick={() => setOpen(false)}
+                    className={`block rounded-lg px-3 py-2 hover:bg-gray-100 relative ${
+                      isActive ? 'text-brand bg-brand/10' : ''
+                    }`}
+                    href={href as Route}
+                  >
+                    {item.label}
+                    {isActive && (
+                      <span className="absolute left-0 top-0 bottom-0 w-1 bg-brand rounded-r"></span>
+                    )}
+                  </Link>
+                );
+              })}
             </nav>
             <div className="mt-4 flex items-center gap-2">
               <div className="relative">

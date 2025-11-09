@@ -27,4 +27,65 @@ html, body, #__next { height: 100%; }
   scrollbar-width: none;
 }
 
+/* Custom scrollbar for select dropdown options */
+select option {
+  background-color: rgba(9, 111, 64, 0.9);
+  color: white;
+  padding: 8px 12px;
+}
+
+select option:hover {
+  background-color: rgba(9, 111, 64, 1);
+}
+
+/* Limit select dropdown to show max height 450px */
+select {
+  max-height: 450px;
+}
+
+/* Custom scrollbar for select elements (when dropdown is open) */
+select::-webkit-scrollbar {
+  width: 8px;
+}
+
+select::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+select::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+select::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* Custom scrollbar for dropdown lists */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) rgba(0, 0, 0, 0.05);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
 

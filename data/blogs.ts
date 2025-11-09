@@ -35,6 +35,29 @@ const baseBlogs: BlogDetailData[] = [
 
   },
   {
+    id: 'p13',
+    title: 'মাসব্যাপী দাওয়াহ প্রশিক্ষণ-২০২৫ সম্পন্ন',
+    excerpt: 'সম্পন্ন হয়েছে আস-সুন্নাহ দাওয়াহ রিসার্চ ইনস্টিটিউটের অডিটোরিয়ামে পর্বের দাওয়াহ প্রশিক্ষণ-২০২৫... ',
+    date: '১৯ অক্টোবর, ২০২৫',
+    image: 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?q=80&w=1600&auto=format&fit=crop',
+    href: '/blog/p1',
+    author: 'আহমাদ উল্লাহ',
+    authorImage: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=100&auto=format&fit=crop',
+    category: 'প্রশিক্ষণ',
+    readTime: '৫ মিনিট',
+    tags: ['দাওয়াহ', 'প্রশিক্ষণ', 'ইসলাম'],
+    fullContent: `সম্পন্ন হয়েছে আস-সুন্নাহ দাওয়াহ রিসার্চ ইনস্টিটিউটের অডিটোরিয়ামে পর্বের দাওয়াহ প্রশিক্ষণ-২০২৫। এই প্রশিক্ষণ কার্যক্রমে অংশগ্রহণ করেছেন দেশের বিভিন্ন অঞ্চল থেকে আগত তরুণ ও যুবকরা।
+
+এই মাসব্যাপী প্রশিক্ষণে অংশগ্রহণকারীরা বিভিন্ন বিষয়ে জ্ঞান অর্জন করেছেন, যার মধ্যে রয়েছে:
+- কুরআন-হাদীসের মৌলিক শিক্ষা
+- দাওয়াহ ও তাবলীগের পদ্ধতি
+- ইসলামী শিক্ষার প্রচার ও প্রসার
+- সামাজিক উন্নয়নে ইসলামের ভূমিকা
+
+প্রশিক্ষণ চলাকালীন সময়ে অংশগ্রহণকারীরা বিভিন্ন বক্তৃতা, আলোচনা সভা এবং প্রশ্নোত্তর পর্বে অংশগ্রহণ করেছেন। বিশেষ করে ইসলামী চিন্তাবিদ ও আলেমদের বক্তব্য অংশগ্রহণকারীদের মধ্যে ব্যাপক সাড়া ফেলেছে।`,
+
+  },
+  {
     id: 'p2',
     title: '১০৯ এতিমসহ ৩০০ শহীদ পরিবারের পাশে আস-সুন্নাহ ফাউন্ডেশন',
     excerpt: 'বৈরন্য বিদ্ধস্ত ছাত্র আন্দোলনের শহীদ হয়ে যাওয়া পরিবারের পাশে দাঁড়ালাম—সহায়তা অব্যাহত।',
@@ -103,7 +126,7 @@ export function getBlogDetail(id: string): BlogDetailData | null {
   return all.find((blog) => blog.id === id || blog.href?.includes(id)) || null;
 }
 
-export function getLatestBlogs(count: number = 3): BlogDetailData[] {
+export function getLatestBlogs(count: number ): BlogDetailData[] {
   return baseBlogs.slice(0, count).map((blog, idx) => ({
     ...blog,
     href: `/blog/${blog.id}`,

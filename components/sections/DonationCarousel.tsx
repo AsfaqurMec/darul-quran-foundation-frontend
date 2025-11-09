@@ -3,6 +3,7 @@
 import * as React from 'react';
 import Button from '@/components/ui/Button';
 import Container from '@/components/layout/Container';
+import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from '@/components/ui/Carousel';
 
 type Fund = {
   id: string;
@@ -14,8 +15,8 @@ type Fund = {
 
 function FundCard({ fund }: { fund: Fund }): JSX.Element {
   return (
-    <div className="snap-start shrink-0 w-[88%] sm:w-[70%] md:w-[48%] lg:w-[32%]">
-      <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
+    <div className="w-full">
+      <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm h-full">
         <div className="aspect-[16/10] w-full bg-gray-200">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={fund.image} alt={fund.title} className="h-full w-full object-cover" />
@@ -53,18 +54,15 @@ const sampleFunds: ReadonlyArray<Fund> = [
     title: 'মসজিদ কমপ্লেক্স ও ইসলামীক সেন্টার',
     description: 'ধর্মীয় ও সামাজিক কার্যক্রমের জন্য নির্মাণ সহায়তা তহবিল।',
   },
+  {
+    id: 'gferg',
+    image: 'https://images.unsplash.com/photo-1591604466107-b7155a6a9c3e?q=80&w=1600&auto=format&fit=crop',
+    title: 'মসজিদ কমপ্লেক্স ও ইসলামীক সেন্টার',
+    description: 'ধর্মীয় ও সামাজিক কার্যক্রমের জন্য নির্মাণ সহায়তা তহবিল।',
+  },
 ];
 
 export default function DonationCarousel({ funds = sampleFunds }: { funds?: ReadonlyArray<Fund> }): JSX.Element {
-  const ref = React.useRef<HTMLDivElement | null>(null);
-
-  const scrollBy = (dir: 'prev' | 'next') => {
-    const node = ref.current;
-    if (!node) return;
-    const amount = Math.round(node.clientWidth * 0.9);
-    node.scrollBy({ left: dir === 'next' ? amount : -amount, behavior: 'smooth' });
-  };
-
   return (
     <section className="py-10">
       <Container>
@@ -72,21 +70,24 @@ export default function DonationCarousel({ funds = sampleFunds }: { funds?: Read
           <h2 className="text-4xl sm:text-5xl font-extrabold text-emerald-900">অনুদান তহবিলসমূহ</h2>
           <p className="text-emerald-800/80 mt-2">চলুন একসাথে পরিবর্তন আনি</p>
         </div>
-        <div className="flex items-center justify-end gap-2 mb-3">
-          <button aria-label="Prev" onClick={() => scrollBy('prev')} className="hidden sm:inline-flex p-2 rounded-full border bg-white hover:bg-gray-50">‹</button>
-          <button aria-label="Next" onClick={() => scrollBy('next')} className="hidden sm:inline-flex p-2 rounded-full border bg-white hover:bg-gray-50">›</button>
-        </div>
-        <div className="relative">
-          <div ref={ref} className="flex gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-2 [-ms-overflow-style:none] [scrollbar-width:none]" style={{ scrollbarWidth: 'none' }}>
+        <Carousel
+          opts={{
+            align: 'start',
+            loop: true,
+          }}
+          autoplay={{ delay: 4500, stopOnInteraction: false }}
+          className="w-full"
+        >
+          <CarouselContent className="-ml-2 md:-ml-4">
             {funds.map((fund) => (
-              <FundCard key={fund.id} fund={fund} />
+              <CarouselItem key={fund.id} className="pl-2 md:pl-4 basis-full sm:basis-1/2 md:basis-1/3">
+                <FundCard fund={fund} />
+              </CarouselItem>
             ))}
-          </div>
-          <div className="sm:hidden mt-3 flex justify-center gap-3">
-            <button aria-label="Prev" onClick={() => scrollBy('prev')} className="px-3 py-1.5 rounded-full border bg-white">পূর্ববর্তী</button>
-            <button aria-label="Next" onClick={() => scrollBy('next')} className="px-3 py-1.5 rounded-full border bg-white">পরবর্তী</button>
-          </div>
-        </div>
+          </CarouselContent>
+          <CarouselPrevious className="-left-4" />
+          <CarouselNext className="-right-4" />
+        </Carousel>
       </Container>
     </section>
   );

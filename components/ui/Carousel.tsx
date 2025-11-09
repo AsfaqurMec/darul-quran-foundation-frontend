@@ -2,13 +2,14 @@
 
 import * as React from 'react';
 import useEmblaCarousel, { type UseEmblaCarouselType } from 'embla-carousel-react';
+import Autoplay from 'embla-carousel-autoplay';
 // Simple arrow icons instead of lucide-react
 const ArrowLeft = ({ className }: { className?: string }) => (
-  <span className={className}>‹</span>
+  <span className={className} style={{ fontSize: '2.5rem', lineHeight: '1' }}>‹</span>
 );
 
 const ArrowRight = ({ className }: { className?: string }) => (
-  <span className={className}>›</span>
+  <span className={className} style={{ fontSize: '2.5rem', lineHeight: '1' }}>›</span>
 );
 
 type CarouselApi = UseEmblaCarouselType[1];
@@ -21,6 +22,7 @@ type CarouselProps = {
   plugins?: CarouselPlugin;
   orientation?: 'horizontal' | 'vertical';
   setApi?: (api: CarouselApi) => void;
+  autoplay?: boolean | { delay?: number; stopOnInteraction?: boolean; stopOnMouseEnter?: boolean };
 };
 
 type CarouselContextProps = {
@@ -47,13 +49,24 @@ function useCarousel() {
 const Carousel = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement> & CarouselProps
->(({ orientation = 'horizontal', opts, setApi, plugins, className, children, ...props }, ref) => {
+>(({ orientation = 'horizontal', opts, setApi, plugins, className, children, autoplay, ...props }, ref) => {
+  const autoplayPlugin = React.useMemo(() => {
+    if (!autoplay) return undefined;
+    const config = typeof autoplay === 'boolean' ? { delay: 4000 } : { delay: 4000, ...autoplay };
+    return Autoplay(config);
+  }, [autoplay]);
+
+  const allPlugins = React.useMemo(() => {
+    const basePlugins = plugins ? (Array.isArray(plugins) ? plugins : [plugins]) : [];
+    return autoplayPlugin ? [...basePlugins, autoplayPlugin] : basePlugins;
+  }, [plugins, autoplayPlugin]);
+
   const [carouselRef, api] = useEmblaCarousel(
     {
       ...opts,
       axis: orientation === 'horizontal' ? 'x' : 'y',
     },
-    plugins
+    allPlugins
   );
   const [canScrollPrev, setCanScrollPrev] = React.useState(false);
   const [canScrollNext, setCanScrollNext] = React.useState(false);
@@ -190,7 +203,7 @@ const CarouselPrevious = React.forwardRef<HTMLButtonElement, React.ComponentProp
         aria-label="Previous slide"
         {...props}
       >
-        <ArrowLeft className="h-5 w-5" />
+        <ArrowLeft className="flex items-center justify-center" />
       </button>
     );
   }
@@ -215,7 +228,7 @@ const CarouselNext = React.forwardRef<HTMLButtonElement, React.ComponentProps<'b
         aria-label="Next slide"
         {...props}
       >
-        <ArrowRight className="h-5 w-5" />
+        <ArrowRight className="flex items-center justify-center" />
       </button>
     );
   }

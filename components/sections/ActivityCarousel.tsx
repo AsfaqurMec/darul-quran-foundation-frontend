@@ -3,7 +3,7 @@
 import * as React from 'react';
 import Link from 'next/link';
 import Container from '@/components/layout/Container';
-import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/Carousel';
+import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from '@/components/ui/Carousel';
 import type { ActivityItem } from '@/components/activity/ActivityCard';
 import { getLatestActivities } from '@/data/activities';
 
@@ -11,7 +11,7 @@ function Card({ item }: { item: ActivityItem }): JSX.Element {
   const href = item.href || `/activities/${item.id}`;
   
   return (
-    <div className="snap-start shrink-0 w-[88%] sm:w-[70%] md:w-[48%] lg:w-[32%]">
+    <div className="w-full">
       <Link href={href} className="block bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 group h-full flex flex-col">
         <div className="aspect-[16/10] w-full bg-gray-200 overflow-hidden">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -42,14 +42,23 @@ export default function ActivityCarousel({ items }: { items?: ReadonlyArray<Acti
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-4xl sm:text-5xl font-extrabold text-emerald-900">চলমান কার্যক্রমসমূহ</h2>
         </div>
-        <Carousel>
-          <CarouselContent>
+        <Carousel
+          opts={{
+            align: 'start',
+            loop: true,
+          }}
+          autoplay={{ delay: 4000, stopOnInteraction: false }}
+          className="w-full"
+        >
+          <CarouselContent className="-ml-2 md:-ml-4">
             {activities.map((it) => (
-              <CarouselItem key={it.id}>
+              <CarouselItem key={it.id} className="pl-2 md:pl-4 basis-full sm:basis-1/2 md:basis-1/3">
                 <Card item={it} />
               </CarouselItem>
             ))}
           </CarouselContent>
+          <CarouselPrevious className="-left-4" />
+          <CarouselNext className="-right-4" />
         </Carousel>
       </Container>
     </section>

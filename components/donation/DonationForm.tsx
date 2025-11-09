@@ -35,6 +35,27 @@ export default function DonationForm({ purposes = defaultPurposes }: DonationFor
   const [contact, setContact] = React.useState<string>('');
   const [amount, setAmount] = React.useState<string>('');
   const [submitted, setSubmitted] = React.useState(false);
+  const [isOpen, setIsOpen] = React.useState(false);
+  const dropdownRef = React.useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen]);
+
+  const selectedLabel = purposes.find((opt) => opt.value === purpose)?.label || 'নির্বাচন করুন';
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,24 +98,53 @@ export default function DonationForm({ purposes = defaultPurposes }: DonationFor
           <label htmlFor="purpose" className="block text-sm font-medium mb-2 text-white drop-shadow-md">
             তহবিল <span className="text-red-300">*</span>
           </label>
-          <div className="relative">
-            <select
-              id="purpose"
-              value={purpose}
-              onChange={(e) => setPurpose(e.target.value)}
-              className="w-full appearance-none rounded-lg border border-white/30 bg-white/20 backdrop-blur-md px-4 py-3 pr-10 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-white/40 transition-all"
+          <div className="relative" ref={dropdownRef}>
+            {/* Dropdown Header */}
+            <button
+              type="button"
+              onClick={() => setIsOpen(!isOpen)}
+              className="w-full text-left rounded-lg border border-white/30 bg-white/20 backdrop-blur-md px-4 py-3 pr-10 text-white focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-white/40 transition-all flex items-center justify-between"
             >
-              {purposes.map((opt) => (
-                <option key={opt.value} value={opt.value} className="bg-brand text-white">
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-            <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 flex items-center text-white/80">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5">
+              <span className={purpose ? 'text-white' : 'text-white/70'}>{selectedLabel}</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                className={`h-5 w-5 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+              >
                 <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.17l3.71-3.94a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z" clipRule="evenodd" />
               </svg>
-            </span>
+            </button>
+
+            {/* Dropdown List */}
+            {isOpen && (
+              <div className="absolute z-50 w-full mt-1 bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden">
+                {/* Scrollable Options List */}
+                <div className="overflow-y-auto custom-scrollbar rounded-t-lg" style={{ maxHeight: '420px' }}>
+                  {purposes.map((opt) => (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => {
+                        setPurpose(opt.value);
+                        setIsOpen(false);
+                      }}
+                      className={`w-full text-left px-4 py-3 text-gray-900 font-semibold hover:bg-brand/20 transition-colors ${
+                        purpose === opt.value ? 'bg-gray-100' : ''
+                      } ${opt.value === '' ? 'text-gray-400' : ''}`}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+                {/* Bottom indicator */}
+                <div className="flex justify-end px-2 py-1 border-t border-gray-100 bg-white rounded-b-lg">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4 text-gray-400">
+                    <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.17l3.71-3.94a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z" clipRule="evenodd" />
+                  </svg>
+                </div>
+              </div>
+            )}
           </div>
           {purposeError && <p className="mt-1 text-xs text-red-300 drop-shadow-md">{purposeError}</p>}
         </div>
@@ -133,12 +183,12 @@ export default function DonationForm({ purposes = defaultPurposes }: DonationFor
         </div>
         
         <div className="pt-2">
-          <Button type="submit" className="w-full px-4 py-3 text-base font-semibold bg-white text-brand hover:bg-white/90 transition-all shadow-lg">
+          <Button type="submit" className="w-full px-4 py-3 text-base font-semibold bg-white text-black hover:bg-white/90 transition-all shadow-lg">
             দান করুন
           </Button>
         </div>
       </form>
-      <p className="relative z-10 mt-4 text-center text-xs sm:text-sm text-white/90 drop-shadow-md">
+      <p className="relative z-0 mt-4 text-center text-xs sm:text-sm text-white/90 drop-shadow-md">
         দারুল কুরআন ফাউন্ডেশনে দান করতে করেই আপনি | <a className="underline hover:text-white transition-colors" href="#details">বিস্তারিত জানতে ক্লিক করুন</a>
       </p>
     </div>
