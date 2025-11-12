@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import LanguageProvider from '@/components/i18n/LanguageProvider';
 import SiteFrame from '@/components/layout/SiteFrame';
+import { AppToaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
   title: 'DarulQuran Dashboard',
@@ -19,6 +20,7 @@ export default function RootLayout({
         <LanguageProvider>
           <SiteFrame>{children}</SiteFrame>
         </LanguageProvider>
+        <AppToaster />
       </body>
     </html>
   );

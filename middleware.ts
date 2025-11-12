@@ -1,33 +1,71 @@
-import { NextResponse, type NextRequest } from 'next/server';
-import { jwtVerify } from 'jose';
+import { getCurrentUser } from "@/services/AuthService/server";
+import { NextRequest, NextResponse } from "next/server";
 
-const PROTECTED_PATHS = ['/dashboard'];
+// Public routes that don't require authentication
+const publicRoutes = [
+  "/",
+  "/login",
+  "/about",
+  "/contact",
+  "/blog",
+  "/events",
+  "/courses",
+  "/test-auth",
+  "/api",
+];
+
+// Protected routes that require authentication
+const protectedRoutes = [
+  "/admin",
+  "/user",
+  "/dashboard",
+  "/profile",
+  "/settings",
+];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const isProtected = PROTECTED_PATHS.some((p) => pathname.startsWith(p));
-  if (!isProtected) return NextResponse.next();
 
-  const token = request.cookies.get('dq_token')?.value;
-  if (!token) {
-    const url = new URL('/login', request.url);
-    url.searchParams.set('next', pathname);
-    return NextResponse.redirect(url);
+  // Allow public routes
+  if (publicRoutes.includes(pathname)) {
+    return NextResponse.next();
+  }
+
+  // Check if it's a protected route
+  const isProtected = protectedRoutes.some((route) =>
+    pathname.startsWith(route)
+  );
+
+  if (!isProtected) {
+    return NextResponse.next();
   }
 
   try {
-    const secret = process.env.JWT_SECRET || 'dev-secret-change-me';
-    await jwtVerify(token, new TextEncoder().encode(secret));
+    const user = await getCurrentUser();
+
+    if (!user) {
+      // Redirect to login with the original path
+      return NextResponse.redirect(
+        new URL(
+          `/login?redirectPath=${encodeURIComponent(pathname)}`,
+          request.url
+        )
+      );
+    }
+
+    // User is authenticated, allow access
     return NextResponse.next();
-  } catch {
-    const url = new URL('/login', request.url);
-    url.searchParams.set('next', pathname);
-    return NextResponse.redirect(url);
+  } catch (error) {
+    console.error("Middleware error:", error);
+    return NextResponse.redirect(
+      new URL(
+        `/login?redirectPath=${encodeURIComponent(pathname)}`,
+        request.url
+      )
+    );
   }
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*'],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|public).*)"],
 };
-
-

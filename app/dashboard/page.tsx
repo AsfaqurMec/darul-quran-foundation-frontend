@@ -1,5 +1,5 @@
 import StatCard from '@/components/cards/StatCard';
-import Button from '@/components/ui/Button';
+import Button from '@/components/ui/button';
 
 function buildStats() {
   // simple deterministic numbers (can be replaced with API later)

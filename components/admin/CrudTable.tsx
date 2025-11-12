@@ -1,6 +1,6 @@
 'use client';
 
-import Button from '@/components/ui/Button';
+import Button from '@/components/ui/button';
 import MediaUploader from '@/components/common/MediaUploader';
 import { useState } from 'react';
 

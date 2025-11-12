@@ -1,12 +1,30 @@
 import Sidebar from '@/components/admin/Sidebar';
 import AdminHeader from '@/components/admin/AdminHeader';
+import { getCurrentUser } from '@/services/AuthService/server';
+import { redirect } from 'next/navigation';
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    redirect('/login');
+  }
+
+  const role = typeof user.role === 'string' ? user.role : '';
+  if (!['admin', 'editor'].includes(role)) {
+    redirect('/');
+  }
+
+  const identifier =
+    (typeof user.identifier === 'string' && user.identifier) ||
+    (typeof user.email === 'string' && user.email) ||
+    'User';
+
   return (
     <div className="min-h-screen grid grid-cols-[auto_1fr]">
       <Sidebar />
       <div className="bg-gray-50 min-h-screen flex flex-col">
-        <AdminHeader />
+        <AdminHeader user={{ identifier, role }} />
         <main className="p-4 md:p-6 flex-1">
           {children}
         </main>

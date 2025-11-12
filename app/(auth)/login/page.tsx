@@ -6,7 +6,7 @@ export default function LoginPage(): JSX.Element {
       <div className="w-full max-w-5xl bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col lg:flex-row">
         {/* Left Section - Login Form (2/3 width) */}
         <div className="w-full lg:w-2/3 p-8 md:p-12 lg:p-16 flex flex-col justify-center">
-          <LoginForm />
+          <LoginForm isLogin />
         </div>
 
         {/* Right Section - Illustration (1/3 width) */}

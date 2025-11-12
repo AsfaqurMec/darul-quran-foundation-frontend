@@ -3,7 +3,7 @@
 import * as React from 'react';
 import Link from 'next/link';
 import Container from '@/components/layout/Container';
-import Button from '@/components/ui/Button';
+import Button from '@/components/ui/button';
 import BlogCard, { BlogPost } from '@/components/blog/BlogCard';
 import { getLatestBlogs } from '@/data/blogs';
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from '@/components/ui/Carousel';

@@ -1,9 +1,9 @@
 'use client';
 
 import * as React from 'react';
-import Input from '@/components/ui/Input';
+import Input from '@/components/ui/input';
 import Select, { SelectOption } from '@/components/ui/Select';
-import Button from '@/components/ui/Button';
+import Button from '@/components/ui/button';
 
 export type DonationFormProps = {
   purposes?: ReadonlyArray<SelectOption>;

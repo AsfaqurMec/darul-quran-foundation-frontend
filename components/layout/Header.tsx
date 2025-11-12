@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import * as React from 'react';
-import Button from '@/components/ui/Button';
+import Button from '@/components/ui/button';
 import Container from '@/components/layout/Container';
 import logo from '@/public/img/logo-foundation.png';
 import Image from 'next/image';

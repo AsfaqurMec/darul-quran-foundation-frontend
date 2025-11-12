@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import Button from '@/components/ui/Button';
+import Button from '@/components/ui/button';
 
 export default function MemberApplication(): JSX.Element {
   const [type, setType] = React.useState<'lifetime' | 'donor'>('lifetime');
