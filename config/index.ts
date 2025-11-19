@@ -48,6 +48,7 @@ interface Config {
   }
   
   export const config: Config = {
+    apiUrl: process.env.NEXT_PUBLIC_BASE_API || "http://localhost:5000/api",
     api: {
       baseUrl: process.env.NEXT_PUBLIC_BASE_API || "http://localhost:5000/api/v1",
       timeout: parseInt(process.env.NEXT_PUBLIC_API_TIMEOUT || "30000"),
@@ -62,6 +63,10 @@ interface Config {
       tokenKey: "accessToken",
       refreshTokenKey: "refreshToken",
       tokenExpiry: parseInt(process.env.NEXT_PUBLIC_TOKEN_EXPIRY || "3600"),
+      // Optional public token for server-protected read-only GET endpoints
+      // Set NEXT_PUBLIC_PUBLIC_TOKEN in env for production
+      // Example: 'Bearer eyJhbGciOi...'
+      publicToken: process.env.NEXT_PUBLIC_PUBLIC_TOKEN || "",
     },
     database: {
       url: process.env.DATABASE_URL || "",

@@ -39,44 +39,15 @@ export default function ImageCarousel({ images, title }: ImageCarouselProps): JS
 
   return (
     <div className="w-full">
-      <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
-        {/* Thumbnail Navigation - Left Side (Desktop) / Top (Mobile) */}
-        {images.length > 1 && (
-          <div className="flex flex-row lg:flex-col gap-2 lg:gap-3 order-2 lg:order-1">
-            {images.map((img, idx) => (
-              <button
-                key={idx}
-                onClick={() => api?.scrollTo(idx)}
-                className={`relative flex-shrink-0 rounded-lg overflow-hidden border-2 transition-all ${
-                  idx === current - 1
-                    ? 'border-brand shadow-lg scale-105 ring-2 ring-brand/20'
-                    : 'border-gray-200 hover:border-gray-300 opacity-70 hover:opacity-100'
-                }`}
-                style={{ 
-                  width: '80px', 
-                  height: '80px',
-                  minWidth: '80px',
-                  minHeight: '80px'
-                }}
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={img}
-                  alt={`Thumbnail ${idx + 1}`}
-                  className="w-full h-full object-cover"
-                  loading="lazy"
-                />
-                {/* Active indicator */}
-                {idx === current - 1 && (
-                  <div className="absolute inset-0 bg-brand/10 border-2 border-brand"></div>
-                )}
-              </button>
-            ))}
-          </div>
-        )}
+      {title && (
+        <div className="mb-4 text-center">
+          <h3 className="text-2xl font-bold">{title}</h3>
+        </div>
+      )}
 
-        {/* Main Image Carousel */}
-        <div className="relative flex-1 order-1 lg:order-2">
+      <div className="flex flex-col gap-4 lg:gap-6">
+        {/* Main Image Carousel (Top) */}
+        <div className="relative w-full">
           <Carousel setApi={setApi} className="w-full">
             <CarouselContent>
               {images.map((img, idx) => (
@@ -95,8 +66,8 @@ export default function ImageCarousel({ images, title }: ImageCarouselProps): JS
             </CarouselContent>
             {images.length > 1 && (
               <>
-                <CarouselPrevious className="left-4" />
-                <CarouselNext className="right-4" />
+                <CarouselPrevious className="left-4 top-1/2 -translate-y-1/2 rounded-full bg-white/90 shadow-md hover:bg-white" />
+                <CarouselNext className="right-4 top-1/2 -translate-y-1/2 rounded-full bg-white/90 shadow-md hover:bg-white" />
               </>
             )}
           </Carousel>
@@ -108,6 +79,45 @@ export default function ImageCarousel({ images, title }: ImageCarouselProps): JS
             </div>
           )}
         </div>
+
+        {/* Thumbnail Navigation - Bottom strip */}
+        {images.length > 1 && (
+          <div className="order-2">
+            <div className="flex items-center gap-2 px-1">
+              <div className="flex w-full gap-2 overflow-x-auto scrollbar-hide py-1">
+                {images.map((img, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => api?.scrollTo(idx)}
+                    className={`relative flex-shrink-0 overflow-hidden rounded-xl border transition-all ${
+                      idx === current - 1
+                        ? 'border-brand ring-2 ring-brand/30'
+                        : 'border-gray-200 hover:border-gray-300 opacity-80 hover:opacity-100'
+                    }`}
+                    style={{
+                      width: '140px',
+                      height: '90px',
+                      minWidth: '140px',
+                      minHeight: '90px',
+                    }}
+                    aria-label={`Go to image ${idx + 1}`}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={img}
+                      alt={`Thumbnail ${idx + 1}`}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                    />
+                    {idx === current - 1 && (
+                      <div className="absolute inset-0 bg-brand/10"></div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

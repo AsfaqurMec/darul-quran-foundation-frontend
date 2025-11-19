@@ -6,6 +6,7 @@ export type TabItem = {
   id: string;
   label: string;
   content: React.ReactNode;
+  icon?: React.ReactNode;
 };
 
 type TabsProps = {
@@ -29,20 +30,35 @@ export default function Tabs({ items, initialId, className }: TabsProps): JSX.El
 
   return (
     <div className={className}>
-      <div className="flex flex-wrap gap-2 justify-center" role="tablist" onKeyDown={onKeyDown}>
-        {items.map((t) => (
-          <button
-            key={t.id}
-            role="tab"
-            aria-selected={active === t.id}
-            className={`px-4 py-2 rounded-full border transition ${active === t.id ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-white text-emerald-700 border-emerald-300 hover:bg-emerald-50'}`}
-            onClick={() => setActive(t.id)}
-          >
-            {t.label}
-          </button>
-        ))}
+      {/* Tabs header with soft container */}
+      <div
+        className="rounded-[20px] border border-emerald-100 bg-white p-2 flex flex-wrap gap-2 justify-center"
+        role="tablist"
+        onKeyDown={onKeyDown}
+      >
+        {items.map((t) => {
+          const isActive = active === t.id;
+          return (
+            <button
+              key={t.id}
+              role="tab"
+              aria-selected={isActive}
+              className={`flex items-center gap-3 px-6 py-4 rounded-[16px] transition border ${
+                isActive
+                  ? 'bg-emerald-100 border-emerald-100 text-emerald-900'
+                  : 'bg-white border-transparent text-emerald-800 hover:bg-emerald-50'
+              }`}
+              onClick={() => setActive(t.id)}
+            >
+              {t.icon ? <span className={`text-emerald-600 ${isActive ? '' : ''}`}>{t.icon}</span> : null}
+              <span className="text-lg font-semibold">{t.label}</span>
+            </button>
+          );
+        })}
       </div>
-      <div className="mt-6 rounded-2xl bg-emerald-50 border border-emerald-100 p-5">
+
+      {/* Active content */}
+      <div className="mt-6">
         {items.find(i => i.id === active)?.content}
       </div>
     </div>

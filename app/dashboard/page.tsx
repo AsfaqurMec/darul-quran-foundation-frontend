@@ -1,5 +1,9 @@
+'use client';
+
 import StatCard from '@/components/cards/StatCard';
 import Button from '@/components/ui/button';
+import { useI18n } from '@/components/i18n/LanguageProvider';
+import { useEffect, useState } from 'react';
 
 function buildStats() {
   // simple deterministic numbers (can be replaced with API later)
@@ -11,24 +15,33 @@ function buildStats() {
   };
 }
 
-export default async function DashboardPage(): Promise<JSX.Element> {
-  const stats = buildStats();
+export default function DashboardPage(): JSX.Element {
+  const { t } = useI18n();
+  const [stats, setStats] = useState(buildStats());
+
+  useEffect(() => {
+    // Update stats periodically if needed
+    const interval = setInterval(() => {
+      setStats(buildStats());
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold">Dashboard</h1>
-        <p className="text-gray-600">Overview of current activity</p>
+        <h1 className="text-2xl font-semibold">{t('dashboard')}</h1>
+        <p className="text-gray-600">{t('overviewOfActivity')}</p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <StatCard title="Users Online" value={stats.usersOnline} hint="updated live" />
-        <StatCard title="Lessons Today" value={stats.lessonsToday} hint="from API" />
-        <StatCard title="Messages" value={stats.messages} hint="incoming" />
+        <StatCard title={t('usersOnline')} value={stats.usersOnline} hint={t('updatedLive')} />
+        <StatCard title={t('lessonsToday')} value={stats.lessonsToday} hint={t('fromApi')} />
+        <StatCard title={t('messages')} value={stats.messages} hint={t('incoming')} />
       </div>
 
       <form action="/api/logout" method="post">
-        <Button type="submit">Logout</Button>
+        <Button type="submit">{t('logout')}</Button>
       </form>
     </div>
   );

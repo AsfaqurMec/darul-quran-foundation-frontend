@@ -53,6 +53,23 @@ export async function middleware(request: NextRequest) {
       );
     }
 
+    // Role-based access control
+    const role = (user as any).role;
+
+    // Admin-only area
+    if (pathname.startsWith('/admin')) {
+      if (role !== 'admin') {
+        return NextResponse.redirect(new URL('/profile', request.url));
+      }
+    }
+
+    // Dashboard allows admin or editor
+    if (pathname.startsWith('/dashboard')) {
+      if (role !== 'admin' && role !== 'editor') {
+        return NextResponse.redirect(new URL('/profile', request.url));
+      }
+    }
+
     // User is authenticated, allow access
     return NextResponse.next();
   } catch (error) {

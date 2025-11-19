@@ -13,6 +13,8 @@ export interface User {
   images: string[];
   createdAt: string;
   updatedAt: string;
+  role?: string;
+  totalDonate?: number;
 }
 
 export interface CreateUserRequest {
@@ -24,6 +26,22 @@ export interface CreateUserRequest {
   company: string;
   fullAddress: string;
   images: string[];
+}
+
+export interface CreateAdminRequest {
+  fullName: string;
+  email: string;
+  password: string;
+  role: string;
+}
+
+export interface UpdateUserRequest {
+  fullName?: string;
+  email?: string;
+  role?: string;
+  phone?: string;
+  companyName?: string;
+  fullAddress?: string;
 }
 
 export interface CreateUserResponse {
@@ -149,5 +167,182 @@ export const createUser = async (
   } catch (error) {
     console.error("Error creating user:", error);
     return { success: false, message: "Failed to create user" };
+  }
+};
+
+// Create admin user
+export const createAdminUser = async (
+  adminData: CreateAdminRequest
+): Promise<CreateUserResponse> => {
+  try {
+    const token = getClientToken();
+    if (!token) {
+      return { success: false, message: "No access token found" };
+    }
+
+    const response = await fetch(`${API_BASE_URL}/users/create-admin`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(adminData),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return {
+        success: false,
+        message: data.message || "Failed to create admin user",
+      };
+    }
+
+    return {
+      success: true,
+      message: "Admin user created successfully",
+      data: data.data || data,
+    };
+  } catch (error) {
+    console.error("Error creating admin user:", error);
+    return { success: false, message: "Failed to create admin user" };
+  }
+};
+
+// Get all users with pagination, search, and filters
+export const getAllUsersPaginated = async (params?: {
+  page?: number;
+  limit?: number;
+  searchTerm?: string;
+  role?: string;
+}): Promise<{
+  success: boolean;
+  data?: User[];
+  message?: string;
+  pagination?: {
+    currentPage: number;
+    totalPages: number;
+    totalItems: number;
+    itemsPerPage: number;
+  };
+}> => {
+  try {
+    const token = getClientToken();
+    if (!token) {
+      return { success: false, message: "No access token found" };
+    }
+
+    // Build query parameters
+    const queryParams = new URLSearchParams();
+    if (params?.page) queryParams.append("page", params.page.toString());
+    if (params?.limit) queryParams.append("limit", params.limit.toString());
+    if (params?.searchTerm) queryParams.append("searchTerm", params.searchTerm);
+    if (params?.role) queryParams.append("role", params.role);
+
+    const queryString = queryParams.toString();
+    const apiUrl = `${API_BASE_URL}/users${queryString ? `?${queryString}` : ""}`;
+
+    const response = await fetch(apiUrl, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return {
+        success: false,
+        message: data.message || "Failed to fetch users",
+      };
+    }
+
+    return {
+      success: true,
+      data: data.data || data.users || data,
+      pagination: data.pagination,
+    };
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    return { success: false, message: "Failed to fetch users" };
+  }
+};
+
+// Delete user
+export const deleteUser = async (
+  id: string
+): Promise<{ success: boolean; message: string }> => {
+  try {
+    const token = getClientToken();
+    if (!token) {
+      return { success: false, message: "No access token found" };
+    }
+
+    const response = await fetch(`${API_BASE_URL}/users/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return {
+        success: false,
+        message: data.message || "Failed to delete user",
+      };
+    }
+
+    return {
+      success: true,
+      message: data.message || "User deleted successfully",
+    };
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    return { success: false, message: "Failed to delete user" };
+  }
+};
+
+// Update user
+export const updateUser = async (
+  id: string,
+  updateData: UpdateUserRequest
+): Promise<{ success: boolean; message: string; data?: User }> => {
+  try {
+    const token = getClientToken();
+    if (!token) {
+      return { success: false, message: "No access token found" };
+    }
+
+    const response = await fetch(`${API_BASE_URL}/users/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(updateData),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return {
+        success: false,
+        message: data.message || "Failed to update user",
+      };
+    }
+
+    return {
+      success: true,
+      message: data.message || "User updated successfully",
+      data: data.data || data,
+    };
+  } catch (error) {
+    console.error("Error updating user:", error);
+    return { success: false, message: "Failed to update user" };
   }
 };

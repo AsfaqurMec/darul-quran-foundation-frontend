@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/form";
 import Input from "@/components/ui/input";
 import type { Route } from "next";
+import Link from "next/link";
 import {
   FieldValues,
   SubmitHandler,
@@ -78,16 +79,39 @@ const LoginForm: React.FC<LoginFormProps> = ({ isLogin }) => {
 
         const redirectPathParam =
           searchParams.get("redirectPath") ?? searchParams.get("next");
+        // Determine role from JWT (client-side decode of payload)
+        let role: string | undefined;
+        try {
+          const token = res.data?.accessToken || localStorage.getItem("token");
+          if (token && token.split(".").length === 3) {
+            const payload = JSON.parse(
+              atob(token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")),
+            );
+            role = payload?.role;
+          }
+        } catch {}
+
+        // Honor explicit redirect param; otherwise role-based default
         const targetPathString =
           redirectPathParam && redirectPathParam.startsWith("/")
             ? redirectPathParam
-            : "/dashboard";
+            : role === "admin" || role === "editor"
+              ? "/dashboard"
+              : "/profile";
         const targetPath = targetPathString as Route;
         console.log("Login successful!");
         console.log("Redirect path from URL:", redirectPathParam);
         console.log("Target path:", targetPathString);
         console.log("Current URL:", window.location.href);
         console.log("Redirecting to:", targetPath);
+        try {
+          // Notify app that auth state changed so navbar updates immediately
+          window.dispatchEvent(new CustomEvent("auth-change"));
+        } catch {}
+        try {
+          // Optional: ensure storage event for other tabs
+          localStorage.setItem("auth:ts", String(Date.now()));
+        } catch {}
         router.push(targetPath);
         router.refresh();
         toast.success(res?.message);
@@ -159,6 +183,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ isLogin }) => {
             </FormItem>
           )}
         />
+
+        <div className="flex items-center justify-between text-sm -mt-2">
+          <Link href="/forgot-password" className="text-teal-600 hover:text-teal-700">
+            Forgot password?
+          </Link>
+        </div>
 
         <Button
           type="submit"

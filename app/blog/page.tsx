@@ -1,13 +1,27 @@
+'use server';
+
 import Container from '@/components/layout/Container';
 import Pagination from '@/components/ui/Pagination';
-import BlogCard from '@/components/blog/BlogCard';
+import BlogCard, { BlogPost } from '@/components/blog/BlogCard';
 import PageHero from '@/components/common/PageHero';
-import { buildStaticBlogs } from '@/data/blogs';
+import { GetAllBlog } from '@/services/blogs';
+import { getImageUrl } from '@/lib/imageUtils';
 
-export default async function BlogArchive({ searchParams }: { searchParams?: { page?: string } }): Promise<JSX.Element> {
-  const perPage = 9;
+export default async function BlogArchive({ searchParams }: { searchParams: { page?: string } }): Promise<JSX.Element> {
+  const perPage = 12;
   const current = Math.max(1, Number(searchParams?.page || '1'));
-  const all = buildStaticBlogs();
+
+  const res = await GetAllBlog();
+  const list = Array.isArray(res?.data) ? res!.data : [];
+  const all: BlogPost[] = list.map((b: any) => ({
+    id: String(b.id ?? b._id ?? ''),
+    title: String(b.title ?? ''),
+    excerpt: String(b.excerpt ?? b.shortDescription ?? ''),
+    date: String(b.createdAt ?? b.date ?? ''),
+    image: getImageUrl(b.thumbnail ?? (Array.isArray(b.images) ? b.images[0] : '')),
+    href: `/blog/${b.id ?? b._id}`,
+  }));
+
   const totalPages = Math.max(1, Math.ceil(all.length / perPage));
   const start = (current - 1) * perPage;
   const items = all.slice(start, start + perPage);
@@ -16,7 +30,7 @@ export default async function BlogArchive({ searchParams }: { searchParams?: { p
   return (
     <div className="py-0">
       <PageHero title="ব্লগসমূহ" />
-      <Container>
+      <Container className="py-20">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {items.map((post) => (
             <BlogCard key={post.id} post={post} />

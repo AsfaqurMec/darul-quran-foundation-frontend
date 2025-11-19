@@ -1,6 +1,6 @@
 import Container from '@/components/layout/Container';
 import NoticeDetail from '@/components/notice/NoticeDetail';
-import { getNoticeDetail } from '@/data/notices';
+import { getNoticeById } from '@/services/notices';
 
 export default async function NoticeDetailPage({
   params,
@@ -8,7 +8,22 @@ export default async function NoticeDetailPage({
   params: Promise<{ id: string }>;
 }): Promise<JSX.Element> {
   const { id } = await params;
-  const notice = getNoticeDetail(id);
+
+  // Fetch from backend
+  const { data } = await getNoticeById(id);
+
+  const notice = data
+    ? {
+        id: data.id ?? id,
+        title: data.title,
+        date: data.date,
+        tag: data.category,
+        excerpt: data.subTitle,
+        category: data.category,
+        fullContent: data.fullContent,
+        href: `/notice/${data.id ?? id}`,
+      }
+    : null;
 
   if (!notice) {
     return (

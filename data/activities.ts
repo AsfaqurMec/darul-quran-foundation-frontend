@@ -37,6 +37,24 @@ const baseActivities: ActivityItem[] = [
 ];
 
 export function buildStaticActivities(): ActivityItem[] {
+  // Try to read imported activities JSON first (client-safe)
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const parsed = require('./assunnah.activities.json') as Array<Partial<ActivityItem> & { id: string }>;
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      return parsed.map((p) => ({
+        id: p.id,
+        image: p.image || '',
+        tag: p.tag || 'কার্যক্রম',
+        title: p.title || (p.id as string),
+        description: p.description || '',
+        href: `/activities/${p.id}`,
+      }));
+    }
+  } catch {
+    // fall back silently
+  }
+
   const list: ActivityItem[] = [];
   for (let i = 0; i < 24; i++) {
     const b = baseActivities[i % baseActivities.length];

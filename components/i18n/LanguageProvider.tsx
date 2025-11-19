@@ -7,16 +7,685 @@ export type Lang = 'bn' | 'en' | 'ar';
 type Dictionary = Record<string, Record<Lang, string>>;
 
 const DICT: Dictionary = {
+  // Navigation
   donate: { bn: 'দান করুন', en: 'Donate', ar: 'تبرع' },
   login: { bn: 'লগইন', en: 'Login', ar: 'تسجيل الدخول' },
   home: { bn: 'হোম', en: 'Home', ar: 'الرئيسية' },
-  about: { bn: 'আমাদের সম্পর্কে', en: 'About', ar: 'من نحن' },
-  programs: { bn: 'কার্যক্রমসমূহ', en: 'Programs', ar: 'البرامج' },
+  about: { bn: 'আমাদের সম্পর্কে', en: 'About Us', ar: 'من نحن' },
+  programs: { bn: 'কর্মসূচিসমূহ', en: 'Programs', ar: 'البرامج' },
+  activities: { bn: 'কর্মসূচিসমূহ', en: 'Programs', ar: 'الأنشطة' },
   gallery: { bn: 'গ্যালারি', en: 'Gallery', ar: 'المعرض' },
   join: { bn: 'আমাদের সাথে যুক্ত হন', en: 'Get Involved', ar: 'انضم إلينا' },
-  blog: { bn: 'ব্লগ', en: 'Blog', ar: 'المدونة' },
+  blog: { bn: 'কার্যক্রমসমূহ', en: 'Activities', ar: 'الأنشطة' },
   notice: { bn: 'নোটিশ', en: 'Notice', ar: 'الإعلانات' },
   contact: { bn: 'যোগাযোগ', en: 'Contact', ar: 'اتصل بنا' },
+  
+  // Foundation name
+  foundationName: { bn: 'দারুল কুরআন ফাউন্ডেশন', en: 'Darul Quran Foundation', ar: 'مؤسسة دار القرآن' },
+  foundationNameShort: { bn: 'দারুল কুরআন', en: 'DarulQuran', ar: 'دار القرآن' },
+  
+  // Hero section
+  heroTitle: { bn: 'দারুল কুরআন ফাউন্ডেশন', en: 'Darul Quran Foundation', ar: 'مؤسسة دار القرآن' },
+  heroSubtitle: { bn: 'একটি অরাজনৈতিক, অলাভজনক শিক্ষা, দাওয়াহ ও পূর্ণ মানবকল্যাণে নিবেদিত সেবামূলক বেসরকারি-নিবন্ধিত প্রতিষ্ঠান', en: 'A non-political, non-profit educational, da\'wah and full human welfare dedicated service-oriented private-registered organization', ar: 'منظمة خدمية خاصة مسجلة غير سياسية وغير ربحية مكرسة للتعليم والدعوة والرفاهية الإنسانية الكاملة' },
+  regNo: { bn: 'এস-১৩১১১/২০১৯', en: 'S-13111/2019', ar: 'S-13111/2019' },
+  regNoLabel: { bn: 'নিবন্ধন নম্বর', en: 'Registration No', ar: 'رقم التسجيل' },
+  learnMore: { bn: 'আরও জানুন', en: 'Learn More', ar: 'اعرف المزيد' },
+  
+  // Donation form
+  makeDonation: { bn: 'আপনার অনুদান প্রদান করুন', en: 'Make Your Donation', ar: 'قدم تبرعك' },
+  selectFund: { bn: 'তহবিল', en: 'Fund', ar: 'الصندوق' },
+  selectFundPlaceholder: { bn: 'নির্বাচন করুন', en: 'Select', ar: 'اختر' },
+  selectFundError: { bn: 'তহবিল নির্বাচন করুন', en: 'Please select a fund', ar: 'يرجى اختيار صندوق' },
+  contactLabel: { bn: 'মোবাইল / ইমেইল', en: 'Mobile / Email', ar: 'الجوال / البريد الإلكتروني' },
+  contactPlaceholder: { bn: 'মোবাইল নম্বর / ইমেইল লিখুন', en: 'Enter mobile number / email', ar: 'أدخل رقم الجوال / البريد الإلكتروني' },
+  contactError: { bn: 'মোবাইল অথবা ইমেইল দিন', en: 'Please enter mobile or email', ar: 'يرجى إدخال الجوال أو البريد الإلكتروني' },
+  amount: { bn: 'পরিমাণ', en: 'Amount', ar: 'المبلغ' },
+  amountPlaceholder: { bn: '৳ সংখ্যা লিখুন', en: 'Enter amount', ar: 'أدخل المبلغ' },
+  amountError: { bn: 'সংখ্যা লিখুন', en: 'Please enter amount', ar: 'يرجى إدخال المبلغ' },
+  donationSuccess: { bn: 'ধন্যবাদ! আপনার অনুদানের তথ্য গৃহীত হয়েছে।', en: 'Thank you! Your donation information has been received.', ar: 'شكراً لك! تم استلام معلومات تبرعك.' },
+  donationNote: { bn: 'দারুল কুরআন ফাউন্ডেশনে দান করতে করেই আপনি', en: 'You are donating to Darul Quran Foundation', ar: 'أنت تتبرع لمؤسسة دار القرآن' },
+  clickForDetails: { bn: 'বিস্তারিত জানতে ক্লিক করুন', en: 'Click for details', ar: 'انقر للتفاصيل' },
+  
+  // Donation purposes
+  orphanResponsibility: { bn: 'এতিমদের দায়িত্ব গ্রহণ', en: 'Orphan Responsibility', ar: 'رعاية الأيتام' },
+  deprivedStudents: { bn: 'সুবিধাবঞ্চিত ছাত্রদের দায়িত্ব গ্রহণ', en: 'Deprived Students Support', ar: 'دعم الطلاب المحرومين' },
+  widowResponsibility: { bn: 'বিধবা নারীর দায়িত্ব গ্রহণ', en: 'Widow Support', ar: 'رعاية الأرامل' },
+  rehabilitationPoorFamily: { bn: 'দরিদ্র পরিবারের পুনর্বাসন', en: 'Poor Family Rehabilitation', ar: 'إعادة تأهيل الأسر الفقيرة' },
+  tubeWellInstall: { bn: 'নলকূপ খনন', en: 'Tube Well Installation', ar: 'حفر الآبار' },
+  wuduPlaceInstall: { bn: 'ওযুখানা স্থাপন', en: 'Ablution Place Installation', ar: 'إنشاء أماكن الوضوء' },
+  dowryResponsibility: { bn: 'দায়গ্রস্ত কন্যার বিবাহ', en: 'Dowry Support', ar: 'دعم المهور' },
+  skillDevelopment: { bn: 'স্কিল ডেভেলপমেন্ট', en: 'Skill Development', ar: 'تنمية المهارات' },
+  winterClothes: { bn: 'শীত বস্ত্র বিতরণ', en: 'Winter Clothes Distribution', ar: 'توزيع الملابس الشتوية' },
+  mosqueConstruction: { bn: 'মসজিদ নির্মাণ', en: 'Mosque Construction', ar: 'بناء المساجد' },
+  orphanageConstruction: { bn: 'এতিমখানা নির্মাণ', en: 'Orphanage Construction', ar: 'بناء دار الأيتام' },
+  zakatFund: { bn: 'যাকাত তহবিল', en: 'Zakat Fund', ar: 'صندوق الزكاة' },
+  generalFund: { bn: 'সাধারণ তহবিল', en: 'General Fund', ar: 'الصندوق العام' },
+  iftarProgram: { bn: 'ইফতার প্রোগ্রাম', en: 'Iftar Program', ar: 'برنامج الإفطار' },
+  qurbaniProgram: { bn: 'কুরবানী প্রোগ্রাম', en: 'Qurbani Program', ar: 'برنامج الأضحية' },
+  emergencyRelief: { bn: 'দুর্যোগে জরুরি ত্রাণ', en: 'Emergency Relief', ar: 'الإغاثة الطارئة' },
+  shelterlessHousing: { bn: 'গৃহহীনদের গৃহ নির্মাণ', en: 'Housing for Homeless', ar: 'بناء مساكن للمشردين' },
+  
+  // About section
+  aboutIntro1: { bn: 'দারুল কুরআন ফাউন্ডেশন শিক্ষা, দাওয়াহ ও পূর্ণ মানবকল্যাণে নিবেদিত একটি অরাজনৈতিক ও অলাভজনক সেবামূলক প্রতিষ্ঠান। নিবন্ধন নম্বর: এস-১৩১১১/২০১৯। ২০১৯ সালে শায়খ আহমাদুল্লাহ (হাফিযাহুল্লাহ) এই প্রতিষ্ঠানটি প্রতিষ্ঠা করেন।', en: 'Darul Quran Foundation is a non-political and non-profit service organization dedicated to education, da\'wah and full human welfare. Registration No: S-13111/2019. Sheikh Ahmadullah (Hafizahullah) established this organization in 2019.', ar: 'مؤسسة دار القرآن هي منظمة خدمية غير سياسية وغير ربحية مكرسة للتعليم والدعوة والرفاهية الإنسانية الكاملة. رقم التسجيل: S-13111/2019. أسس الشيخ أحمد الله (حفظه الله) هذه المنظمة في عام 2019.' },
+  aboutIntro2: { bn: 'এই প্রতিষ্ঠান মানবতার শিক্ষা, মানুষের মুক্তি ও শান্তির দাওয়াহ, মানবকল্যাণের আদর্শ, সামাজিক সেবা, মসজিদ-সংস্কার, অনাথ সহায়তা এবং দারিদ্র্য মোকাবিলাসহ নানাবিধ কল্যাণমূলক কাজ পরিচালনা করছে।', en: 'This organization is conducting various welfare activities including education for humanity, da\'wah for human liberation and peace, ideals of human welfare, social services, mosque renovation, orphan support and poverty alleviation.', ar: 'تقوم هذه المنظمة بأنشطة رفاهية متنوعة تشمل تعليم الإنسانية والدعوة لتحرير الإنسان والسلام ومثل الرفاهية الإنسانية والخدمات الاجتماعية وتجديد المساجد ودعم الأيتام ومكافحة الفقر.' },
+  aboutIntro3: { bn: 'লক্ষ্য ও উদ্দেশ্য—সুন্নাহভিত্তিক জীবন ও সমাজ গঠন করা এবং বিভিন্ন ইসলামী প্রজেক্টের বিস্তারের মাধ্যমে মানবতার কল্যাণে কাজ করা।', en: 'Goal and Objective—To build a Sunnah-based life and society and work for the welfare of humanity through the expansion of various Islamic projects.', ar: 'الهدف والغاية—بناء حياة ومجتمع قائم على السنة والعمل لرفاهية الإنسانية من خلال توسيع المشاريع الإسلامية المختلفة.' },
+  
+  // Policy Tabs
+  policyAndIdeals: { bn: 'নীতি ও আদর্শ', en: 'Policy & Ideals', ar: 'السياسة والمثل' },
+  vision: { bn: 'ভিশন', en: 'Vision', ar: 'الرؤية' },
+  faq: { bn: 'প্রশ্নোত্তর', en: 'FAQ', ar: 'الأسئلة الشائعة' },
+  policy1: { bn: 'পবিত্র কুরআন ও রাসুলের সুন্নাহর আলোকে নীতি ও আদর্শ।', en: 'Policy and ideals based on the Holy Quran and the Sunnah of the Prophet.', ar: 'السياسة والمثل المستندة إلى القرآن الكريم وسنة الرسول.' },
+  policy2: { bn: 'ইসলামের প্রাথমিক যুগের শ্রেষ্ঠ মুসলিমদের অনুসরণ।', en: 'Following the best Muslims of the early Islamic era.', ar: 'اتباع أفضل المسلمين في العصر الإسلامي المبكر.' },
+  policy3: { bn: 'ঐক্য, সংহতি ও পারস্পরিক আন্তরিক নীতি মেনে চলা।', en: 'Adhering to unity, solidarity and mutual respect.', ar: 'الالتزام بالوحدة والتضامن والاحترام المتبادل.' },
+  policy4: { bn: 'সমাজের জন্য সহায়তামূলক ও মানবিক চেতনায় কাজ।', en: 'Working with a supportive and humanitarian spirit for society.', ar: 'العمل بروح داعمة وإنسانية للمجتمع.' },
+  policy5: { bn: 'দাওয়াহ, শিক্ষা ও কল্যাণমুখী কার্যক্রমে জোর দেয়া।', en: 'Emphasizing da\'wah, education and welfare activities.', ar: 'التركيز على الدعوة والتعليم وأنشطة الرفاهية.' },
+  policy6: { bn: 'সব মানুষের জন্য সেবা – বর্ণ, ধর্ম বা গোত্র নির্বিশেষে।', en: 'Service for all people – regardless of color, religion or ethnicity.', ar: 'الخدمة لجميع الناس - بغض النظر عن اللون أو الدين أو العرق.' },
+  vision1: { bn: 'সুন্নাহভিত্তিক জ্ঞানচর্চা ও কর্মের মাধ্যমে সত্যিকার ইসলামি জীবন গড়ে তোলা।', en: 'Building a true Islamic life through Sunnah-based knowledge and practice.', ar: 'بناء حياة إسلامية حقيقية من خلال المعرفة والعمل القائم على السنة.' },
+  vision2: { bn: 'শিক্ষা, দাওয়াহ ও মানবকল্যাণকে প্রযুক্তি-সমর্থ আধুনিক পদ্ধতিতে এগিয়ে নেয়া।', en: 'Advancing education, da\'wah and human welfare through technology-supported modern methods.', ar: 'تطوير التعليم والدعوة والرفاهية الإنسانية من خلال الأساليب الحديثة المدعومة بالتكنولوجيا.' },
+  faqQuestion: { bn: 'প্রশ্ন:', en: 'Question:', ar: 'سؤال:' },
+  faqAnswer: { bn: 'উত্তর:', en: 'Answer:', ar: 'إجابة:' },
+  faqQuestionText: { bn: 'কিভাবে যুক্ত হব?', en: 'How can I join?', ar: 'كيف يمكنني الانضمام؟' },
+  faqAnswerText: { bn: 'নিয়মিত দাতা/সদস্য/স্বেচ্ছাসেবক/ক্যারিয়ার অপশন থেকে শুরু করতে পারেন।', en: 'You can start from the regular donor/member/volunteer/career options.', ar: 'يمكنك البدء من خيارات المتبرع العادي/العضو/المتطوع/الوظيفة.' },
+  
+  // Finance Policy
+  financePolicyTitle: { bn: 'আয়-ব্যয়ের নীতিমালা', en: 'Income-Expense Policy', ar: 'سياسة الدخل والمصروفات' },
+  incomeSources: { bn: 'আয়ের উৎস', en: 'Income Sources', ar: 'مصادر الدخل' },
+  expenseAreas: { bn: 'ব্যয়মুখুল বর্ণ', en: 'Expense Areas', ar: 'مجالات المصروفات' },
+  managementPolicy: { bn: 'ব্যবস্থাপনা নীতি', en: 'Management Policy', ar: 'سياسة الإدارة' },
+  income1: { bn: 'বিভিন্ন ব্যক্তি ও প্রতিষ্ঠান থেকে প্রাপ্ত স্বেচ্ছা অনুদান ও অর্থসহায়তা।', en: 'Voluntary donations and financial support received from various individuals and organizations.', ar: 'التبرعات الطوعية والدعم المالي المستلم من أفراد ومنظمات مختلفة.' },
+  income2: { bn: 'সদস্য, সমর্থক ও শুভাকাঙ্ক্ষীদের এককালীন ও নিয়মিত অনুদান।', en: 'One-time and regular donations from members, supporters and well-wishers.', ar: 'التبرعات لمرة واحدة والمنتظمة من الأعضاء والداعمين والمحسنين.' },
+  income3: { bn: 'ফাউন্ডেশনের যে কোনো প্রকল্পের জন্য সংরক্ষিত অর্থ।', en: 'Funds reserved for any project of the foundation.', ar: 'الأموال المحفوظة لأي مشروع من مؤسسة.' },
+  income4: { bn: 'সৎ মুসলিমদের প্রেরণা যাকাত।', en: 'Zakat from sincere Muslims.', ar: 'الزكاة من المسلمين المخلصين.' },
+  income5: { bn: 'ইফতার ও কুরবানিসহ বিশেষ প্রকল্প খাতে উৎসর্গকৃত অর্থ।', en: 'Funds dedicated to special project accounts including Iftar and Qurbani.', ar: 'الأموال المخصصة لحسابات المشاريع الخاصة بما في ذلك الإفطار والأضحية.' },
+  income6: { bn: 'ফাউন্ডেশনের বিভিন্ন আয়োজনে প্রাপ্ত অর্থ।', en: 'Funds received from various foundation events.', ar: 'الأموال المستلمة من فعاليات المؤسسة المختلفة.' },
+  expense1: { bn: 'শিক্ষা, দাওয়াহ, সেবা—আলোর পথে মানবকল্যাণমূলক খাতে ব্যয়।', en: 'Expenditure in educational, da\'wah, service—human welfare sectors on the path of light.', ar: 'المصروفات في القطاعات التعليمية والدعوية والخدمية - الرفاهية الإنسانية على طريق النور.' },
+  expense2: { bn: 'প্রকল্প অনুযায়ী নির্ধারিত খাতে ব্যয়।', en: 'Expenditure in accounts determined according to projects.', ar: 'المصروفات في الحسابات المحددة وفقاً للمشاريع.' },
+  expense3: { bn: 'গবেষণা, প্রকাশনা, ট্রেনিং, সচেতনতা কর্মসূচিতে ব্যয়।', en: 'Expenditure on research, publication, training, awareness programs.', ar: 'المصروفات على البحث والنشر والتدريب وبرامج التوعية.' },
+  expense4: { bn: 'ফাউন্ডেশনের তত্ত্বাবধানে বিপর্যস্ত মানুষের সহায়তা।', en: 'Assistance to distressed people under the supervision of the foundation.', ar: 'المساعدة للأشخاص المنكوبين تحت إشراف المؤسسة.' },
+  management1: { bn: 'হিসাবরক্ষণ ও অডিট নীতিমালা অনুযায়ী স্বচ্ছ ব্যবস্থাপনা।', en: 'Transparent management according to accounting and audit policies.', ar: 'إدارة شفافة وفقاً لسياسات المحاسبة والتدقيق.' },
+  management2: { bn: 'বোর্ডের সিদ্ধান্ত ব্যতীত কোনো খাতে ব্যয় নয়।', en: 'No expenditure in any account without board decision.', ar: 'لا توجد مصروفات في أي حساب دون قرار المجلس.' },
+  management3: { bn: 'প্রকল্পভিত্তিক তহবিলের অর্থ নির্দিষ্ট খাতে সংরক্ষণ ও ব্যয়।', en: 'Preservation and expenditure of project-based funds in designated accounts.', ar: 'الحفظ والمصروفات للأموال القائمة على المشاريع في حسابات محددة.' },
+  management4: { bn: 'দাতাদের কাছে প্রয়োজনানুযায়ী রিপোর্টিং ও আপডেট প্রদান।', en: 'Providing reporting and updates to donors as needed.', ar: 'تقديم التقارير والتحديثات للمتبرعين حسب الحاجة.' },
+  
+  // Mission Triplet
+  missionTitle: { bn: 'উন্নতির স্বার্থে, সুন্নাহর সাথে', en: 'For Progress, With Sunnah', ar: 'من أجل التقدم، مع السنة' },
+  education: { bn: 'শিক্ষা', en: 'Education', ar: 'التعليم' },
+  educationDesc: { bn: 'দ্বীনি ও সাধারণ শিক্ষার সমন্বিত সিলেবাসের মাদরাসা প্রতিষ্ঠা; স্কুল, কলেজ ও বিশ্ববিদ্যালয়সহ বিভিন্ন সাধারণ ও কারিগরি বিদ্যালয় প্রতিষ্ঠা; এ ছাড়াও আধুনিক শিক্ষার উদ্যোগ গ্রহণ', en: 'Establishing madrasas with integrated curriculum of religious and general education; establishing various general and technical schools including schools, colleges and universities; also taking initiatives for modern education', ar: 'إنشاء مدارس بمنهج متكامل للتعليم الديني والعام؛ إنشاء مدارس عامة وتقنية مختلفة بما في ذلك المدارس والكليات والجامعات؛ وأيضاً اتخاذ مبادرات للتعليم الحديث' },
+  service: { bn: 'সেবা', en: 'Service', ar: 'الخدمة' },
+  serviceDesc: { bn: 'দরিদ্রদের স্বাবলম্বীকরণ, বন্যাদের ত্রাণ ও পুনর্বাসন, নলকূপ ও পানি শোধনাগার স্থাপন, বৃক্ষরোপণ, শীতবস্ত্র বিতরণ, ইফতার বিতরণ, সবার জন্য কুরবানিসহ বিভিন্ন সেবামূলক কার্যক্রম', en: 'Self-reliance of the poor, relief and rehabilitation of flood victims, installation of tube wells and water treatment plants, tree planting, winter clothes distribution, iftar distribution, qurbani for all including various service activities', ar: 'اكتفاء الفقراء ذاتياً، إغاثة وإعادة تأهيل ضحايا الفيضانات، تركيب الآبار ومحطات معالجة المياه، زراعة الأشجار، توزيع الملابس الشتوية، توزيع الإفطار، الأضحية للجميع بما في ذلك أنشطة خدمية متنوعة' },
+  dawah: { bn: 'দাওয়াহ', en: 'Dawah', ar: 'الدعوة' },
+  dawahDesc: { bn: 'বই-পুস্তক রচনা ও প্রকাশনা, মসজিদ ও অডিওভিজ্যুয়ালভিত্তিক দ্বীনি হালাকাহ, দাওয়াহ বিষয়ক প্রশিক্ষণ ও কর্মশালাসহ অনলাইন-অফলাইনভিত্তিক বহুমুখী কার্যক্রম', en: 'Writing and publishing books, mosque and audiovisual-based religious circles, training and workshops on da\'wah including various online and offline activities', ar: 'كتابة ونشر الكتب، حلقات دينية قائمة على المساجد والصوتيات والمرئيات، التدريب وورش العمل حول الدعوة بما في ذلك أنشطة متنوعة عبر الإنترنت وخارجها' },
+  
+  // Join Us section
+  joinUsTitle: { bn: 'আমাদের সাথে যুক্ত হোন', en: 'Join Us', ar: 'انضم إلينا' },
+  joinUsSubtitle: { bn: 'নিচের যে কোনো পদ্ধতিতে যুক্ত হয়ে আত্মমানবতার সেবায় ভূমিকা রাখুন', en: 'Join in any of the following ways and contribute to the service of humanity', ar: 'انضم بأي من الطرق التالية وساهم في خدمة الإنسانية' },
+  getInvolvedHeading: { bn: 'আমাদের সাথে যুক্ত হতে পারেন বিভিন্নভাবে', en: 'You can get involved with us in various ways', ar: 'يمكنك المشاركة معنا بطرق متنوعة' },
+  regularDonor: { bn: 'নিয়মিত দাতা', en: 'Regular Donor', ar: 'متبرع منتظم' },
+  lifetimeMember: { bn: 'আজীবন ও দাতা সদস্য', en: 'Lifetime & Donor Member', ar: 'عضو مدى الحياة ومتبرع' },
+  volunteer: { bn: 'স্বেচ্ছাসেবক', en: 'Volunteer', ar: 'متطوع' },
+  career: { bn: 'ক্যারিয়ার', en: 'Career', ar: 'الوظائف' },
+  
+  // Regular Donor Tab
+  regularDonorNotice: { bn: 'নিয়মিত অনুদান সম্পর্কিত জিজ্ঞাসা বা কোনো সমস্যায় পড়লে, মেইল করুন', en: 'If you have any questions or issues regarding regular donations, please email', ar: 'إذا كان لديك أي أسئلة أو مشاكل بخصوص التبرعات المنتظمة، يرجى إرسال بريد إلكتروني' },
+  regularDonorNoticeEmail: { bn: 'এ অথবা কল করুন', en: 'or call', ar: 'أو اتصل' },
+  regularDonorVideoTitle: { bn: 'নিয়মিত দাতা হয়ে যান', en: 'Become a Regular Donor', ar: 'كن متبرعاً منتظماً' },
+  regularDonorHadith: { bn: 'আল্লাহর কাছে সর্বাধিক প্রিয় আমল হলো, যা সদাসর্বদা নিয়মিত করা হয়, যদিও তা অল্প হয়। (সহিহ বুখারি, হাদিস ৬৪৬৪)', en: 'The most beloved deed to Allah is that which is done regularly, even if it is little. (Sahih al-Bukhari, Hadith 6464)', ar: 'أحب الأعمال إلى الله ما داوم عليه صاحبه وإن قل. (صحيح البخاري، حديث 6464)' },
+  regularDonorDesc1: { bn: 'নিয়মিত অনুদান ফাউন্ডেশনকে টিকিয়ে রাখতে সবচেয়ে বেশি সাহায্য করে। নিয়মিত দানের অর্থেই মূলত সকল কল্যাণমুখী কার্যক্রম পরিচালিত হয়। নিয়মিত দানের জন্য কোনো অংক নির্দিষ্ট নেই, যে কোনো পরিমাণ দান করা যায়। আর যে কোনো ভালো কাজ অনিয়মিতভাবে বেশি করার চেয়ে নিয়মিতভাবে অল্প করা উত্তম।', en: 'Regular donations help the most in keeping the foundation running. All welfare activities are primarily conducted with regular donation funds. There is no specific amount required for regular donations; any amount can be donated. And it is better to do a small good deed regularly than to do a large one irregularly.', ar: 'التبرعات المنتظمة تساعد أكثر في الحفاظ على استمرارية المؤسسة. جميع أنشطة الرفاهية تُجرى بشكل أساسي بأموال التبرعات المنتظمة. لا يوجد مبلغ محدد مطلوب للتبرعات المنتظمة؛ يمكن التبرع بأي مبلغ. والأفضل أداء عمل خير صغير بانتظام من أداء عمل كبير بشكل غير منتظم.' },
+  regularDonorDesc2: { bn: 'অনেকে নিয়মিত দান করতে চান, কিন্তু মনে থাকে না বলে দান করা হয়ে ওঠে না। এখন থেকে বিকাশ-নগদ এবং ভিসা-মাস্টারকার্ড ব্যবহারকারীরা আস-সুন্নাহ ফাউন্ডেশনের ওয়েবসাইট থেকে স্বয়ংক্রিয় পদ্ধতি চালু করে নিয়মিত দান করতে পারবেন। দৈনিক কিংবা মাসিক অপশন সিলেক্ট করে টাকার পরিমাণ সেট করে দিন। আপনি ভুলে গেলেও আপনার নির্ধারিত সময়ে নির্ধারিত পরিমাণ টাকা ফাউন্ডেশনের অ্যাকাউন্টে জমা হবে। চাইলে এই পদ্ধতিটি যেকোনো সময় বন্ধও করতে পারবেন।', en: 'Many people want to donate regularly, but forget, so they don\'t end up donating. From now on, bKash-Nagad and Visa-Mastercard users can activate the automatic system from AS-Sunnah Foundation\'s website to donate regularly. Select daily or monthly option and set the amount. Even if you forget, your predetermined amount will be deposited into the foundation\'s account at the scheduled time. You can also turn off this system anytime if you wish.', ar: 'كثير من الناس يريدون التبرع بانتظام، لكنهم ينسون، لذلك لا ينتهي بهم الأمر بالتبرع. من الآن فصاعداً، يمكن لمستخدمي bKash-Nagad و Visa-Mastercard تفعيل النظام التلقائي من موقع مؤسسة السنة للتبرع بانتظام. حدد خيار يومي أو شهري وقم بتعيين المبلغ. حتى إذا نسيت، سيتم إيداع مبلغك المحدد مسبقاً في حساب المؤسسة في الوقت المحدد. يمكنك أيضاً إيقاف هذا النظام في أي وقت إذا رغبت.' },
+  regularDonorExpenseAreas: { bn: 'ব্যয়ের খাত', en: 'Expense Areas', ar: 'مجالات المصروفات' },
+  regularDonorExpense1: { bn: 'আস-সুন্নাহ ফাউন্ডেশনের সকল সেবামূলক কার্যক্রম', en: 'All service activities of AS-Sunnah Foundation', ar: 'جميع الأنشطة الخدمية لمؤسسة السنة' },
+  regularDonorExpense2: { bn: 'সকল নতুন কার্যক্রমের ব্যয় নির্বাহ', en: 'Expenditure for all new activities', ar: 'المصروفات لجميع الأنشطة الجديدة' },
+  regularDonorExpense3: { bn: 'দাওয়াহ ও গবেষণা কার্যক্রম পরিচালনা', en: 'Management of da\'wah and research activities', ar: 'إدارة أنشطة الدعوة والبحث' },
+  regularDonorExpense4: { bn: 'ফাউন্ডেশনের প্রশাসনিক ব্যয়', en: 'Administrative expenses of the foundation', ar: 'المصروفات الإدارية للمؤسسة' },
+  regularDonorExpense5: { bn: 'ব্যবস্থাপনা ব্যয়', en: 'Management expenses', ar: 'مصروفات الإدارة' },
+  regularDonorAutopayTitle: { bn: 'চালু করুন স্বয়ংক্রিয় পদ্ধতি', en: 'Activate Automatic System', ar: 'تفعيل النظام التلقائي' },
+  regularDonorAutopayDesc: { bn: 'দৈনিক কিংবা মাসিক অপশন সিলেক্ট করে টাকার পরিমাণ সেট করে দিন। আপনি ভুলে গেলেও আপনার নির্ধারিত সময়ে নির্ধারিত পরিমাণ টাকা ফাউন্ডেশনের অ্যাকাউন্টে জমা হবে। চাইলে এই পদ্ধতিটি যেকোনো সময় বন্ধও করতে পারবেন।', en: 'Select daily or monthly option and set the amount. Even if you forget, your predetermined amount will be deposited into the foundation\'s account at the scheduled time. You can also turn off this system anytime if you wish.', ar: 'حدد خيار يومي أو شهري وقم بتعيين المبلغ. حتى إذا نسيت، سيتم إيداع مبلغك المحدد مسبقاً في حساب المؤسسة في الوقت المحدد. يمكنك أيضاً إيقاف هذا النظام في أي وقت إذا رغبت.' },
+  
+  // Lifetime Member Tab
+  lifetimeMemberRulesTitle: { bn: 'আজীবন ও দাতা সদস্য হওয়ার নিয়ম', en: 'Rules for Becoming a Lifetime & Donor Member', ar: 'قواعد أن تصبح عضواً مدى الحياة ومتبرعاً' },
+  lifetimeMemberDesc1: { bn: 'আস-সুন্নাহ ফাউন্ডেশনের মসজিদ কমপ্লেক্স-এর ৮ ও ৭ দাতা মোডেলে \'আজীবন সদস্য\' ও \'দাতা সদস্য\' সংযোজন করা হয়েছে।', en: 'Lifetime Member\' and \'Donor Member\' have been added to the 8 and 7 donor modes of AS-Sunnah Foundation\'s Mosque Complex.', ar: 'تمت إضافة \'عضو مدى الحياة\' و\'عضو متبرع\' إلى وضعي المتبرعين 8 و 7 من مجمع مسجد مؤسسة السنة.' },
+  lifetimeMemberVideoTitle: { bn: 'সদস্য হওয়ার নিয়ম', en: 'Rules for Membership', ar: 'قواعد العضوية' },
+  lifetimeMemberDesc2: { bn: 'আজীবন ও দাতা সদস্যরা ফাউন্ডেশনের দাওয়াহমুখী কল্যাণমূলক যে কোনো প্রকল্পে সম্পৃক্ত হতে পারবেন।', en: 'Lifetime and Donor Members can be involved in any of the foundation\'s da\'wah-oriented welfare projects.', ar: 'يمكن لأعضاء مدى الحياة والمتبرعين المشاركة في أي من مشاريع الرفاهية الموجهة للدعوة في المؤسسة.' },
+  lifetimeMemberDesc3: { bn: 'কিস্তিতে পরিশোধের সুবিধাসহ সহজ শর্তে আজীবন/দাতা সদস্য হওয়ার সুযোগ রয়েছে। আস-সুন্নাহ ফাউন্ডেশন মসজিদ কমপ্লেক্স প্রকল্পের কাজ চলমান। এ প্রকল্পের প্রসারে আপনার এককালীন বা কিস্তিতে সহায়তা অব্যাহত থাকলে, আমরা দাওয়াহ, শিক্ষা, সেবাসহ আরও নানা কল্যাণমূলক কাজ করতে সক্ষম হব ইনশাআল্লাহ।', en: 'There is an opportunity to become a Lifetime/Donor Member on easy terms with installment payment facilities. AS-Sunnah Foundation Mosque Complex project work is ongoing. If your one-time or installment support continues for the expansion of this project, we will be able to do various welfare activities including da\'wah, education, and service, Insha\'Allah.', ar: 'هناك فرصة لتصبح عضواً مدى الحياة/متبرعاً بشروط سهلة مع مرافق دفع بالتقسيط. أعمال مشروع مجمع مسجد مؤسسة السنة مستمرة. إذا استمر دعمك لمرة واحدة أو بالتقسيط لتوسعة هذا المشروع، سنكون قادرين على القيام بأنشطة رفاهية متنوعة بما في ذلك الدعوة والتعليم والخدمة، إن شاء الله.' },
+  lifetimeMemberMosqueTitle: { bn: 'আস-সুন্নাহ ফাউন্ডেশন মসজিদ কমপ্লেক্স ও ইসলামিক সেন্টার', en: 'AS-Sunnah Foundation Mosque Complex & Islamic Center', ar: 'مجمع مسجد مؤسسة السنة والمركز الإسلامي' },
+  lifetimeMemberMosqueDesc1: { bn: 'রাসূলুল্লাহ (সাল্লাল্লাহু আলাইহি ওয়া সাল্লাম)-এর মসজিদ সালাত আদায়ের পাশাপাশি বহুবিধ কল্যাণের কেন্দ্র ছিল। ঢাকা মসজিদের শহর হলেও বেশিরভাগ মসজিদে নামাযের জামায়াত এবং বড়জোর মকতবের মধ্যেই সীমাবদ্ধ। আস-সুন্নাহ ফাউন্ডেশন ঢাকায় একটি আদর্শ মসজিদ গড়ে তুলতে চায়, যা সালাত আদায় ছাড়াও বিভিন্ন কল্যাণমূলক কাজে মুখর থাকবে। এতে বিভিন্ন শ্রেণী-পেশা ও বয়সের মানুষের দীনি শিক্ষার নিয়মিত আয়োজন, প্রতি সপ্তাহের খুতবার সারসংক্ষেপ লিখিত আকারে মুসুল্লীদের মাঝে বিতরণ, প্রাজ্ঞ উলামায়ে কিরামের সাক্ষাৎ ও সান্নিধ্যলাভের সুযোগ, নারী ও শিশুদের জন্য বিশেষ কর্নার, দুস্থ রোগীদের বিনামূল্যে প্রাথমিক চিকিৎসা, পারিবারিক ও ব্যক্তিগত কলহ নিরসনকল্পে আলেমদের মাধ্যমে কাউন্সেলিংয়ের ব্যবস্থা ও গ্রাম থেকে বিভিন্ন সাময়িক প্রয়োজনে ঢাকায় আগত ব্যক্তিদের জন্য মুসাফিরখানাসহ বিভিন্ন কার্যক্রম থাকবে ইন-শা-আল্লাহ।', en: 'The Prophet\'s (peace be upon him) mosque was a center of multiple benefits alongside offering prayers. Although Dhaka is a city of mosques, most mosques are limited to congregational prayers and at most a madrasa. AS-Sunnah Foundation wants to build an ideal mosque in Dhaka that will be active in various welfare activities besides offering prayers. This will include regular arrangements for religious education for people of various classes, professions and ages, distribution of written summaries of weekly sermons among worshippers, opportunities to meet and be close to learned scholars, special corners for women and children, free primary treatment for poor patients, counseling arrangements through scholars for resolving family and personal disputes, and various programs including a guesthouse for people coming to Dhaka from villages for various temporary needs, Insha\'Allah.', ar: 'كان مسجد النبي (صلى الله عليه وسلم) مركزاً لفوائد متعددة إلى جانب أداء الصلاة. رغم أن دكا مدينة المساجد، فإن معظم المساجد تقتصر على الصلاة الجماعية وأكثرها مدرسة. تريد مؤسسة السنة بناء مسجد مثالي في دكا سيكون نشطاً في أنشطة رفاهية متنوعة إلى جانب أداء الصلاة. سيضمن هذا ترتيبات منتظمة للتعليم الديني لأشخاص من فئات ومهن وأعمار مختلفة، وتوزيع ملخصات مكتوبة لخطب أسبوعية بين المصلين، وفرص للقاء والتقرب من العلماء المتعلمين، وزوايا خاصة للنساء والأطفال، وعلاج مجاني أولي للمرضى الفقراء، وترتيبات استشارية من خلال العلماء لحل النزاعات العائلية والشخصية، وبرامج متنوعة تشمل نزلاً للأشخاص القادمين إلى دكا من القرى لاحتياجات مؤقتة متنوعة، إن شاء الله.' },
+  lifetimeMemberMosqueDesc2: { bn: 'এছাড়াও মসজিদের পাশে আস-সুন্নাহ ফাউন্ডেশনের দেশব্যাপী পরিচালিত যাবতীয় কল্যাণমূলক কাজের প্রধান কার্যালয় থাকবে ইন-শা-আল্লাহ। যেখান থেকে ফাউন্ডেশনের দেশব্যআপী পরিচালিত মসজিদ, মাদরাসা ও বিভিন্ন সেবা ও জনকল্যাণমূলক কাজ পরিচালিত হবে।', en: 'Additionally, next to the mosque will be the main office of AS-Sunnah Foundation\'s nationwide welfare activities, Insha\'Allah. From there, the foundation\'s nationwide mosques, madrasas, and various service and public welfare activities will be managed.', ar: 'بالإضافة إلى ذلك، بجانب المسجد سيكون المكتب الرئيسي لأنشطة الرفاهية على مستوى البلاد لمؤسسة السنة، إن شاء الله. من هناك، سيتم إدارة مساجد ومدارس المؤسسة على مستوى البلاد، والأنشطة الخدمية والرفاهية العامة المتنوعة.' },
+  lifetimeMemberFeaturesTitle: { bn: 'যা থাকবে আস-সুন্নাহ ফাউন্ডেশন মসজিদ কমপ্লেক্স ও ইসলামিক সেন্টারঃ', en: 'What will be in AS-Sunnah Foundation Mosque Complex & Islamic Center:', ar: 'ما سيكون في مجمع مسجد مؤسسة السنة والمركز الإسلامي:' },
+  lifetimeMemberFeature1: { bn: 'আধুনিক জামে মসজিদ', en: 'Modern Jame\' Mosque', ar: 'مسجد جامع حديث' },
+  lifetimeMemberFeature2: { bn: 'কেন্দ্রিক নীতি নির্ধারণ ও শিক্ষা দাওয়াহের অ্যাকাডেমিক (নারী/পুরুষ) সেকশন', en: 'Centralized policy-making and academic (male/female) section for education and da\'wah', ar: 'وضع السياسات المركزية والقسم الأكاديمي (ذكور/إناث) للتعليم والدعوة' },
+  lifetimeMemberFeature3: { bn: 'আস-সুন্নাহ ফাউন্ডেশনের কল্যাণমূলক কার্যক্রম', en: 'AS-Sunnah Foundation\'s welfare activities', ar: 'أنشطة رفاهية مؤسسة السنة' },
+  lifetimeMemberMoreInfo: { bn: 'আরও দেখুন', en: 'See More', ar: 'شاهد المزيد' },
+  lifetimeMemberPolicyDesc: { bn: 'আস-সুন্নাহ ফাউন্ডেশনের নীতি ও আদর্শের সঙ্গে একমত এমন যে কেউ আজীবন সদস্য ও দাতা সদস্য হওয়ার জন্য আবেদন করতে পারবেন।', en: 'Anyone who agrees with the policies and ideals of AS-Sunnah Foundation can apply to become a Lifetime Member and Donor Member.', ar: 'يمكن لأي شخص يوافق على سياسات ومثل مؤسسة السنة التقدم ليكون عضواً مدى الحياة وعضواً متبرعاً.' },
+  lifetimeMemberTypeTitle: { bn: 'আজীবন সদস্য', en: 'Lifetime Member', ar: 'عضو مدى الحياة' },
+  lifetimeMemberTypeDesc: { bn: 'যারা ফাউন্ডেশনের কল্যাণার্থে এককালীন কমপক্ষে এক লক্ষ বা তদূর্ধ্ব টাকা ফাউন্ডেশনের তহবিলে দান করবেন, তারা ফাউন্ডেশনের আজীবন সদস্য হবেন।', en: 'Those who will donate a minimum of one lakh or more to the foundation\'s fund at once for the welfare of the foundation will become Lifetime Members of the foundation.', ar: 'أولئك الذين سيتبرعون بحد أدنى مائة ألف أو أكثر لصندوق المؤسسة دفعة واحدة لرفاهية المؤسسة سيصبحون أعضاء مدى الحياة في المؤسسة.' },
+  donorMemberTypeTitle: { bn: 'দাতা সদস্য', en: 'Donor Member', ar: 'عضو متبرع' },
+  donorMemberTypeDesc: { bn: 'যারা ফাউন্ডেশনের কল্যাণার্থে এককালীন কমপক্ষে পঞ্চাশ হাজার বা তদূর্ধ্ব টাকা ফাউন্ডেশনের তহবিলে দান করবেন, তারা ফাউন্ডেশনের দাতা সদস্য হবেন।', en: 'Those who will donate a minimum of fifty thousand or more to the foundation\'s fund at once for the welfare of the foundation will become Donor Members of the foundation.', ar: 'أولئك الذين سيتبرعون بحد أدنى خمسين ألفاً أو أكثر لصندوق المؤسسة دفعة واحدة لرفاهية المؤسسة سيصبحون أعضاء متبرعين في المؤسسة.' },
+  memberApplicationTitle: { bn: 'সদস্য আবেদন', en: 'Member Application', ar: 'طلب العضوية' },
+  memberApplicationSubtitle: { bn: 'আপনি যদি সদস্য হতে ইচ্ছুক হন, তাহলে নিচের তথ্যটি পূরণ করুন।', en: 'If you wish to become a member, please fill in the information below.', ar: 'إذا كنت ترغب في أن تصبح عضواً، يرجى ملء المعلومات أدناه.' },
+  
+  // Volunteer Tab
+  volunteerJoinTitle: { bn: 'আমাদের সহযোগী হন', en: 'Become Our Partner', ar: 'كن شريكنا' },
+  volunteerJoinDesc: { bn: 'আস-সুন্নাহ ফাউন্ডেশনের স্বেচ্ছাসেবক হয়ে সমাজ পরিবর্তনের সাথী হন। আল্লাহর সন্তুষ্টির উদ্দেশ্যে নিজেকে নিয়োজিত করুন মানবসেবায়।', en: 'Become a volunteer of AS-Sunnah Foundation and partner in social change. Devote yourself to serving humanity for the pleasure of Allah.', ar: 'كن متطوعاً في مؤسسة السنة وكن شريكاً في التغيير الاجتماعي. كرس نفسك لخدمة الإنسانية لإرضاء الله.' },
+  volunteerDesc2: { bn: 'আসুন, আমরা মানুষের জন্য কিছু করি। আপনার সদিচ্ছা ও সময় বদলে দিতে পারে কোনো অসহায় মানুষের দিন। নিজেকে নির্দিষ্ট করুন দাওয়াহ, সেবামূলক ও মানবিক কাজে। এখনই যুক্ত হোন আমাদের স্বেচ্ছাসেবক টিমে!', en: 'Let\'s do something for people. Your goodwill and time can change the day of a helpless person. Dedicate yourself to da\'wah, service-oriented and humanitarian work. Join our volunteer team now!', ar: 'دعونا نفعل شيئاً للناس. حسن نيتك ووقتك يمكن أن يغير يوم شخص عاجز. كرس نفسك للدعوة والعمل الخدمي والإنساني. انضم إلى فريقنا التطوعي الآن!' },
+  volunteerRulesTitle: { bn: 'স্বেচ্ছাসেবক হওয়ার নিয়ম ও শর্তাবলি:', en: 'Rules and Conditions for Becoming a Volunteer:', ar: 'القواعد والشروط لتصبح متطوعاً:' },
+  volunteerRule1: { bn: 'আস-সুন্নাহ ফাউন্ডেশনের নীতি ও আদর্শের প্রতি একান্ত হতে হবে।', en: 'Must be committed to the policies and ideals of AS-Sunnah Foundation.', ar: 'يجب أن يكون ملتزماً بسياسات ومثل مؤسسة السنة.' },
+  volunteerRule2: { bn: 'সেবামূলক কাজে আগ্রহী হতে হবে।', en: 'Must be interested in service-oriented work.', ar: 'يجب أن يكون مهتماً بالعمل الخدمي.' },
+  volunteerRule3: { bn: 'কোনো রকম পার্থিব স্বার্থের প্রত্যাশা করা যাবে না।', en: 'No worldly benefits should be expected.', ar: 'لا ينبغي توقع أي فوائد دنيوية.' },
+  volunteerRule4: { bn: 'প্রকৃত ব্যবস্থাপনার আমানতদারি বজায় রাখতে হবে।', en: 'Must maintain the integrity of genuine management.', ar: 'يجب الحفاظ على نزاهة الإدارة الحقيقية.' },
+  volunteerQuote: { bn: 'মানুষের মধ্যে সর্বোত্তম সেই ব্যক্তি, যে মানুষের উপকার করে। (সহীহ আল-জামে আস-সগীর, ৩৬৯)', en: 'The best among people is he who benefits people. (Sahih al-Jami\' as-Saghir, 369)', ar: 'خير الناس من ينفع الناس. (صحيح الجامع الصغير، 369)' },
+  volunteerApplicationTitle: { bn: 'স্বেচ্ছাসেবক আবেদন', en: 'Volunteer Application', ar: 'طلب المتطوع' },
+  volunteerApplicationSubtitle: { bn: 'আপনি যদি আস-সুন্নাহ ফাউন্ডেশনের যেকোনো প্রকল্পের স্বেচ্ছাসেবক হিসেবে কাজ করতে চান, তাহলে নিচের আবেদন ফরমটি পূরণ করুন।', en: 'If you wish to work as a volunteer in any project of AS-Sunnah Foundation, please fill in the application form below.', ar: 'إذا كنت ترغب في العمل كمتطوع في أي مشروع من مشاريع مؤسسة السنة، يرجى ملء نموذج الطلب أدناه.' },
+  volunteerReadMore: { bn: 'আরও পড়ুন', en: 'Read More', ar: 'اقرأ المزيد' },
+  volunteerApplicationSubmitted: { bn: 'স্বেচ্ছাসেবক আবেদন সফলভাবে জমা দেওয়া হয়েছে', en: 'Volunteer application submitted successfully', ar: 'تم تقديم طلب المتطوع بنجاح' },
+  volunteerApplicationError: { bn: 'আবেদন জমা দেওয়ার সময় একটি ত্রুটি হয়েছে', en: 'An error occurred while submitting the application', ar: 'حدث خطأ أثناء تقديم الطلب' },
+  
+  // Volunteer Form Sections and Labels
+  volunteerFormOverseas: { bn: 'প্রবাসী হলে', en: 'If Overseas', ar: 'إذا كان بالخارج' },
+  volunteerFormSocialMedia: { bn: 'সোশ্যাল মিডিয়া সংক্রান্ত তথ্য', en: 'Social Media Information', ar: 'معلومات وسائل التواصل الاجتماعي' },
+  volunteerFormPreviousExperience: { bn: 'পূর্বে স্বেচ্ছাসেবক ছিলেন?', en: 'Previous Volunteer Experience?', ar: 'تجربة متطوع سابقة؟' },
+  volunteerFormProfileImage: { bn: 'সাম্প্রতিক ছবি', en: 'Recent Photo', ar: 'صورة حديثة' },
+  volunteerFormWasVolunteer: { bn: 'পূর্বে স্বেচ্ছাসেবক হিসেবে সম্পৃক্ত ছিলেন?', en: 'Were you previously involved as a volunteer?', ar: 'هل كنت مشاركاً سابقاً كمتطوع؟' },
+  volunteerFormProjectDescription: { bn: 'আপনি যদি ইতিপূর্বে আস-সুন্নাহ ফাউন্ডেশনের কোনো প্রকল্পে স্বেচ্ছাসেবক হিসেবে সম্পৃক্ত হয়ে থাকেন, তাহলে প্রকল্প অনুযায়ী আপনার সেবা কার্যক্রম সম্পর্কে তথ্য দিন।', en: 'If you have previously been involved as a volunteer in any project of AS-Sunnah Foundation, please provide information about your service activities according to the project.', ar: 'إذا كنت قد شاركت سابقاً كمتطوع في أي مشروع من مشاريع مؤسسة السنة، يرجى تقديم معلومات حول أنشطة خدمتك وفقاً للمشروع.' },
+  volunteerFormNotUsingFacebook: { bn: 'ব্যবহার করি না', en: 'Not using', ar: 'لا أستخدم' },
+  volunteerFormRequiredNote: { bn: '* চিহ্নিত তথ্যগুলো পূরণ করা বাধ্যতামূলক, অনুপস্থিত তথ্য গ্রহণযোগ্য নয়।', en: '* Marked fields are mandatory, incomplete information will not be accepted.', ar: '* الحقول المميزة إلزامية، لن يتم قبول المعلومات غير المكتملة.' },
+  volunteerFormSubmitting: { bn: 'জমা দেওয়া হচ্ছে...', en: 'Submitting...', ar: 'جاري الإرسال...' },
+  volunteerFormSubmitButton: { bn: 'আবেদন করুন →', en: 'Submit Application →', ar: 'إرسال الطلب →' },
+  volunteerFormUploadButton: { bn: 'আপলোড করুন', en: 'Upload', ar: 'رفع' },
+  volunteerFormImageHelper: { bn: 'JPEG, JPG, PNG অথবা HEIC ফরম্যাটে ছবি (সর্বোচ্চ ৩ MB)', en: 'Image in JPEG, JPG, PNG or HEIC format (max 3 MB)', ar: 'صورة بتنسيق JPEG أو JPG أو PNG أو HEIC (الحد الأقصى 3 ميجابايت)' },
+  volunteerFormImageSelected: { bn: 'ছবি সফলভাবে নির্বাচিত হয়েছে', en: 'Image successfully selected', ar: 'تم اختيار الصورة بنجاح' },
+  volunteerFormImageSizeError: { bn: 'ছবির আকার সর্বোচ্চ ৩ MB হতে হবে।', en: 'Image size must be maximum 3 MB.', ar: 'يجب أن يكون حجم الصورة 3 ميجابايت كحد أقصى.' },
+  volunteerFormImageFormatError: { bn: 'অনুগ্রহ করে JPEG, JPG, PNG অথবা HEIC ফরম্যাটে ছবি আপলোড করুন।', en: 'Please upload an image in JPEG, JPG, PNG or HEIC format.', ar: 'يرجى رفع صورة بتنسيق JPEG أو JPG أو PNG أو HEIC.' },
+  mobileNumber: { bn: 'মোবাইল নম্বর', en: 'Mobile Number', ar: 'رقم الجوال' },
+  linkPlaceholder: { bn: 'লিঙ্ক দিন', en: 'Enter link', ar: 'أدخل الرابط' },
+  implementationLocation: { bn: 'বাস্তবায়নের স্থান', en: 'Implementation Location', ar: 'موقع التنفيذ' },
+  howManyBeneficiaries: { bn: 'আপনার মাধ্যমে মোট কতজন উপকারভোগী হয়েছে', en: 'How many beneficiaries through you', ar: 'كم عدد المستفيدين من خلالك' },
+  
+  // Donation Widget
+  donationWidgetTitle: { bn: 'অংশ নিন ফাউন্ডেশনের সকল কল্যাণমূলক কাজে', en: 'Join in all welfare activities of the foundation', ar: 'شارك في جميع الأنشطة الخيرية للمؤسسة' },
+  donationWidgetDesc: { bn: 'এই খাতে দানের মাধ্যমে ফাউন্ডেশনের সকল কল্যাণমূলক কাজের অংশীদার হতে পারবেন।', en: 'By donating to this fund, you can become a partner in all welfare activities of the foundation.', ar: 'من خلال التبرع لهذا الصندوق، يمكنك أن تصبح شريكاً في جميع الأنشطة الخيرية للمؤسسة.' },
+  daily: { bn: 'দৈনিক', en: 'Daily', ar: 'يومي' },
+  monthly: { bn: 'মাসিক', en: 'Monthly', ar: 'شهري' },
+  anyAmount: { bn: 'যে কোনো পরিমাণ', en: 'Any amount', ar: 'أي مبلغ' },
+  donationAmount: { bn: 'পরিমাণ', en: 'Amount', ar: 'المبلغ' },
+  yourName: { bn: 'আপনার নাম', en: 'Your name', ar: 'اسمك' },
+  mobileOrEmail: { bn: 'মোবাইল / ইমেইল', en: 'Mobile / Email', ar: 'الجوال / البريد' },
+  donateOnBehalf: { bn: 'অন্য কারো পক্ষ থেকে দান করলে তার নাম লিখুন', en: 'If donating on behalf of someone else, write their name', ar: 'إذا كنت تتبرع نيابة عن شخص آخر، اكتب اسمه' },
+  paymentMethod: { bn: 'পেমেন্ট মেথড', en: 'Payment Method', ar: 'طريقة الدفع' },
+  bkash: { bn: 'বিকাশ', en: 'bKash', ar: 'bKash' },
+  nagad: { bn: 'নগদ', en: 'Nagad', ar: 'Nagad' },
+  card: { bn: 'কার্ড', en: 'Card', ar: 'بطاقة' },
+  nextStep: { bn: 'পরবর্তী ধাপ', en: 'Next Step', ar: 'الخطوة التالية' },
+  donationReceived: { bn: 'ধন্যবাদ! আপনার অনুদান গ্রহণ করা হয়েছে।', en: 'Thank you! Your donation has been received.', ar: 'شكراً لك! تم استلام تبرعك.' },
+  
+  // Member Application Form
+  memberAppTitle: { bn: 'সদস্য আবেদন', en: 'Member Application', ar: 'طلب العضوية' },
+  memberAppLifetimeAmount: { bn: 'মূল্যমান ১ লাখ বা তার অধিক যে কোনো পরিমাণ দিতে পারেন', en: 'You can donate any amount of 1 lakh or more', ar: 'يمكنك التبرع بأي مبلغ يساوي أو يزيد عن 100,000' },
+  memberAppDonorAmount: { bn: 'মূল্যমান ৫০,০০০ বা তার অধিক যে কোনো পরিমাণ দিতে পারেন', en: 'You can donate any amount of 50,000 or more', ar: 'يمكنك التبرع بأي مبلغ يساوي أو يزيد عن 50,000' },
+  iAmA: { bn: 'আমি একজন', en: 'I am a', ar: 'أنا' },
+  male: { bn: 'পুরুষ', en: 'Male', ar: 'ذكر' },
+  female: { bn: 'নারী', en: 'Female', ar: 'أنثى' },
+  profession: { bn: 'পেশা', en: 'Profession', ar: 'المهنة' },
+  selectProfession: { bn: 'নির্বাচন করুন', en: 'Select', ar: 'اختر' },
+  reference: { bn: 'রেফারেন্স', en: 'Reference', ar: 'المرجع' },
+  address: { bn: 'ঠিকানা', en: 'Address', ar: 'العنوان' },
+  paymentMethodChoice: { bn: 'যে মাধ্যমে প্রদান করতে চান', en: 'Payment method you want to use', ar: 'طريقة الدفع التي تريد استخدامها' },
+  onlinePayment: { bn: 'অনলাইন পেমেন্ট', en: 'Online Payment', ar: 'الدفع عبر الإنترنت' },
+  bankTransfer: { bn: 'ব্যাংক ট্রান্সফার', en: 'Bank Transfer', ar: 'حوالة بنكية' },
+  bankDeposit: { bn: 'ব্যাংক ডিপোজিট', en: 'Bank Deposit', ar: 'إيداع بنكي' },
+  transactionReferenceId: { bn: 'লেনদেন রেফারেন্স আইডি', en: 'Transaction Reference ID', ar: 'معرف معاملة المرجع' },
+  uploadPaymentDocument: { bn: 'পেমেন্টের ডকুমেন্ট আপলোড করুন (ইমেজ / পিডিএফ)', en: 'Upload payment document (Image / PDF)', ar: 'رفع مستند الدفع (صورة / PDF)' },
+  uploadReceiptNote: { bn: 'পেমেন্টের রিসিট অথবা স্ক্রিনশট আপলোড করুন।', en: 'Upload payment receipt or screenshot.', ar: 'قم برفع إيصال الدفع أو لقطة الشاشة.' },
+  uploadDepositNote: { bn: 'ডিপোজিট সম্পন্ন হওয়ার রিসিট অথবা স্ক্রিনশট আপলোড করুন।', en: 'Upload deposit receipt or screenshot.', ar: 'قم برفع إيصال الإيداع أو لقطة الشاشة.' },
+  paymentGateway: { bn: 'পেমেন্ট গেটওয়ে', en: 'Payment Gateway', ar: 'بوابة الدفع' },
+  openingPaymentPage: { bn: 'পেমেন্ট পেজ খোলা হচ্ছে...', en: 'Opening payment page...', ar: 'جاري فتح صفحة الدفع...' },
+  submittingApplication: { bn: 'জমা দেওয়া হচ্ছে...', en: 'Submitting...', ar: 'جاري الإرسال...' },
+  donateNow: { bn: 'দান করুন →', en: 'Donate Now →', ar: 'تبرع الآن →' },
+  memberAppSuccess: { bn: 'আবেদন সফলভাবে জমা দেওয়া হয়েছে! ধন্যবাদ।', en: 'Application submitted successfully! Thank you.', ar: 'تم تقديم الطلب بنجاح! شكراً لك.' },
+  memberAppError: { bn: 'আবেদন জমা দিতে সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।', en: 'There was a problem submitting the application. Please try again.', ar: 'حدثت مشكلة في تقديم الطلب. يرجى المحاولة مرة أخرى.' },
+  paymentGatewayError: { bn: 'পেমেন্ট গেটওয়ে শুরু করতে সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।', en: 'There was a problem initiating the payment gateway. Please try again.', ar: 'حدثت مشكلة في بدء بوابة الدفع. يرجى المحاولة مرة أخرى.' },
+  paymentInitError: { bn: 'পেমেন্ট শুরু করতে সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।', en: 'There was a problem starting the payment. Please try again.', ar: 'حدثت مشكلة في بدء الدفع. يرجى المحاولة مرة أخرى.' },
+  pleaseProvideAmount: { bn: 'অনুগ্রহ করে পরিমাণ প্রদান করুন', en: 'Please provide amount', ar: 'يرجى تقديم المبلغ' },
+  minimumAmountRequired: { bn: 'ন্যূনতম', en: 'Minimum', ar: 'الحد الأدنى' },
+  takaRequired: { bn: 'টাকা প্রদান করতে হবে', en: 'taka required', ar: 'تاكا مطلوب' },
+  fillThisField: { bn: 'এই ঘরটি পূরণ করুন', en: 'Fill this field', ar: 'املأ هذا الحقل' },
+  emailRequiredForOverseas: { bn: 'প্রবাসী সদস্যদের জন্য ইমেইল প্রদান আবশ্যক', en: 'Email is required for overseas members', ar: 'البريد الإلكتروني مطلوب للأعضاء في الخارج' },
+  provideTransactionId: { bn: 'লেনদেন রেফারেন্স আইডি প্রদান করুন', en: 'Provide transaction reference ID', ar: 'قدم معرف معاملة المرجع' },
+  documentUploadRequired: { bn: 'ডকুমেন্ট আপলোড বাধ্যতামূলক', en: 'Document upload is required', ar: 'رفع المستند إلزامي' },
+  onlyPdfOrImage: { bn: 'শুধুমাত্র PDF অথবা ইমেজ ফাইল গ্রহণযোগ্য', en: 'Only PDF or image files are acceptable', ar: 'يتم قبول ملفات PDF أو الصور فقط' },
+  memberAppNote: { bn: 'সদস্যদের তথ্যসমূহ গোপন রাখা হবে এবং আপনারা সম্মিলিতভাবে করতে পারবেন দাওয়াহ ও সেবামূলক কাজ। আবেদন জমা দেওয়ার পর প্রয়োজনবোধে আমাদের টিম আপনার সাথে যোগাযোগ করবে।', en: 'Member information will be kept confidential and you can collectively engage in da\'wah and service activities. After submitting the application, our team will contact you if necessary.', ar: 'سيتم الحفاظ على معلومات الأعضاء سرية ويمكنكم المشاركة الجماعية في أنشطة الدعوة والخدمة. بعد تقديم الطلب، سيتصل فريقنا بك إذا لزم الأمر.' },
+  bank: { bn: 'ব্যাংক:', en: 'Bank:', ar: 'البنك:' },
+  accountName: { bn: 'অ্যাকাউন্টের নাম:', en: 'Account Name:', ar: 'اسم الحساب:' },
+  branch: { bn: 'শাখা:', en: 'Branch:', ar: 'الفرع:' },
+  accountNumber: { bn: 'অ্যাকাউন্ট নম্বর:', en: 'Account Number:', ar: 'رقم الحساب:' },
+  routingNumber: { bn: 'রাউটিং নম্বর:', en: 'Routing Number:', ar: 'رقم التوجيه:' },
+  swiftCode: { bn: 'সুইফট কোড:', en: 'SWIFT Code:', ar: 'رمز SWIFT:' },
+  
+  // Footer
+  footerDescription: { bn: 'এই প্রতিষ্ঠান মানবতার শিক্ষা, মানুষের মুক্তি ও শান্তির লক্ষ্য সাধনে নিবেদিত। মানবকল্যাণে আদর্শ প্রচার ও সেবামূলক কার্যক্রম চালিয়ে যাচ্ছে।', en: 'This organization is dedicated to the goal of education for humanity, human liberation and peace. It continues to promote ideals and service activities for human welfare.', ar: 'هذه المنظمة مكرسة لهدف تعليم الإنسانية وتحرير الإنسان والسلام. تواصل تعزيز المثل والأنشطة الخدمية لرفاهية الإنسان.' },
+  menu: { bn: 'মেনু', en: 'Menu', ar: 'القائمة' },
+  joinUs: { bn: 'যুক্ত হোন', en: 'Join Us', ar: 'انضم إلينا' },
+  others: { bn: 'অন্যান্য', en: 'Others', ar: 'أخرى' },
+  termsConditions: { bn: 'পরিবেশ ও শর্তাবলী', en: 'Terms & Conditions', ar: 'الشروط والأحكام' },
+  privacyPolicy: { bn: 'গোপনীয়তা নীতি', en: 'Privacy Policy', ar: 'سياسة الخصوصية' },
+  copyright: { bn: 'স্বত্ব', en: 'Copyright', ar: 'حقوق النشر' },
+  allRightsReserved: { bn: 'সর্বস্বত্ব সংরক্ষিত', en: 'All Rights Reserved', ar: 'جميع الحقوق محفوظة' },
+  
+  // Contact form
+  yourName: { bn: 'আপনার নাম', en: 'Your Name', ar: 'اسمك' },
+  yourEmail: { bn: 'আপনার ইমেইল', en: 'Your Email', ar: 'بريدك الإلكتروني' },
+  subject: { bn: 'বিষয়', en: 'Subject', ar: 'الموضوع' },
+  message: { bn: 'বার্তা', en: 'Message', ar: 'الرسالة' },
+  write: { bn: 'লিখুন', en: 'Write', ar: 'اكتب' },
+  send: { bn: 'পাঠান', en: 'Send', ar: 'إرسال' },
+  
+  // Language names
+  bengali: { bn: 'বাংলা', en: 'Bengali', ar: 'البنغالية' },
+  english: { bn: 'English', en: 'English', ar: 'الإنجليزية' },
+  arabic: { bn: 'العربية', en: 'Arabic', ar: 'العربية' },
+  
+  // Common
+  required: { bn: '*', en: '*', ar: '*' },
+  
+  // Dashboard
+  dashboard: { bn: 'ড্যাশবোর্ড', en: 'Dashboard', ar: 'لوحة التحكم' },
+  dashboardOverview: { bn: 'ড্যাশবোর্ড ওভারভিউ', en: 'Dashboard Overview', ar: 'نظرة عامة على لوحة التحكم' },
+  overview: { bn: 'ওভারভিউ', en: 'Overview', ar: 'نظرة عامة' },
+  overviewOfActivity: { bn: 'বর্তমান কার্যক্রমের ওভারভিউ', en: 'Overview of current activity', ar: 'نظرة عامة على النشاط الحالي' },
+  logout: { bn: 'লগআউট', en: 'Logout', ar: 'تسجيل الخروج' },
+  donationCategories: { bn: 'অনুদান বিভাগসমূহ', en: 'Donation Categories', ar: 'فئات التبرعات' },
+  heroImages: { bn: 'হিরো ইমেজসমূহ', en: 'Hero Images', ar: 'صور البطل' },
+  volunteerApplications: { bn: 'স্বেচ্ছাসেবক আবেদন', en: 'Volunteer Applications', ar: 'طلبات المتطوعين' },
+  memberApplications: { bn: 'সদস্য আবেদনসমূহ', en: 'Member Applications', ar: 'طلبات العضوية' },
+  memberApplicationsDescription: { bn: 'সমস্ত সদস্য আবেদন পরিচালনা করুন', en: 'Manage all member applications', ar: 'إدارة جميع طلبات العضوية' },
+  createAdmin: { bn: 'অ্যাডমিন তৈরি করুন', en: 'Create Admin', ar: 'إنشاء مسؤول' },
+  
+  // Admin
+  admin: { bn: 'অ্যাডমিন', en: 'Admin', ar: 'المسؤول' },
+  adminDashboard: { bn: 'অ্যাডমিন ড্যাশবোর্ড', en: 'Admin Dashboard', ar: 'لوحة تحكم المسؤول' },
+  updateProfile: { bn: 'প্রোফাইল আপডেট', en: 'Update profile', ar: 'تحديث الملف الشخصي' },
+  
+  // Stats
+  usersOnline: { bn: 'অনলাইন ব্যবহারকারী', en: 'Users Online', ar: 'المستخدمون المتصلون' },
+  lessonsToday: { bn: 'আজকের পাঠ', en: 'Lessons Today', ar: 'دروس اليوم' },
+  messages: { bn: 'বার্তা', en: 'Messages', ar: 'الرسائل' },
+  updatedLive: { bn: 'লাইভ আপডেট', en: 'updated live', ar: 'محدث مباشرة' },
+  fromApi: { bn: 'API থেকে', en: 'from API', ar: 'من API' },
+  incoming: { bn: 'আসছে', en: 'incoming', ar: 'واردة' },
+  totalDonations: { bn: 'মোট অনুদান', en: 'Total Donations', ar: 'إجمالي التبرعات' },
+  activeDonors: { bn: 'সক্রিয় দাতা', en: 'Active Donors', ar: 'المتبرعون النشطون' },
+  recurringDonors: { bn: 'নিয়মিত দাতা', en: 'Recurring Donors', ar: 'المتبرعون المتكررون' },
+  filtered: { bn: 'ফিল্টার করা', en: 'Filtered', ar: 'مفلتر' },
+  recentDonations: { bn: 'সাম্প্রতিক অনুদান', en: 'Recent Donations', ar: 'التبرعات الأخيرة' },
+  mock: { bn: '(মক)', en: '(mock)', ar: '(وهمي)' },
+  
+  // Table
+  date: { bn: 'তারিখ', en: 'Date', ar: 'التاريخ' },
+  donor: { bn: 'দাতা', en: 'Donor', ar: 'المتبرع' },
+  actions: { bn: 'কার্যক্রম', en: 'Actions', ar: 'الإجراءات' },
+  edit: { bn: 'সম্পাদনা', en: 'Edit', ar: 'تعديل' },
+  delete: { bn: 'মুছুন', en: 'Delete', ar: 'حذف' },
+  new: { bn: 'নতুন', en: 'New', ar: 'جديد' },
+  save: { bn: 'সংরক্ষণ', en: 'Save', ar: 'حفظ' },
+  cancel: { bn: 'বাতিল', en: 'Cancel', ar: 'إلغاء' },
+  title: { bn: 'শিরোনাম', en: 'Title', ar: 'العنوان' },
+  tag: { bn: 'ট্যাগ', en: 'Tag', ar: 'العلامة' },
+  imageUrl: { bn: 'ছবির URL', en: 'Image URL', ar: 'رابط الصورة' },
+  uploadImage: { bn: 'ছবি আপলোড', en: 'Upload image', ar: 'رفع صورة' },
+  
+  // Filters
+  preset: { bn: 'প্রিসেট', en: 'Preset', ar: 'الإعداد المسبق' },
+  today: { bn: 'আজ', en: 'Today', ar: 'اليوم' },
+  thisWeek: { bn: 'এই সপ্তাহ', en: 'This week', ar: 'هذا الأسبوع' },
+  thisMonth: { bn: 'এই মাস', en: 'This month', ar: 'هذا الشهر' },
+  thisYear: { bn: 'এই বছর', en: 'This year', ar: 'هذا العام' },
+  customRange: { bn: 'কাস্টম রেঞ্জ', en: 'Custom range', ar: 'نطاق مخصص' },
+  from: { bn: 'থেকে', en: 'From', ar: 'من' },
+  to: { bn: 'পর্যন্ত', en: 'To', ar: 'إلى' },
+  apply: { bn: 'প্রয়োগ', en: 'Apply', ar: 'تطبيق' },
+  search: { bn: 'অনুসন্ধান', en: 'Search', ar: 'بحث' },
+  hide: { bn: 'লুকান', en: 'Hide', ar: 'إخفاء' },
+  expand: { bn: 'প্রসারিত করুন', en: 'Expand', ar: 'توسيع' },
+  previous: { bn: 'পূর্ববর্তী', en: 'Previous', ar: 'السابق' },
+  next: { bn: 'পরবর্তী', en: 'Next', ar: 'التالي' },
+  yes: { bn: 'হ্যাঁ', en: 'Yes', ar: 'نعم' },
+  no: { bn: 'না', en: 'No', ar: 'لا' },
+  showing: { bn: 'দেখানো হচ্ছে', en: 'Showing', ar: 'عرض' },
+  of: { bn: 'এর মধ্যে', en: 'of', ar: 'من' },
+  
+  // User Management
+  createAdminUser: { bn: 'অ্যাডমিন ব্যবহারকারী তৈরি', en: 'Create Admin User', ar: 'إنشاء مستخدم مسؤول' },
+  name: { bn: 'নাম', en: 'Name', ar: 'الاسم' },
+  fullName: { bn: 'পূর্ণ নাম', en: 'Full name', ar: 'الاسم الكامل' },
+  email: { bn: 'ইমেইল', en: 'Email', ar: 'البريد الإلكتروني' },
+  password: { bn: 'পাসওয়ার্ড', en: 'Password', ar: 'كلمة المرور' },
+  role: { bn: 'ভূমিকা', en: 'Role', ar: 'الدور' },
+  editor: { bn: 'সম্পাদক', en: 'Editor', ar: 'محرر' },
+  reset: { bn: 'রিসেট', en: 'Reset', ar: 'إعادة تعيين' },
+  create: { bn: 'তৈরি', en: 'Create', ar: 'إنشاء' },
+  
+  // Profile
+  profileInformation: { bn: 'প্রোফাইল তথ্য', en: 'Profile Information', ar: 'معلومات الملف الشخصي' },
+  adminName: { bn: 'অ্যাডমিন নাম', en: 'Admin Name', ar: 'اسم المسؤول' },
+  phone: { bn: 'ফোন', en: 'Phone', ar: 'الهاتف' },
+  avatarUrl: { bn: 'অবতার URL', en: 'Avatar URL', ar: 'رابط الصورة الرمزية' },
+  saveChanges: { bn: 'পরিবর্তন সংরক্ষণ', en: 'Save Changes', ar: 'حفظ التغييرات' },
+  updatePassword: { bn: 'পাসওয়ার্ড আপডেট', en: 'Update Password', ar: 'تحديث كلمة المرور' },
+  currentPassword: { bn: 'বর্তমান পাসওয়ার্ড', en: 'Current Password', ar: 'كلمة المرور الحالية' },
+  newPassword: { bn: 'নতুন পাসওয়ার্ড', en: 'New Password', ar: 'كلمة المرور الجديدة' },
+  confirmNewPassword: { bn: 'নতুন পাসওয়ার্ড নিশ্চিত করুন', en: 'Confirm New Password', ar: 'تأكيد كلمة المرور الجديدة' },
+  
+  // Additional
+  users: { bn: 'ব্যবহারকারী', en: 'Users', ar: 'المستخدمون' },
+  altText: { bn: 'Alt টেক্সট', en: 'Alt text', ar: 'نص بديل' },
+  notAvailable: { bn: 'উপলব্ধ নয়', en: 'Not Available', ar: 'غير متاح' },
+  details: { bn: 'বিস্তারিত', en: 'Details', ar: 'التفاصيل' },
+  
+  // Blog
+  blogs: { bn: 'কার্যক্রমসমূহ', en: 'Activities', ar: 'الأنشطة' },
+  manageBlogPosts: { bn: 'কার্যক্রম পোস্ট পরিচালনা', en: 'Manage activity posts', ar: 'إدارة منشورات الأنشطة' },
+  addBlog: { bn: 'কার্যক্রম যোগ করুন', en: 'Add activity', ar: 'إضافة مدونة' },
+  editBlog: { bn: 'কার্যক্রম সম্পাদনা', en: 'Edit activity', ar: 'تعديل المدونة' },
+  blogsList: { bn: 'কার্যক্রম তালিকা', en: 'Activities List', ar: 'قائمة المدونات' },
+  noBlogsYet: { bn: 'এখনও কোনো কার্যক্রম নেই', en: 'No activities yet', ar: 'لا توجد أنشطة بعد' },
+  blogUpdated: { bn: 'কার্যক্রম সফলভাবে আপডেট হয়েছে', en: 'Activity updated successfully', ar: 'تم تحديث الأنشطة بنجاح' },
+  blogCreated: { bn: 'কার্যক্রম সফলভাবে তৈরি হয়েছে', en: 'Activity created successfully', ar: 'تم إنشاء الأنشطة بنجاح' },
+  blogDeleted: { bn: 'কার্যক্রম সফলভাবে মুছে ফেলা হয়েছে', en: 'Activity deleted successfully', ar: 'تم حذف الأنشطة بنجاح' },
+  deleteBlogConfirm: { bn: 'আপনি কি এই কার্যক্রমটি মুছে ফেলতে চান?', en: 'Are you sure you want to delete this activity?', ar: 'هل أنت متأكد أنك تريد حذف هذه الأنشطة؟' },
+  operationFailed: { bn: 'অপারেশন ব্যর্থ হয়েছে', en: 'Operation failed', ar: 'فشلت العملية' },
+  deleteFailed: { bn: 'মুছে ফেলতে ব্যর্থ', en: 'Failed to delete activity', ar: 'فشل حذف الأنشطة' },
+  excerpt: { bn: 'সংক্ষিপ্ত বিবরণ', en: 'Excerpt', ar: 'ملخص' },
+  fullContent: { bn: 'সম্পূর্ণ বিষয়বস্তু', en: 'Full Content', ar: 'المحتوى الكامل' },
+  author: { bn: 'লেখক', en: 'Author', ar: 'المؤلف' },
+  category: { bn: 'বিভাগ', en: 'Category', ar: 'الفئة' },
+  readTime: { bn: 'পড়ার সময়', en: 'Read Time', ar: 'وقت القراءة' },
+  tags: { bn: 'ট্যাগ', en: 'Tags', ar: 'العلامات' },
+  enterTag: { bn: 'ট্যাগ লিখুন এবং Enter চাপুন বা Add ক্লিক করুন', en: 'Enter tag and press Enter or click Add', ar: 'أدخل العلامة واضغط Enter أو انقر فوق إضافة' },
+  addTag: { bn: 'ট্যাগ যোগ করুন', en: 'Add Tag', ar: 'إضافة علامة' },
+  uploadBlogImage: { bn: 'ব্লগ ছবি আপলোড', en: 'Upload blog image', ar: 'رفع صورة المدونة' },
+  uploadAuthorImage: { bn: 'লেখকের ছবি আপলোড', en: 'Upload author image', ar: 'رفع صورة المؤلف' },
+  update: { bn: 'আপডেট', en: 'Update', ar: 'تحديث' },
+  loading: { bn: 'লোড হচ্ছে...', en: 'Loading...', ar: 'جاري التحميل...' },
+  blogNotFound: { bn: 'ব্লগ পাওয়া যায়নি', en: 'Blog Not Found', ar: 'المدونة غير موجودة' },
+  blogNotFoundDesc: { bn: 'আপনি যে ব্লগ পোস্ট খুঁজছেন তা বিদ্যমান নেই।', en: 'The blog post you\'re looking for doesn\'t exist.', ar: 'منشور المدونة الذي تبحث عنه غير موجود.' },
+  backToBlog: { bn: '← ব্লগে ফিরে যান', en: '← Back to Blog', ar: '← العودة إلى المدونة' },
+  share: { bn: 'শেয়ার করুন:', en: 'Share:', ar: 'مشاركة:' },
+  relatedBlogs: { bn: 'সম্পর্কিত ব্লগ', en: 'Related Blogs', ar: 'مدونات ذات صلة' },
+  readMore: { bn: 'আরও পড়ুন', en: 'Read More', ar: 'اقرأ المزيد' },
+
+  // Member Applications
+  memberSearchPlaceholder: { bn: 'নাম, ইমেইল, মোবাইল অথবা ট্রানজেকশন আইডি দিয়ে অনুসন্ধান করুন...', en: 'Search by name, email, mobile, or transaction ID...', ar: 'ابحث بالاسم أو البريد أو الجوال أو معرف المعاملة...' },
+  allTypes: { bn: 'সমস্ত ধরন', en: 'All Types', ar: 'كل الأنواع' },
+  lifetimeMemberType: { bn: 'আজীবন সদস্য', en: 'Lifetime Member', ar: 'عضو دائم' },
+  donorMemberType: { bn: 'দাতা সদস্য', en: 'Donor Member', ar: 'عضو متبرع' },
+  allStatus: { bn: 'সমস্ত অবস্থা', en: 'All Status', ar: 'كل الحالات' },
+  pendingApproval: { bn: 'অনুমোদনের অপেক্ষায়', en: 'Pending Approval', ar: 'بانتظار الموافقة' },
+  approved: { bn: 'অনুমোদিত', en: 'Approved', ar: 'مقبول' },
+  rejected: { bn: 'বাতিল', en: 'Rejected', ar: 'مرفوض' },
+  allPaymentStatus: { bn: 'সমস্ত পেমেন্ট অবস্থা', en: 'All Payment Status', ar: 'كل حالات الدفع' },
+  pending: { bn: 'অপেক্ষমান', en: 'Pending', ar: 'قيد الانتظار' },
+  completed: { bn: 'সম্পন্ন', en: 'Completed', ar: 'مكتمل' },
+  pendingVerification: { bn: 'যাচাইয়ের অপেক্ষায়', en: 'Pending Verification', ar: 'بانتظار التحقق' },
+  failed: { bn: 'ব্যর্থ', en: 'Failed', ar: 'فشل' },
+  paymentStatus: { bn: 'পেমেন্ট স্ট্যাটাস', en: 'Payment Status', ar: 'حالة الدفع' },
+  status: { bn: 'স্ট্যাটাস', en: 'Status', ar: 'الحالة' },
+  statusActions: { bn: 'স্ট্যাটাস অ্যাকশন', en: 'Status Actions', ar: 'إجراءات الحالة' },
+  appliedDate: { bn: 'আবেদনের তারিখ', en: 'Applied Date', ar: 'تاريخ التقديم' },
+  noMemberApplications: { bn: 'কোনো সদস্য আবেদন পাওয়া যায়নি', en: 'No member applications found', ar: 'لا توجد طلبات عضوية' },
+  hideDetails: { bn: 'লুকান', en: 'Hide', ar: 'إخفاء' },
+  expandDetails: { bn: 'প্রসারিত করুন', en: 'Expand', ar: 'توسيع' },
+  memberDeleteConfirm: { bn: 'আপনি কি এই সদস্য আবেদনটি মুছে ফেলতে চান?', en: 'Are you sure you want to delete this member application?', ar: 'هل أنت متأكد أنك تريد حذف طلب العضوية هذا؟' },
+  memberDeleteSuccess: { bn: 'সদস্য আবেদন সফলভাবে মুছে ফেলা হয়েছে', en: 'Member application deleted successfully', ar: 'تم حذف طلب العضوية بنجاح' },
+  memberDeleteFailure: { bn: 'সদস্য আবেদন মুছতে ব্যর্থ', en: 'Failed to delete member application', ar: 'فشل حذف طلب العضوية' },
+  memberStatusUpdateSuccess: { bn: 'স্ট্যাটাস সফলভাবে আপডেট হয়েছে', en: 'Status updated successfully', ar: 'تم تحديث الحالة بنجاح' },
+  memberStatusUpdateFailure: { bn: 'স্ট্যাটাস আপডেট ব্যর্থ হয়েছে', en: 'Failed to update status', ar: 'فشل تحديث الحالة' },
+  fetchMembersFailure: { bn: 'সদস্য আবেদন আনতে ব্যর্থ', en: 'Failed to fetch member applications', ar: 'فشل جلب طلبات العضوية' },
+  personalInformation: { bn: 'ব্যক্তিগত তথ্য', en: 'Personal Information', ar: 'المعلومات الشخصية' },
+  fatherName: { bn: 'পিতার নাম', en: 'Father Name', ar: 'اسم الأب' },
+  gender: { bn: 'লিঙ্গ', en: 'Gender', ar: 'الجنس' },
+  male: { bn: 'পুরুষ', en: 'Male', ar: 'ذكر' },
+  female: { bn: 'নারী', en: 'Female', ar: 'أنثى' },
+  isOverseas: { bn: 'বিদেশে?', en: 'Is Overseas', ar: 'هل بالخارج؟' },
+  occupation: { bn: 'পেশা', en: 'Occupation', ar: 'المهنة' },
+  reference: { bn: 'রেফারেন্স', en: 'Reference', ar: 'المرجع' },
+  address: { bn: 'ঠিকানা', en: 'Address', ar: 'العنوان' },
+  applicationDetails: { bn: 'আবেদনের বিবরণ', en: 'Application Details', ar: 'تفاصيل الطلب' },
+  applicationStatus: { bn: 'আবেদনের স্ট্যাটাস', en: 'Application Status', ar: 'حالة الطلب' },
+  paymentMethod: { bn: 'পেমেন্ট পদ্ধতি', en: 'Payment Method', ar: 'طريقة الدفع' },
+  paymentDocument: { bn: 'পেমেন্ট ডকুমেন্ট', en: 'Payment Document', ar: 'مستند الدفع' },
+  paymentGatewayDetails: { bn: 'পেমেন্ট গেটওয়ে বিবরণ', en: 'Payment Gateway Details', ar: 'تفاصيل بوابة الدفع' },
+  document: { bn: 'ডকুমেন্ট', en: 'Document', ar: 'المستند' },
+  viewPaymentDocument: { bn: 'পেমেন্ট ডকুমেন্ট দেখুন', en: 'View Payment Document', ar: 'عرض مستند الدفع' },
+  transactionId: { bn: 'লেনদেন নম্বর', en: 'Transaction ID', ar: 'معرف المعاملة' },
+  appliedAt: { bn: 'আবেদনের সময়', en: 'Applied At', ar: 'وقت التقديم' },
+  lastUpdated: { bn: 'সর্বশেষ আপডেট', en: 'Last Updated', ar: 'آخر تحديث' },
+  validationId: { bn: 'ভ্যালিডেশন আইডি', en: 'Validation ID', ar: 'معرف التحقق' },
+  applications: { bn: 'আবেদন', en: 'applications', ar: 'طلبات' },
+  memberType: { bn: 'সদস্যের ধরন', en: 'Member Type', ar: 'نوع العضو' },
+  memberTableType: { bn: 'ধরন', en: 'Type', ar: 'النوع' },
+  memberTableAmount: { bn: 'পরিমাণ', en: 'Amount', ar: 'المبلغ' },
+  memberTablePaymentStatus: { bn: 'পেমেন্ট স্ট্যাটাস', en: 'Payment Status', ar: 'حالة الدفع' },
+  memberTableStatus: { bn: 'স্ট্যাটাস', en: 'Status', ar: 'الحالة' },
+  memberTableAppliedDate: { bn: 'আবেদনের তারিখ', en: 'Applied Date', ar: 'تاريخ التقديم' },
+  memberTableStatusActions: { bn: 'স্ট্যাটাস অ্যাকশন', en: 'Status Actions', ar: 'إجراءات الحالة' },
+  memberTableDetails: { bn: 'বিস্তারিত', en: 'Details', ar: 'التفاصيل' },
+  memberTableActions: { bn: 'কার্যক্রম', en: 'Actions', ar: 'الإجراءات' },
+  
+  // Activities
+  manageActivities: { bn: 'কর্মসূচি পরিচালনা', en: 'Manage activities', ar: 'إدارة الأنشطة' },
+  addActivity: { bn: 'কর্মসূচি যোগ করুন', en: 'Add Activity', ar: 'إضافة نشاط' },
+  editActivity: { bn: 'কর্মসূচি সম্পাদনা', en: 'Edit Activity', ar: 'تعديل النشاط' },
+  activityUpdated: { bn: 'কর্মসূচি সফলভাবে আপডেট হয়েছে', en: 'Activity updated successfully', ar: 'تم تحديث النشاط بنجاح' },
+  activityCreated: { bn: 'কর্মসূচি সফলভাবে তৈরি হয়েছে', en: 'Activity created successfully', ar: 'تم إنشاء النشاط بنجاح' },
+  activityDeleted: { bn: 'কর্মসূচি সফলভাবে মুছে ফেলা হয়েছে', en: 'Activity deleted successfully', ar: 'تم حذف النشاط بنجاح' },
+  deleteActivityConfirm: { bn: 'আপনি কি এই কর্মসূচিটি মুছে ফেলতে চান?', en: 'Are you sure you want to delete this activity?', ar: 'هل أنت متأكد أنك تريد حذف هذا النشاط؟' },
+  activitiesList: { bn: 'কর্মসূচির তালিকা', en: 'Activities List', ar: 'قائمة الأنشطة' },
+  noActivitiesYet: { bn: 'এখনও কোনো কর্মসূচি নেই', en: 'No activities yet', ar: 'لا توجد أنشطة بعد' },
+  description: { bn: 'বিবরণ', en: 'Description', ar: 'الوصف' },
+  
+  // Donation Categories
+  manageDonationCategories: { bn: 'অনুদান বিভাগ পরিচালনা', en: 'Manage donation categories', ar: 'إدارة فئات التبرعات' },
+  addCategory: { bn: 'বিভাগ যোগ করুন', en: 'Add Category', ar: 'إضافة فئة' },
+  editDonationCategory: { bn: 'অনুদান বিভাগ সম্পাদনা', en: 'Edit Donation Category', ar: 'تعديل فئة التبرع' },
+  addDonationCategory: { bn: 'অনুদান বিভাগ যোগ করুন', en: 'Add Donation Category', ar: 'إضافة فئة التبرع' },
+  donationCategoryUpdated: { bn: 'অনুদান বিভাগ সফলভাবে আপডেট হয়েছে', en: 'Donation category updated successfully', ar: 'تم تحديث فئة التبرع بنجاح' },
+  donationCategoryCreated: { bn: 'অনুদান বিভাগ সফলভাবে তৈরি হয়েছে', en: 'Donation category created successfully', ar: 'تم إنشاء فئة التبرع بنجاح' },
+  donationCategoryDeleted: { bn: 'অনুদান বিভাগ সফলভাবে মুছে ফেলা হয়েছে', en: 'Donation category deleted successfully', ar: 'تم حذف فئة التبرع بنجاح' },
+  deleteDonationCategoryConfirm: { bn: 'আপনি কি এই অনুদান বিভাগটি মুছে ফেলতে চান?', en: 'Are you sure you want to delete this donation category?', ar: 'هل أنت متأكد أنك تريد حذف فئة التبرع هذه؟' },
+  donationCategoriesList: { bn: 'অনুদান বিভাগের তালিকা', en: 'Donation Categories List', ar: 'قائمة فئات التبرعات' },
+  noDonationCategoriesYet: { bn: 'এখনও কোনো অনুদান বিভাগ নেই', en: 'No donation categories yet', ar: 'لا توجد فئات تبرع بعد' },
+  subtitle: { bn: 'উপশিরোনাম', en: 'Subtitle', ar: 'العنوان الفرعي' },
+  slug: { bn: 'স্লাগ', en: 'Slug', ar: 'الرابط' },
+  generate: { bn: 'তৈরি করুন', en: 'Generate', ar: 'إنشاء' },
+  videoUrl: { bn: 'ভিডিও URL', en: 'Video URL', ar: 'رابط الفيديو' },
+  expenseCategory: { bn: 'ব্যয় বিভাগ', en: 'Expense Category', ar: 'فئة المصروفات' },
+  add: { bn: 'যোগ করুন', en: 'Add', ar: 'إضافة' },
+  formTitle: { bn: 'ফর্ম শিরোনাম', en: 'Form Title', ar: 'عنوان النموذج' },
+  formDescription: { bn: 'ফর্ম বিবরণ', en: 'Form Description', ar: 'وصف النموذج' },
+  donationAmountOptions: { bn: 'অনুদানের পরিমাণের বিকল্প', en: 'Donation Amount Options', ar: 'خيارات مبلغ التبرع' },
+  enableDailyDonationAmounts: { bn: 'দৈনিক অনুদানের পরিমাণ সক্রিয় করুন', en: 'Enable Daily Donation Amounts', ar: 'تفعيل مبالغ التبرع اليومية' },
+  enableMonthlyDonationAmounts: { bn: 'মাসিক অনুদানের পরিমাণ সক্রিয় করুন', en: 'Enable Monthly Donation Amounts', ar: 'تفعيل مبالغ التبرع الشهرية' },
+  enterDailyAmount: { bn: 'দৈনিক পরিমাণ লিখুন...', en: 'Enter daily amount...', ar: 'أدخل المبلغ اليومي...' },
+  enterMonthlyAmount: { bn: 'মাসিক পরিমাণ লিখুন...', en: 'Enter monthly amount...', ar: 'أدخل المبلغ الشهري...' },
+  enterDonationAmount: { bn: 'অনুদানের পরিমাণ লিখুন...', en: 'Enter donation amount...', ar: 'أدخل مبلغ التبرع...' },
+  donationAmounts: { bn: 'অনুদানের পরিমাণ', en: 'Donation Amounts', ar: 'مبالغ التبرع' },
+  thumbnail: { bn: 'থাম্বনেইল', en: 'Thumbnail', ar: 'الصورة المصغرة' },
+  uploadThumbnail: { bn: 'থাম্বনেইল আপলোড', en: 'Upload thumbnail', ar: 'رفع الصورة المصغرة' },
+  validPositiveNumber: { bn: 'একটি বৈধ ধনাত্মক সংখ্যা লিখুন', en: 'Please enter a valid positive number', ar: 'يرجى إدخال رقم موجب صالح' },
+  atLeastOneDonationOption: { bn: 'অন্তত একটি অনুদানের পরিমাণ বিকল্প প্রদান করুন (দৈনিক, মাসিক, বা পরিমাণ)', en: 'Please provide at least one donation amount option (daily, monthly, or amount)', ar: 'يرجى توفير خيار مبلغ تبرع واحد على الأقل (يومي أو شهري أو مبلغ)' },
+  pleaseUploadThumbnail: { bn: 'একটি থাম্বনেইল ছবি আপলোড করুন', en: 'Please upload a thumbnail image', ar: 'يرجى رفع صورة مصغرة' },
+  categoryIdMissing: { bn: 'বিভাগ আইডি অনুপস্থিত', en: 'Category ID is missing', ar: 'معرف الفئة مفقود' },
+  failedToLoadCategory: { bn: 'বিভাগের তথ্য লোড করতে ব্যর্থ', en: 'Failed to load category data', ar: 'فشل تحميل بيانات الفئة' },
+  
+  // Gallery
+  manageGalleryItems: { bn: 'গ্যালারি আইটেম পরিচালনা', en: 'Manage gallery items', ar: 'إدارة عناصر المعرض' },
+  addItem: { bn: 'আইটেম যোগ করুন', en: 'Add Item', ar: 'إضافة عنصر' },
+  galleryItemUpdated: { bn: 'গ্যালারি আইটেম সফলভাবে আপডেট হয়েছে', en: 'Gallery item updated successfully', ar: 'تم تحديث عنصر المعرض بنجاح' },
+  galleryItemCreated: { bn: 'গ্যালারি আইটেম সফলভাবে তৈরি হয়েছে', en: 'Gallery item created successfully', ar: 'تم إنشاء عنصر المعرض بنجاح' },
+  galleryItemDeleted: { bn: 'গ্যালারি আইটেম সফলভাবে মুছে ফেলা হয়েছে', en: 'Gallery item deleted successfully', ar: 'تم حذف عنصر المعرض بنجاح' },
+  deleteGalleryItemConfirm: { bn: 'আপনি কি এই গ্যালারি আইটেমটি মুছে ফেলতে চান?', en: 'Are you sure you want to delete this gallery item?', ar: 'هل أنت متأكد أنك تريد حذف عنصر المعرض هذا؟' },
+  noGalleryItemsYet: { bn: 'এখনও কোনো গ্যালারি আইটেম নেই', en: 'No gallery items yet', ar: 'لا توجد عناصر معرض بعد' },
+  selectCategory: { bn: 'বিভাগ নির্বাচন করুন', en: 'Select category', ar: 'اختر الفئة' },
+  type: { bn: 'ধরন', en: 'Type', ar: 'النوع' },
+  image: { bn: 'ছবি', en: 'Image', ar: 'صورة' },
+  video: { bn: 'ভিডিও', en: 'Video', ar: 'فيديو' },
+  viewVideo: { bn: 'ভিডিও দেখুন', en: 'View video', ar: 'عرض الفيديو' },
+  pleaseProvideVideoUrl: { bn: 'একটি ভিডিও URL প্রদান করুন', en: 'Please provide a video URL', ar: 'يرجى توفير رابط فيديو' },
+  
+  // Hero
+  manageHeroImages: { bn: 'হিরো সেকশনের ব্যাকগ্রাউন্ড ছবি পরিচালনা', en: 'Manage hero section background images', ar: 'إدارة صور خلفية قسم البطل' },
+  addImage: { bn: 'ছবি যোগ করুন', en: 'Add Image', ar: 'إضافة صورة' },
+  editHeroImage: { bn: 'হিরো ছবি সম্পাদনা', en: 'Edit Hero Image', ar: 'تعديل صورة البطل' },
+  addHeroImage: { bn: 'হিরো ছবি যোগ করুন', en: 'Add Hero Image', ar: 'إضافة صورة البطل' },
+  heroImageUpdated: { bn: 'হিরো ছবি সফলভাবে আপডেট হয়েছে', en: 'Hero image updated successfully', ar: 'تم تحديث صورة البطل بنجاح' },
+  heroImageCreated: { bn: 'হিরো ছবি সফলভাবে তৈরি হয়েছে', en: 'Hero image created successfully', ar: 'تم إنشاء صورة البطل بنجاح' },
+  heroImageDeleted: { bn: 'হিরো ছবি সফলভাবে মুছে ফেলা হয়েছে', en: 'Hero image deleted successfully', ar: 'تم حذف صورة البطل بنجاح' },
+  deleteHeroImageConfirm: { bn: 'আপনি কি এই হিরো ছবিটি মুছে ফেলতে চান?', en: 'Are you sure you want to delete this hero image?', ar: 'هل أنت متأكد أنك تريد حذف صورة البطل هذه؟' },
+  titleOptional: { bn: 'শিরোনাম (ঐচ্ছিক)', en: 'Title (Optional)', ar: 'العنوان (اختياري)' },
+  imageTitle: { bn: 'ছবির শিরোনাম', en: 'Image title', ar: 'عنوان الصورة' },
+  order: { bn: 'ক্রম', en: 'Order', ar: 'الترتيب' },
+  lowerNumbersAppearFirst: { bn: 'নিম্ন সংখ্যাগুলি প্রথমে প্রদর্শিত হবে', en: 'Lower numbers appear first', ar: 'الأرقام الأقل تظهر أولاً' },
+  descriptionOptional: { bn: 'বিবরণ (ঐচ্ছিক)', en: 'Description (Optional)', ar: 'الوصف (اختياري)' },
+  imageDescription: { bn: 'ছবির বিবরণ', en: 'Image description', ar: 'وصف الصورة' },
+  activeShowInSlider: { bn: 'সক্রিয় (স্লাইডারে দেখান)', en: 'Active (Show in slider)', ar: 'نشط (عرض في الشريط)' },
+  uploadHeroImage: { bn: 'হিরো ছবি আপলোড', en: 'Upload Hero Image', ar: 'رفع صورة البطل' },
+  pleaseUploadImage: { bn: 'একটি ছবি আপলোড করুন', en: 'Please upload an image', ar: 'يرجى رفع صورة' },
+  heroImagesCount: { bn: 'হিরো ছবি ({count})', en: 'Hero Images ({count})', ar: 'صور البطل ({count})' },
+  active: { bn: 'সক্রিয়', en: 'Active', ar: 'نشط' },
+  inactive: { bn: 'নিষ্ক্রিয়', en: 'Inactive', ar: 'غير نشط' },
+  heroImageActivated: { bn: 'হিরো ছবি সফলভাবে সক্রিয় হয়েছে', en: 'Hero image activated successfully', ar: 'تم تفعيل صورة البطل بنجاح' },
+  heroImageDeactivated: { bn: 'হিরো ছবি সফলভাবে নিষ্ক্রিয় হয়েছে', en: 'Hero image deactivated successfully', ar: 'تم إلغاء تفعيل صورة البطل بنجاح' },
+  noHeroImagesYet: { bn: 'এখনও কোনো হিরো ছবি নেই। শুরু করতে একটি যোগ করুন।', en: 'No hero images yet. Add one to get started.', ar: 'لا توجد صور بطل بعد. أضف واحدة للبدء.' },
+  
+  // Notices
+  manageNotices: { bn: 'নোটিশ পরিচালনা', en: 'Manage notices', ar: 'إدارة الإعلانات' },
+  addNotice: { bn: 'নোটিশ যোগ করুন', en: 'Add Notice', ar: 'إضافة إعلان' },
+  editNotice: { bn: 'নোটিশ সম্পাদনা', en: 'Edit Notice', ar: 'تعديل الإعلان' },
+  noticeUpdated: { bn: 'নোটিশ সফলভাবে আপডেট হয়েছে', en: 'Notice updated successfully', ar: 'تم تحديث الإعلان بنجاح' },
+  noticeCreated: { bn: 'নোটিশ সফলভাবে তৈরি হয়েছে', en: 'Notice created successfully', ar: 'تم إنشاء الإعلان بنجاح' },
+  noticeDeleted: { bn: 'নোটিশ সফলভাবে মুছে ফেলা হয়েছে', en: 'Notice deleted successfully', ar: 'تم حذف الإعلان بنجاح' },
+  deleteNoticeConfirm: { bn: 'আপনি কি এই নোটিশটি মুছে ফেলতে চান?', en: 'Are you sure you want to delete this notice?', ar: 'هل أنت متأكد أنك تريد حذف هذا الإعلان؟' },
+  noticesList: { bn: 'নোটিশের তালিকা', en: 'Notices List', ar: 'قائمة الإعلانات' },
+  noNoticesYet: { bn: 'এখনও কোনো নোটিশ নেই', en: 'No notices yet', ar: 'لا توجد إعلانات بعد' },
+  subTitle: { bn: 'উপশিরোনাম', en: 'Subtitle', ar: 'العنوان الفرعي' },
+  
+  // Programs
+  managePrograms: { bn: 'প্রোগ্রাম পরিচালনা', en: 'Manage programs', ar: 'إدارة البرامج' },
+  addProgram: { bn: 'প্রোগ্রাম যোগ করুন', en: 'Add Program', ar: 'إضافة برنامج' },
+  editProgram: { bn: 'প্রোগ্রাম সম্পাদনা', en: 'Edit Program', ar: 'تعديل البرنامج' },
+  programUpdated: { bn: 'প্রোগ্রাম সফলভাবে আপডেট হয়েছে', en: 'Program updated successfully', ar: 'تم تحديث البرنامج بنجاح' },
+  programCreated: { bn: 'প্রোগ্রাম সফলভাবে তৈরি হয়েছে', en: 'Program created successfully', ar: 'تم إنشاء البرنامج بنجاح' },
+  programDeleted: { bn: 'প্রোগ্রাম সফলভাবে মুছে ফেলা হয়েছে', en: 'Program deleted successfully', ar: 'تم حذف البرنامج بنجاح' },
+  deleteProgramConfirm: { bn: 'আপনি কি এই প্রোগ্রামটি মুছে ফেলতে চান?', en: 'Are you sure you want to delete this program?', ar: 'هل أنت متأكد أنك تريد حذف هذا البرنامج؟' },
+  programsList: { bn: 'প্রোগ্রামের তালিকা', en: 'Programs List', ar: 'قائمة البرامج' },
+  noProgramsYet: { bn: 'এখনও কোনো প্রোগ্রাম নেই', en: 'No programs yet', ar: 'لا توجد برامج بعد' },
+  area: { bn: 'এলাকা', en: 'Area', ar: 'المنطقة' },
+  duration: { bn: 'সময়কাল', en: 'Duration', ar: 'المدة' },
+  beneficiary: { bn: 'উপকারভোগী', en: 'Beneficiary', ar: 'المستفيد' },
+  projectGoalsAndObjectives: { bn: 'প্রকল্পের লক্ষ্য ও উদ্দেশ্য', en: 'Project Goals and Objectives', ar: 'أهداف ومقاصد المشروع' },
+  addBeneficiary: { bn: 'উপকারভোগী যোগ করুন...', en: 'Add beneficiary...', ar: 'إضافة مستفيد...' },
+  addExpenseCategory: { bn: 'ব্যয় বিভাগ যোগ করুন...', en: 'Add expense category...', ar: 'إضافة فئة مصروفات...' },
+  addProjectGoal: { bn: 'প্রকল্প লক্ষ্য যোগ করুন...', en: 'Add project goal...', ar: 'إضافة هدف مشروع...' },
+  addActivityItem: { bn: 'কর্মসূচি যোগ করুন...', en: 'Add activity...', ar: 'إضافة نشاط...' },
+  mediaImages: { bn: 'মিডিয়া ছবি', en: 'Media Images', ar: 'صور الوسائط' },
+  uploadImages: { bn: 'ছবি আপলোড', en: 'Upload images', ar: 'رفع الصور' },
+  programIdMissing: { bn: 'প্রোগ্রাম আইডি অনুপস্থিত', en: 'Program ID is missing', ar: 'معرف البرنامج مفقود' },
+  failedToLoadProgram: { bn: 'প্রোগ্রামের তথ্য লোড করতে ব্যর্থ', en: 'Failed to load program data', ar: 'فشل تحميل بيانات البرنامج' },
+  
+  // Users
+  manageAllUsers: { bn: 'সিস্টেমের সমস্ত ব্যবহারকারী পরিচালনা', en: 'Manage all users in the system', ar: 'إدارة جميع المستخدمين في النظام' },
+  searchByEmail: { bn: 'ইমেইল দিয়ে অনুসন্ধান করুন...', en: 'Search by email...', ar: 'ابحث بالبريد الإلكتروني...' },
+  allRoles: { bn: 'সমস্ত ভূমিকা', en: 'All Roles', ar: 'جميع الأدوار' },
+  adminRole: { bn: 'অ্যাডমিন', en: 'Admin', ar: 'مسؤول' },
+  editorRole: { bn: 'সম্পাদক', en: 'Editor', ar: 'محرر' },
+  userRole: { bn: 'ব্যবহারকারী', en: 'User', ar: 'مستخدم' },
+  createdAt: { bn: 'তৈরির তারিখ', en: 'Created At', ar: 'تاريخ الإنشاء' },
+  totalDonate: { bn: 'মোট দান', en: 'Total Donate', ar: 'إجمالي التبرع' },
+  userDeleted: { bn: 'ব্যবহারকারী সফলভাবে মুছে ফেলা হয়েছে', en: 'User deleted successfully', ar: 'تم حذف المستخدم بنجاح' },
+  failedToDeleteUser: { bn: 'ব্যবহারকারী মুছতে ব্যর্থ', en: 'Failed to delete user', ar: 'فشل حذف المستخدم' },
+  deleteUserConfirm: { bn: 'আপনি কি এই ব্যবহারকারীটি মুছে ফেলতে চান?', en: 'Are you sure you want to delete this user?', ar: 'هل أنت متأكد أنك تريد حذف هذا المستخدم؟' },
+  updateUser: { bn: 'ব্যবহারকারী আপডেট', en: 'Update User', ar: 'تحديث المستخدم' },
+  userUpdated: { bn: 'ব্যবহারকারী সফলভাবে আপডেট হয়েছে', en: 'User updated successfully', ar: 'تم تحديث المستخدم بنجاح' },
+  failedToUpdateUser: { bn: 'ব্যবহারকারী আপডেট করতে ব্যর্থ', en: 'Failed to update user', ar: 'فشل تحديث المستخدم' },
+  failedToFetchUsers: { bn: 'ব্যবহারকারী আনতে ব্যর্থ', en: 'Failed to fetch users', ar: 'فشل جلب المستخدمين' },
+  noUsersFound: { bn: 'কোনো ব্যবহারকারী পাওয়া যায়নি', en: 'No users found', ar: 'لا يوجد مستخدمون' },
+  showingUsers: { bn: 'দেখানো হচ্ছে {start} থেকে {end} এর মধ্যে {total} ব্যবহারকারী', en: 'Showing {start} to {end} of {total} users', ar: 'عرض {start} إلى {end} من {total} مستخدم' },
+  
+  // Volunteers
+  manageVolunteerApplications: { bn: 'সমস্ত স্বেচ্ছাসেবক আবেদন পরিচালনা', en: 'Manage all volunteer applications', ar: 'إدارة جميع طلبات المتطوعين' },
+  volunteerSearchPlaceholder: { bn: 'নাম, ইমেইল অথবা মোবাইল নম্বর দিয়ে অনুসন্ধান করুন...', en: 'Search by name, email, or mobile number...', ar: 'ابحث بالاسم أو البريد الإلكتروني أو رقم الجوال...' },
+  volunteerStatusUpdated: { bn: 'স্ট্যাটাস সফলভাবে আপডেট হয়েছে', en: 'Status updated successfully', ar: 'تم تحديث الحالة بنجاح' },
+  volunteerStatusUpdateFailed: { bn: 'স্ট্যাটাস আপডেট ব্যর্থ হয়েছে', en: 'Failed to update status', ar: 'فشل تحديث الحالة' },
+  volunteerDeleted: { bn: 'স্বেচ্ছাসেবক আবেদন সফলভাবে মুছে ফেলা হয়েছে', en: 'Volunteer application deleted successfully', ar: 'تم حذف طلب المتطوع بنجاح' },
+  volunteerDeleteFailed: { bn: 'স্বেচ্ছাসেবক আবেদন মুছতে ব্যর্থ', en: 'Failed to delete volunteer application', ar: 'فشل حذف طلب المتطوع' },
+  deleteVolunteerConfirm: { bn: 'আপনি কি এই স্বেচ্ছাসেবক আবেদনটি মুছে ফেলতে চান?', en: 'Are you sure you want to delete this volunteer application?', ar: 'هل أنت متأكد أنك تريد حذف طلب المتطوع هذا؟' },
+  failedToFetchVolunteers: { bn: 'স্বেচ্ছাসেবক আবেদন আনতে ব্যর্থ', en: 'Failed to fetch volunteer applications', ar: 'فشل جلب طلبات المتطوعين' },
+  noVolunteerApplications: { bn: 'কোনো স্বেচ্ছাসেবক আবেদন পাওয়া যায়নি', en: 'No volunteer applications found', ar: 'لا توجد طلبات متطوعين' },
+  professionalInformation: { bn: 'পেশাগত তথ্য', en: 'Professional Information', ar: 'المعلومات المهنية' },
+  currentProfession: { bn: 'বর্তমান পেশা', en: 'Current Profession', ar: 'المهنة الحالية' },
+  organizationName: { bn: 'সংস্থার নাম', en: 'Organization Name', ar: 'اسم المنظمة' },
+  workplaceAddress: { bn: 'কর্মক্ষেত্রের ঠিকানা', en: 'Workplace Address', ar: 'عنوان مكان العمل' },
+  currentAddress: { bn: 'বর্তমান ঠিকানা', en: 'Current Address', ar: 'العنوان الحالي' },
+  permanentAddress: { bn: 'স্থায়ী ঠিকানা', en: 'Permanent Address', ar: 'العنوان الدائم' },
+  division: { bn: 'বিভাগ', en: 'Division', ar: 'القسم' },
+  district: { bn: 'জেলা', en: 'District', ar: 'المنطقة' },
+  upazila: { bn: 'উপজেলা', en: 'Upazila', ar: 'المنطقة الفرعية' },
+  union: { bn: 'ইউনিয়ন', en: 'Union', ar: 'الاتحاد' },
+  fullAddress: { bn: 'সম্পূর্ণ ঠিকানা', en: 'Full Address', ar: 'العنوان الكامل' },
+  overseasIfApplicable: { bn: 'বিদেশে (যদি প্রযোজ্য)', en: 'Overseas (if applicable)', ar: 'في الخارج (إن وجد)' },
+  country: { bn: 'দেশ', en: 'Country', ar: 'البلد' },
+  overseasAddress: { bn: 'বিদেশের ঠিকানা', en: 'Overseas Address', ar: 'عنوان الخارج' },
+  socialMediaMessaging: { bn: 'সোশ্যাল মিডিয়া ও মেসেজিং', en: 'Social Media & Messaging', ar: 'وسائل التواصل الاجتماعي والمراسلة' },
+  facebookId: { bn: 'ফেসবুক আইডি', en: 'Facebook ID', ar: 'معرف Facebook' },
+  linkedinId: { bn: 'লিঙ্কডইন আইডি', en: 'LinkedIn ID', ar: 'معرف LinkedIn' },
+  whatsapp: { bn: 'হোয়াটসঅ্যাপ', en: 'WhatsApp', ar: 'WhatsApp' },
+  telegram: { bn: 'টেলিগ্রাম', en: 'Telegram', ar: 'Telegram' },
+  educationalQualification: { bn: 'শিক্ষাগত যোগ্যতা', en: 'Educational Qualification', ar: 'المؤهلات التعليمية' },
+  educationMedium: { bn: 'শিক্ষার মাধ্যম', en: 'Education Medium', ar: 'وسيلة التعليم' },
+  educationLevel: { bn: 'শিক্ষার স্তর', en: 'Education Level', ar: 'مستوى التعليم' },
+  currentClassYear: { bn: 'বর্তমান শ্রেণী/বছর', en: 'Current Class/Year', ar: 'الصف/السنة الحالية' },
+  departmentDegree: { bn: 'বিভাগ/ডিগ্রি', en: 'Department/Degree', ar: 'القسم/الدرجة' },
+  lastInstitutionName: { bn: 'শেষ প্রতিষ্ঠানের নাম', en: 'Last Institution Name', ar: 'اسم المؤسسة الأخيرة' },
+  previousVolunteerExperience: { bn: 'পূর্ববর্তী স্বেচ্ছাসেবক অভিজ্ঞতা', en: 'Previous Volunteer Experience', ar: 'تجربة المتطوع السابقة' },
+  wasVolunteer: { bn: 'স্বেচ্ছাসেবক ছিল', en: 'Was Volunteer', ar: 'كان متطوعاً' },
+  projectName: { bn: 'প্রকল্পের নাম', en: 'Project Name', ar: 'اسم المشروع' },
+  projectLocation: { bn: 'প্রকল্পের অবস্থান', en: 'Project Location', ar: 'موقع المشروع' },
+  batch: { bn: 'ব্যাচ', en: 'Batch', ar: 'الدفعة' },
+  beneficiariesCount: { bn: 'উপকারভোগীর সংখ্যা', en: 'Beneficiaries Count', ar: 'عدد المستفيدين' },
+  profileImage: { bn: 'প্রোফাইল ছবি', en: 'Profile Image', ar: 'صورة الملف الشخصي' },
+  viewFullImage: { bn: 'সম্পূর্ণ ছবি দেখুন', en: 'View full image', ar: 'عرض الصورة الكاملة' },
+  notUsed: { bn: 'ব্যবহৃত হয়নি', en: 'Not used', ar: 'غير مستخدم' },
+  showingVolunteers: { bn: 'দেখানো হচ্ছে {start} থেকে {end} এর মধ্যে {total} আবেদন', en: 'Showing {start} to {end} of {total} applications', ar: 'عرض {start} إلى {end} من {total} طلب' },
+  
+  // Admin Users
+  createAdminUserTitle: { bn: 'অ্যাডমিন ব্যবহারকারী তৈরি', en: 'Create Admin User', ar: 'إنشاء مستخدم مسؤول' },
+  addNewAdminEditor: { bn: 'সিস্টেমে একটি নতুন অ্যাডমিন বা সম্পাদক ব্যবহারকারী যোগ করুন', en: 'Add a new admin or editor user to the system', ar: 'إضافة مستخدم مسؤول أو محرر جديد إلى النظام' },
+  adminUserCreated: { bn: 'অ্যাডমিন ব্যবহারকারী সফলভাবে তৈরি হয়েছে', en: 'Admin user created successfully', ar: 'تم إنشاء مستخدم المسؤول بنجاح' },
+  failedToCreateAdminUser: { bn: 'অ্যাডমিন ব্যবহারকারী তৈরি করতে ব্যর্থ', en: 'Failed to create admin user', ar: 'فشل إنشاء مستخدم المسؤول' },
+  creating: { bn: 'তৈরি হচ্ছে...', en: 'Creating...', ar: 'جاري الإنشاء...' },
+  emailPlaceholder: { bn: 'email@example.com', en: 'email@example.com', ar: 'email@example.com' },
+  passwordPlaceholder: { bn: '••••••••', en: '••••••••', ar: '••••••••' },
+  detailsLabel: { bn: 'বিস্তারিত', en: 'Details', ar: 'التفاصيل' },
+  actionsLabel: { bn: 'কার্যক্রম', en: 'Actions', ar: 'الإجراءات' },
+  memberTypeLifetime: { bn: 'আজীবন', en: 'Lifetime', ar: 'دائم' },
+  memberTypeDonor: { bn: 'দাতা', en: 'Donor', ar: 'متبرع' },
+  searchResultsSummary: { bn: 'আবেদন', en: 'applications', ar: 'طلبات' },
+  statusSelectLabel: { bn: 'স্ট্যাটাস নির্বাচন করুন', en: 'Select status', ar: 'اختر الحالة' },
+  view: { bn: 'দেখুন', en: 'View', ar: 'عرض' },
+  searchResultsOf: { bn: 'মোট', en: 'of', ar: 'من' },
+  
+  // Payment Methods
+  paymentMethodOnline: { bn: 'অনলাইন', en: 'Online', ar: 'عبر الإنترنت' },
+  paymentMethodBankTransfer: { bn: 'ব্যাংক ট্রান্সফার', en: 'Bank Transfer', ar: 'تحويل بنكي' },
+  paymentMethodBankDeposit: { bn: 'ব্যাংক ডিপোজিট', en: 'Bank Deposit', ar: 'إيداع بنكي' },
+  
+  // Status values (already exist but ensuring consistency)
+  statusPendingApproval: { bn: 'অনুমোদনের অপেক্ষায়', en: 'Pending Approval', ar: 'بانتظار الموافقة' },
+  statusApproved: { bn: 'অনুমোদিত', en: 'Approved', ar: 'مقبول' },
+  statusRejected: { bn: 'বাতিল', en: 'Rejected', ar: 'مرفوض' },
+  statusPending: { bn: 'অপেক্ষমান', en: 'Pending', ar: 'قيد الانتظار' },
+  statusCompleted: { bn: 'সম্পন্ন', en: 'Completed', ar: 'مكتمل' },
+  statusPendingVerification: { bn: 'যাচাইয়ের অপেক্ষায়', en: 'Pending Verification', ar: 'بانتظار التحقق' },
+  statusFailed: { bn: 'ব্যর্থ', en: 'Failed', ar: 'فشل' },
 };
 
 type Ctx = {
@@ -54,7 +723,19 @@ export default function LanguageProvider({ children }: { children: React.ReactNo
     document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr';
   };
 
-  const t = (key: keyof typeof DICT) => DICT[key][lang];
+  const t = (key: keyof typeof DICT) => {
+    const entry = DICT[key];
+    if (!entry) {
+      console.warn(`Translation key "${String(key)}" not found in dictionary`);
+      return String(key);
+    }
+    const translation = entry[lang];
+    if (!translation) {
+      console.warn(`Translation for key "${String(key)}" and language "${lang}" not found`);
+      return entry['en'] || entry['bn'] || String(key);
+    }
+    return translation;
+  };
 
   return (
     <I18nContext.Provider value={{ lang, setLang, t }}>
@@ -67,6 +748,75 @@ export function useI18n() {
   const ctx = React.useContext(I18nContext);
   if (!ctx) throw new Error('useI18n must be used within LanguageProvider');
   return ctx;
+}
+
+/**
+ * Utility function to translate enum/constant values from backend
+ * Maps backend string values to translation keys
+ * 
+ * @param value - The enum value from backend (e.g., "lifetime", "pending_approval", "bank_transfer")
+ * @param lang - Current language
+ * @param t - Translation function
+ * @returns Translated string
+ */
+export function translateEnumValue(
+  value: string | null | undefined,
+  lang: Lang,
+  t: (key: keyof typeof DICT) => string
+): string {
+  if (!value) return '';
+  
+  // Normalize the value (lowercase, trim)
+  const normalized = value.toLowerCase().trim();
+  
+  // Map enum values to translation keys
+  const enumMap: Record<string, keyof typeof DICT> = {
+    // Member Types
+    'lifetime': 'memberTypeLifetime',
+    'donor': 'memberTypeDonor',
+    
+    // Application Status
+    'pending_approval': 'pendingApproval',
+    'approved': 'approved',
+    'rejected': 'rejected',
+    
+    // Payment Status
+    'pending': 'pending',
+    'completed': 'completed',
+    'pending_verification': 'pendingVerification',
+    'failed': 'failed',
+    
+    // Payment Methods
+    'online': 'paymentMethodOnline',
+    'bank_transfer': 'paymentMethodBankTransfer',
+    'bank_deposit': 'paymentMethodBankDeposit',
+    
+    // Gender
+    'male': 'male',
+    'female': 'female',
+  };
+  
+  const translationKey = enumMap[normalized];
+  
+  if (translationKey) {
+    return t(translationKey);
+  }
+  
+  // If no mapping found, return formatted version of the value
+  // (e.g., "bank_transfer" -> "Bank Transfer")
+  return normalized
+    .split('_')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
+
+/**
+ * Hook to get a function that translates enum values
+ * Usage: const translateEnum = useTranslateEnum(); translateEnum('pending_approval')
+ */
+export function useTranslateEnum() {
+  const { lang, t } = useI18n();
+  return (value: string | null | undefined) => translateEnumValue(value, lang, t);
 }
 
 

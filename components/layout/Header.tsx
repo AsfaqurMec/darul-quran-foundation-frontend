@@ -3,56 +3,111 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import * as React from 'react';
+import { createPortal } from 'react-dom';
 import Button from '@/components/ui/button';
 import Container from '@/components/layout/Container';
 import logo from '@/public/img/logo-foundation.png';
 import Image from 'next/image';
 import { Route } from 'next';
 import { useI18n } from '@/components/i18n/LanguageProvider';
+import { getClientToken, removeClientToken } from '@/lib/tokenUtils';
+import { useRouter } from 'next/navigation';
 
-type NavItem = { href: string; label: string };
+type NavItem = { href: string; labelKey: Parameters<ReturnType<typeof useI18n>['t']>[0] };
 
 const navItems: ReadonlyArray<NavItem> = [
-  { href: '', label: 'হোম' },
-  { href: 'about', label: 'আমাদের সম্পর্কে' },
-  { href: 'activities', label: 'কার্যক্রমসমূহ' },
-  { href: 'gallery', label: 'গ্যালারি' },
-  { href: 'get-involved', label: 'আমাদের সাথে যুক্ত হন' },
-  { href: 'blog', label: 'ব্লগ' },
-  { href: 'notice', label: 'নোটিশ' },
-  { href: 'contact', label: 'যোগাযোগ' },
+  { href: '', labelKey: 'home' },
+  { href: 'about', labelKey: 'about' },
+  { href: 'programs', labelKey: 'programs' },
+  { href: 'gallery', labelKey: 'gallery' },
+  { href: 'get-involved', labelKey: 'join' },
+  { href: 'blog', labelKey: 'blog' },
+  { href: 'notice', labelKey: 'notice' },
+  { href: 'contact', labelKey: 'contact' },
 ];
 
 export default function Header(): JSX.Element {
   const [open, setOpen] = React.useState(false);
   const { lang, setLang, t } = useI18n();
   const [langOpen, setLangOpen] = React.useState(false);
+  const [mounted, setMounted] = React.useState(false);
+  const [authed, setAuthed] = React.useState(false);
+  const [userMenuOpen, setUserMenuOpen] = React.useState(false);
   const pathname = usePathname();
+  const router = useRouter();
+
+  React.useEffect(() => {
+    setMounted(true);
+    setAuthed(!!getClientToken());
+  }, []);
+
+  React.useEffect(() => {
+    const handleStorage = () => {
+      setAuthed(!!getClientToken());
+    };
+    window.addEventListener('storage', handleStorage);
+    const handleAuthChange = () => setAuthed(!!getClientToken());
+    window.addEventListener('auth-change', handleAuthChange as EventListener);
+    return () => {
+      window.removeEventListener('storage', handleStorage);
+      window.removeEventListener('auth-change', handleAuthChange as EventListener);
+    };
+  }, []);
+
+  const handleLogout = async () => {
+    setUserMenuOpen(false);
+    try {
+      await fetch('/api/logout', { method: 'POST' });
+    } catch {
+      // ignore
+    } finally {
+      removeClientToken();
+      setAuthed(false);
+      // Dispatch auth-change event to notify other components
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('auth-change'));
+      }
+    }
+    router.push('/login');
+    router.refresh();
+  };
+
+  // Helper function to add line break before last word
+  const formatFoundationName = (text: string) => {
+    const words = text.split(' ');
+    if (words.length <= 1) return text;
+    const lastWord = words[words.length - 1];
+    const rest = words.slice(0, -1).join(' ');
+    return (
+      <>
+        {rest} <br /> {lastWord}
+      </>
+    );
+  };
 
   return (
     <header className="sticky top-0 z-40 w-full backdrop-blur supports-[backdrop-filter]:bg-white/70 bg-white/90 border-b border-gray-200">
       <Container className="h-20 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <button className="sm:hidden inline-flex items-center justify-center p-2 rounded-md border border-gray-300" onClick={() => setOpen(true)} aria-label="Open menu">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6"><path fillRule="evenodd" d="M3.75 5.25a.75.75 0 0 1 .75-.75h15a.75.75 0 0 1 0 1.5h-15a.75.75 0 0 1-.75-.75Zm0 6a.75.75 0 0 1 .75-.75h15a.75.75 0 0 1 0 1.5h-15a.75.75 0 0 1-.75-.75Zm.75 5.25a.75.75 0 0 0 0 1.5h15a.75.75 0 0 0 0-1.5h-15Z" clipRule="evenodd" /></svg>
-          </button>
-          <Link href="/" className="inline-flex items-center gap-2">
-           <Image src={logo} alt="logo" width={76} height={76} />
-           <span className="font-semibold">দারুল কুরআন ফাউন্ডেশন</span>
+          
+          <Link href="/" className="inline-flex items-center gap-0">
+           <Image src={logo} alt="logo" width={76} height={76} className="hidden sm:block"/>
+           <Image src={logo} alt="logo" width={56} height={56} className="block sm:hidden"/>
+           <span className=" text-xl md:text-md font-bold leading-tight">{formatFoundationName(t('foundationName'))}</span>
           </Link>
         </div>
 
-        <nav className="hidden sm:flex items-center gap-6 text-sm">
+        <nav className="hidden lg:flex items-center gap-5 text-sm mx-0">
           {navItems.map((item: NavItem, index: number) => {
             const href = `/${item.href}`;
             const isActive = pathname === href || (href === '/' && pathname === '/') || (href !== '/' && pathname.startsWith(href));
             return (
               <Link
                 key={index}
-                className={`relative hover:text-brand transition-base ${isActive ? 'text-brand' : ''}`}
+                className={`relative hover:text-brand text-[18px] transition-base ${isActive ? 'text-brand' : ''}`}
                 href={href as Route}
               >
-                {item.label}
+                {t(item.labelKey)}
                 {isActive && (
                   <span className="absolute bottom-0 top-6 left-0 right-0 h-0.5 bg-brand"></span>
                 )}
@@ -61,48 +116,75 @@ export default function Header(): JSX.Element {
           })}
         </nav>
 
-        <div className="hidden sm:flex items-center gap-2">
-          <div className="relative">
+        <div className="flex items-center gap-2">
+          <div className="relative hidden sm:block">
             <button
               onClick={() => setLangOpen((v) => !v)}
               className="inline-flex items-center gap-2 rounded-md border border-gray-300 px-3 py-1.5 text-sm hover:bg-gray-50"
               aria-haspopup="listbox"
               aria-expanded={langOpen}
             >
-              <span>{lang === 'bn' ? 'বাংলা' : lang === 'en' ? 'English' : 'العربية'}</span>
+              <span>{t(lang === 'bn' ? 'bengali' : lang === 'en' ? 'english' : 'arabic')}</span>
               <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" clipRule="evenodd"/></svg>
             </button>
             {langOpen && (
-              <ul className="absolute right-0 mt-1 min-w-[140px] rounded-md border border-gray-200 bg-white shadow-lg z-50" role="listbox">
+              <ul className="absolute right-0 mt-1 min-w-[140px] rounded-md border border-gray-200 bg-white shadow-lg z-50 text-md" role="listbox">
                 <li>
-                  <button className="w-full text-left px-3 py-2 hover:bg-gray-50" onClick={()=>{setLang('bn'); setLangOpen(false);}}>বাংলা</button>
+                  <button className="w-full text-left px-3 py-2 hover:bg-gray-50" onClick={()=>{setLang('bn'); setLangOpen(false);}}>{t('bengali')}</button>
                 </li>
                 <li>
-                  <button className="w-full text-left px-3 py-2 hover:bg-gray-50" onClick={()=>{setLang('en'); setLangOpen(false);}}>English</button>
+                  <button className="w-full text-left px-3 py-2 hover:bg-gray-50" onClick={()=>{setLang('en'); setLangOpen(false);}}>{t('english')}</button>
                 </li>
                 <li>
-                  <button className="w-full text-left px-3 py-2 hover:bg-gray-50" onClick={()=>{setLang('ar'); setLangOpen(false);}}>العربية</button>
+                  <button className="w-full text-left px-3 py-2 hover:bg-gray-50" onClick={()=>{setLang('ar'); setLangOpen(false);}}>{t('arabic')}</button>
                 </li>
               </ul>
             )}
           </div>
-          <Link href="/login" className="px-2 py-1 rounded-md border border-gray-300 text-sm">{t('login')}</Link>
-          <Link href="#donate">
-            <Button className="px-3 py-1.5 bg-brand.primary hover:bg-brand.dark text-white">{t('donate')}</Button>
+          {!authed ? (
+            <Link href="/login" className="hidden sm:block rounded-lg px-3 py-1.5 border text-sm">{t('login')}</Link>
+          ) : (
+            <div className="relative hidden sm:block">
+              <button
+                onClick={() => setUserMenuOpen((v) => !v)}
+                className="inline-flex items-center justify-center w-9 h-9 rounded-full border border-gray-300 bg-white hover:bg-gray-50"
+                aria-haspopup="menu"
+                aria-expanded={userMenuOpen}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-700" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 0 1 5 5v1a5 5 0 1 1-10 0V7a5 5 0 0 1 5-5Zm0 12c4.418 0 8 2.239 8 5v1H4v-1c0-2.761 3.582-5 8-5Z"/></svg>
+              </button>
+              {userMenuOpen && (
+                <ul className="absolute right-0 mt-2 min-w-[160px] rounded-md border border-gray-200 bg-white shadow-lg z-50" role="menu">
+                  <li>
+                    <Link href="/profile" className="block px-3 py-2 hover:bg-gray-50" onClick={() => setUserMenuOpen(false)}>My Profile</Link>
+                  </li>
+                  <li>
+                    <button className="w-full text-left px-3 py-2 hover:bg-gray-50" onClick={handleLogout}>Logout</button>
+                  </li>
+                </ul>
+              )}
+            </div>
+          )}
+          <Link href="/donation">
+            <Button className="rounded-lg bg-brand hover:bg-brand-dark text-white px-4 py-2 font-semibold transition-all hover:shadow-lg text-md md:text-lg">{t('donate')}</Button>
           </Link>
+          <button className="sm:hidden inline-flex items-center justify-center p-2 rounded-md border border-gray-300" onClick={() => setOpen(true)} aria-label="Open menu">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6"><path fillRule="evenodd" d="M3.75 5.25a.75.75 0 0 1 .75-.75h15a.75.75 0 0 1 0 1.5h-15a.75.75 0 0 1-.75-.75Zm0 6a.75.75 0 0 1 .75-.75h15a.75.75 0 0 1 0 1.5h-15a.75.75 0 0 1-.75-.75Zm.75 5.25a.75.75 0 0 0 0 1.5h15a.75.75 0 0 0 0-1.5h-15Z" clipRule="evenodd" /></svg>
+          </button>
         </div>
       </Container>
 
       {/* Mobile drawer */}
-      {open && (
+      {open && mounted && createPortal(
         <>
           <div className="fixed inset-0 z-40 bg-black/40" onClick={() => setOpen(false)} />
-          <div className="fixed inset-y-0 left-0 z-50 w-80 max-w-[85%] bg-white shadow-xl p-4 flex flex-col">
-            <div className="flex items-center justify-between mb-4">
-              <Link href="/" className="inline-flex items-center gap-2" onClick={() => setOpen(false)}>
-                <div className="h-8 w-8 rounded bg-brand" />
-                <span className="font-semibold">DarulQuran</span>
-              </Link>
+          <div className="fixed inset-y-0 left-0 z-50 w-80 max-w-[85%] !bg-white shadow-xl p-4 flex flex-col border-r border-gray-200" style={{ backgroundColor: '#ffffff' }}>
+            <div className="flex items-center justify-between border-b-2 border-gray-200 pb-4">
+            <Link href="/" className="inline-flex items-center gap-2">
+           <Image src={logo} alt="logo" width={76} height={76} className="hidden sm:block"/>
+           <Image src={logo} alt="logo" width={56} height={56} className="block sm:hidden"/>
+           <span className="font-semibold text-xl md:text-xl">{formatFoundationName(t('foundationName'))}</span>
+          </Link>
               <button className="p-2 rounded-md border" onClick={() => setOpen(false)} aria-label="Close menu">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5"><path fillRule="evenodd" d="M5.47 5.47a.75.75 0 0 1 1.06 0L12 10.94l5.47-5.47a.75.75 0 1 1 1.06 1.06L13.06 12l5.47 5.47a.75.75 0 1 1-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 0 1-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 0 1 0-1.06Z" clipRule="evenodd" /></svg>
               </button>
@@ -115,12 +197,12 @@ export default function Header(): JSX.Element {
                   <Link
                     key={item.href}
                     onClick={() => setOpen(false)}
-                    className={`block rounded-lg px-3 py-2 hover:bg-gray-100 relative ${
+                    className={`block rounded-lg px-3 py-2 hover:bg-gray-100 relative text-xl ${
                       isActive ? 'text-brand bg-brand/10' : ''
                     }`}
                     href={href as Route}
                   >
-                    {item.label}
+                    {t(item.labelKey)}
                     {isActive && (
                       <span className="absolute left-0 top-0 bottom-0 w-1 bg-brand rounded-r"></span>
                     )}
@@ -131,24 +213,25 @@ export default function Header(): JSX.Element {
             <div className="mt-4 flex items-center gap-2">
               <div className="relative">
                 <button onClick={()=>setLangOpen((v)=>!v)} className="px-3 py-1.5 text-sm rounded border border-gray-300 inline-flex items-center gap-2">
-                  <span>{lang === 'bn' ? 'বাংলা' : lang === 'en' ? 'English' : 'العربية'}</span>
+                  <span>{t(lang === 'bn' ? 'bengali' : lang === 'en' ? 'english' : 'arabic')}</span>
                   <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-4.24-4.24z"/></svg>
                 </button>
                 {langOpen && (
-                  <ul className="absolute left-0 mt-1 min-w-[140px] rounded-md border border-gray-200 bg-white shadow-lg z-50">
-                    <li><button className="w-full text-left px-3 py-2 hover:bg-gray-50" onClick={()=>{setLang('bn'); setLangOpen(false);}}>বাংলা</button></li>
-                    <li><button className="w-full text-left px-3 py-2 hover:bg-gray-50" onClick={()=>{setLang('en'); setLangOpen(false);}}>English</button></li>
-                    <li><button className="w-full text-left px-3 py-2 hover:bg-gray-50" onClick={()=>{setLang('ar'); setLangOpen(false);}}>العربية</button></li>
+                  <ul className="absolute left-0 bottom-full mb-1 min-w-[140px] rounded-md border border-gray-200 bg-white shadow-lg z-50 text-xl">
+                    <li><button className="w-full text-left px-3 py-2 hover:bg-gray-50" onClick={()=>{setLang('bn'); setLangOpen(false);}}>{t('bengali')}</button></li>
+                    <li><button className="w-full text-left px-3 py-2 hover:bg-gray-50" onClick={()=>{setLang('en'); setLangOpen(false);}}>{t('english')}</button></li>
+                    <li><button className="w-full text-left px-3 py-2 hover:bg-gray-50" onClick={()=>{setLang('ar'); setLangOpen(false);}}>{t('arabic')}</button></li>
                   </ul>
                 )}
               </div>
-              <Link href="/login" onClick={() => setOpen(false)} className="ml-auto px-3 py-1.5 rounded border">{t('login')}</Link>
+              <Link href="/login" onClick={() => setOpen(false)} className="ml-auto px-3 py-1.5 rounded border text-xl">{t('login')}</Link>
               <Link href="#donate" onClick={() => setOpen(false)}>
-                <Button className="px-3 py-1.5">{t('donate')}</Button>
+                <Button className="px-3 py-1.5 text-xl">{t('donate')}</Button>
               </Link>
             </div>
           </div>
-        </>
+        </>,
+        document.body
       )}
     </header>
   );

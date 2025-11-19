@@ -5,11 +5,11 @@ import useEmblaCarousel, { type UseEmblaCarouselType } from 'embla-carousel-reac
 import Autoplay from 'embla-carousel-autoplay';
 // Simple arrow icons instead of lucide-react
 const ArrowLeft = ({ className }: { className?: string }) => (
-  <span className={className} style={{ fontSize: '2.5rem', lineHeight: '1' }}>‹</span>
+  <span className={className} style={{ fontSize: 'clamp(1.5rem, 4vw, 2.5rem)', lineHeight: '1' }}>‹</span>
 );
 
 const ArrowRight = ({ className }: { className?: string }) => (
-  <span className={className} style={{ fontSize: '2.5rem', lineHeight: '1' }}>›</span>
+  <span className={className} style={{ fontSize: 'clamp(1.5rem, 4vw, 2.5rem)', lineHeight: '1' }}>›</span>
 );
 
 type CarouselApi = UseEmblaCarouselType[1];
@@ -123,6 +123,27 @@ const Carousel = React.forwardRef<
     };
   }, [api, onSelect]);
 
+  // Reinitialize on window resize to handle Tailwind breakpoint layout changes
+  React.useEffect(() => {
+    if (!api) return;
+    let resizeTimer: number | undefined;
+    const handleResize = () => {
+      if (resizeTimer) {
+        window.clearTimeout(resizeTimer);
+      }
+      resizeTimer = window.setTimeout(() => {
+        api.reInit();
+      }, 150);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      if (resizeTimer) {
+        window.clearTimeout(resizeTimer);
+      }
+    };
+  }, [api]);
+
   return (
     <CarouselContext.Provider
       value={{
@@ -156,7 +177,7 @@ const CarouselContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HT
     const { carouselRef, orientation } = useCarousel();
 
     return (
-      <div ref={carouselRef} className="overflow-hidden">
+      <div ref={carouselRef} className={`overflow-hidden ${orientation === 'horizontal' ? 'touch-pan-y' : 'touch-pan-x'}`}>
         <div
           ref={ref}
           className={`flex ${orientation === 'horizontal' ? 'flex-row' : 'flex-col'} ${className ?? ''}`}
@@ -195,9 +216,9 @@ const CarouselPrevious = React.forwardRef<HTMLButtonElement, React.ComponentProp
         type="button"
         onClick={scrollPrev}
         disabled={!canScrollPrev}
-        className={`absolute h-12 w-12 flex items-center justify-center rounded-full border bg-white/90 hover:bg-white shadow-lg transition-all z-10 disabled:opacity-50 disabled:cursor-not-allowed ${
+        className={`absolute h-10 w-10 sm:h-10 sm:w-10 md:h-12 md:w-12 flex items-center justify-center rounded-full border bg-white/90 hover:bg-white shadow-lg transition-all z-10 disabled:opacity-50 disabled:cursor-not-allowed ${
           orientation === 'horizontal'
-            ? '-left-4 top-1/2 -translate-y-1/2'
+            ? '-left-3 top-1/2 -translate-y-1/2'
             : '-top-12 left-1/2 -translate-x-1/2 rotate-90'
         } ${className ?? ''}`}
         aria-label="Previous slide"
@@ -220,9 +241,9 @@ const CarouselNext = React.forwardRef<HTMLButtonElement, React.ComponentProps<'b
         type="button"
         onClick={scrollNext}
         disabled={!canScrollNext}
-        className={`absolute h-12 w-12 flex items-center justify-center rounded-full border bg-white/90 hover:bg-white shadow-lg transition-all z-10 disabled:opacity-50 disabled:cursor-not-allowed ${
+        className={`absolute h-10 w-10 sm:h-10 sm:w-10 md:h-12 md:w-12 flex items-center justify-center rounded-full border bg-white/90 hover:bg-white shadow-lg transition-all z-10 disabled:opacity-50 disabled:cursor-not-allowed ${
           orientation === 'horizontal'
-            ? '-right-4 top-1/2 -translate-y-1/2'
+            ? '-right-3 top-1/2 -translate-y-1/2'
             : '-bottom-12 left-1/2 -translate-x-1/2 rotate-90'
         } ${className ?? ''}`}
         aria-label="Next slide"

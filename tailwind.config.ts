@@ -9,7 +9,8 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['SolaimanLipi', 'ui-sans-serif', 'system-ui', 'Segoe UI', 'Arial'],
+        sans: ['NotoSerifBengali', 'Noto Serif Bengali', 'ui-sans-serif', 'system-ui', 'Segoe UI', 'Arial'],
+        serif: ['NotoSerifBengali', 'Noto Serif Bengali', 'Georgia', 'serif'],
       },
       colors: {
         brand: {

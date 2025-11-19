@@ -5,7 +5,7 @@ import SiteFrame from '@/components/layout/SiteFrame';
 import { AppToaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
-  title: 'DarulQuran Dashboard',
+  title: 'DarulQuran Foundation',
   description: 'Next.js app with auth, dashboard, and Tailwind CSS',
 };
 

@@ -1,4 +1,4 @@
-import PageHero from '@/components/common/PageHero';
+import TranslatablePageHero from '@/components/common/TranslatablePageHero';
 import AboutIntro from '@/components/about/AboutIntro';
 import PolicyTabs from '@/components/about/PolicyTabs';
 import FinancePolicy from '@/components/about/FinancePolicy';
@@ -6,7 +6,7 @@ import FinancePolicy from '@/components/about/FinancePolicy';
 export default function AboutPage(): JSX.Element {
   return (
     <div className="space-y-10">
-      <PageHero title="আমাদের সম্পর্কে" />
+      <TranslatablePageHero translationKey="about" />
       <AboutIntro />
       <PolicyTabs />
       <FinancePolicy />

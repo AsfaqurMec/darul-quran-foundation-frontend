@@ -3,23 +3,7 @@ import Pagination from '@/components/ui/Pagination';
 import Gallery from '@/components/sections/Gallery';
 import Link from 'next/link';
 import PageHero from '@/components/common/PageHero';
-
-type ApiResp = {
-  items: { id: string; src: string; alt?: string }[];
-  total: number;
-  years: number[];
-  categories: string[];
-};
-
-function buildGallery(year?: number, category?: string, type: string = 'image'): ApiResp {
-  const years = [2025, 2024, 2023, 2022, 2021];
-  const categories = ['সবগুলো', 'বন্যা', 'খাদ্য বিতরণ', 'স্বাবলম্বীকরণ', 'কুরবানি', 'শীতবস্ত্র বিতরণ'];
-  const items: { id: string; src: string; alt?: string }[] = [];
-  for (let i = 0; i < 30; i++) {
-    items.push({ id: `g-${i}`, src: `https://picsum.photos/seed/${i}/900/600`, alt: `${category || 'gallery'} ${year || ''}` });
-  }
-  return { items, total: items.length, years, categories };
-}
+import { GetGallery } from '@/services/gallery';
 
 export default async function GalleryPage({ searchParams }: { searchParams?: { page?: string; year?: string; category?: string; type?: string } }) {
   const current = Math.max(1, Number(searchParams?.page || '1'));
@@ -28,10 +12,15 @@ export default async function GalleryPage({ searchParams }: { searchParams?: { p
   const type = searchParams?.type || 'image';
   const perPage = 12;
 
-  const data = buildGallery(year, category, type);
-  const totalPages = Math.max(1, Math.ceil(data.total / perPage));
-  const start = (current - 1) * perPage;
-  const pageItems = data.items.slice(start, start + perPage);
+  const data = await GetGallery({
+    page: current,
+    limit: perPage,
+    year,
+    category: category === 'সবগুলো' ? undefined : category,
+    type: type as 'image' | 'video',
+  });
+  const totalPages = Math.max(1, Math.ceil((data.total || 0) / perPage));
+  const pageItems = data.items;
 
   const makeHref = (p: number) => {
     const qs = new URLSearchParams();

@@ -2,15 +2,28 @@ import Container from '@/components/layout/Container';
 import Pagination from '@/components/ui/Pagination';
 import NoticeCard from '@/components/notice/NoticeCard';
 import PageHero from '@/components/common/PageHero';
-import { buildStaticNotices } from '@/data/notices';
+import { getAllNotices } from '@/services/notices';
 
 export default async function NoticePage({ searchParams }: { searchParams?: { page?: string } }): Promise<JSX.Element> {
   const perPage = 10;
   const current = Math.max(1, Number(searchParams?.page || '1'));
-  const all = buildStaticNotices();
-  const totalPages = Math.max(1, Math.ceil(all.length / perPage));
+
+  // Fetch from backend
+  const { data: allNotices = [] } = await getAllNotices();
+
+  // Map backend notices to card-friendly shape
+  const mapped = allNotices.map((n) => ({
+    id: n.id ?? '',
+    title: n.title,
+    date: n.date,
+    tag: n.category,
+    excerpt: n.subTitle,
+    href: `/notice/${n.id}`,
+  }));
+
+  const totalPages = Math.max(1, Math.ceil(mapped.length / perPage));
   const start = (current - 1) * perPage;
-  const items = all.slice(start, start + perPage);
+  const items = mapped.slice(start, start + perPage);
   const makeHref = (p: number) => `/notice?page=${p}`;
 
   return (

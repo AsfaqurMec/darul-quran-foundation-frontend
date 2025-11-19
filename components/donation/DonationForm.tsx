@@ -4,33 +4,57 @@ import * as React from 'react';
 import Input from '@/components/ui/input';
 import Select, { SelectOption } from '@/components/ui/Select';
 import Button from '@/components/ui/button';
+import { useI18n } from '@/components/i18n/LanguageProvider';
 
 export type DonationFormProps = {
   purposes?: ReadonlyArray<SelectOption>;
 };
 
-const defaultPurposes: ReadonlyArray<SelectOption> = [
-  { value: '', label: 'নির্বাচন করুন' },
-  { value: 'orphan_responsibility', label: 'এতিমদের দায়িত্ব গ্রহণ' },
-  { value: 'deprived_students', label: 'সুবিধাবঞ্চিত ছাত্রদের দায়িত্ব গ্রহণ' },
-  { value: 'widow_responsibility', label: 'বিধবা নারীর দায়িত্ব গ্রহণ' },
-  { value: 'rehabilitation_poor_family', label: 'দরিদ্র পরিবারের পুনর্বাসন' },
-  { value: 'tube_well_install', label: 'নলকূপ খনন' },
-  { value: 'wudu_place_install', label: 'ওযুখানা স্থাপন' },
-  { value: 'dowry_responsibility', label: 'দায়গ্রস্ত কন্যার বিবাহ' },
-  { value: 'skill_development', label: 'স্কিল ডেভেলপমেন্ট' },
-  { value: 'winter_clothes', label: 'শীত বস্ত্র বিতরণ' },
-  { value: 'mosque_construction', label: 'মসজিদ নির্মাণ' },
-  { value: 'orphanage_construction', label: 'এতিমখানা নির্মাণ' },
-  { value: 'zakat_fund', label: 'যাকাত তহবিল' },
-  { value: 'general_fund', label: 'সাধারণ তহবিল' },
-  { value: 'iftar_program', label: 'ইফতার প্রোগ্রাম' },
-  { value: 'qurbani_program', label: 'কুরবানী প্রোগ্রাম' },
-  { value: 'emergency_relief', label: 'দুর্যোগে জরুরি ত্রাণ' },
-  { value: 'shelterless_housing', label: 'গৃহহীনদের গৃহ নির্মাণ' }
-];
+// const purposeKeyMap: Record<string, keyof ReturnType<typeof useI18n>['t']> = {
+//   'orphan_responsibility': 'orphanResponsibility',
+//   'deprived_students': 'deprivedStudents',
+//   'widow_responsibility': 'widowResponsibility',
+//   'rehabilitation_poor_family': 'rehabilitationPoorFamily',
+//   'tube_well_install': 'tubeWellInstall',
+//   'wudu_place_install': 'wuduPlaceInstall',
+//   'dowry_responsibility': 'dowryResponsibility',
+//   'skill_development': 'skillDevelopment',
+//   'winter_clothes': 'winterClothes',
+//   'mosque_construction': 'mosqueConstruction',
+//   'orphanage_construction': 'orphanageConstruction',
+//   'zakat_fund': 'zakatFund',
+//   'general_fund': 'generalFund',
+//   'iftar_program': 'iftarProgram',
+//   'qurbani_program': 'qurbaniProgram',
+//   'emergency_relief': 'emergencyRelief',
+//   'shelterless_housing': 'shelterlessHousing',
+// };
 
-export default function DonationForm({ purposes = defaultPurposes }: DonationFormProps): JSX.Element {
+export default function DonationForm({ purposes }: DonationFormProps): JSX.Element {
+  const { t } = useI18n();
+  
+  const defaultPurposes: ReadonlyArray<SelectOption> = [
+    { value: '', label: t('selectFundPlaceholder') },
+    { value: 'orphan_responsibility', label: t('orphanResponsibility') },
+    { value: 'deprived_students', label: t('deprivedStudents') },
+    { value: 'widow_responsibility', label: t('widowResponsibility') },
+    { value: 'rehabilitation_poor_family', label: t('rehabilitationPoorFamily') },
+    { value: 'tube_well_install', label: t('tubeWellInstall') },
+    { value: 'wudu_place_install', label: t('wuduPlaceInstall') },
+    { value: 'dowry_responsibility', label: t('dowryResponsibility') },
+    { value: 'skill_development', label: t('skillDevelopment') },
+    { value: 'winter_clothes', label: t('winterClothes') },
+    { value: 'mosque_construction', label: t('mosqueConstruction') },
+    { value: 'orphanage_construction', label: t('orphanageConstruction') },
+    { value: 'zakat_fund', label: t('zakatFund') },
+    { value: 'general_fund', label: t('generalFund') },
+    { value: 'iftar_program', label: t('iftarProgram') },
+    { value: 'qurbani_program', label: t('qurbaniProgram') },
+    { value: 'emergency_relief', label: t('emergencyRelief') },
+    { value: 'shelterless_housing', label: t('shelterlessHousing') }
+  ];
+  
+  const displayPurposes = purposes || defaultPurposes;
   const [purpose, setPurpose] = React.useState<string>('');
   const [contact, setContact] = React.useState<string>('');
   const [amount, setAmount] = React.useState<string>('');
@@ -55,32 +79,63 @@ export default function DonationForm({ purposes = defaultPurposes }: DonationFor
     };
   }, [isOpen]);
 
-  const selectedLabel = purposes.find((opt) => opt.value === purpose)?.label || 'নির্বাচন করুন';
+  const selectedLabel = displayPurposes.find((opt) => opt.value === purpose)?.label || t('selectFundPlaceholder');
 
-  const onSubmit = (e: React.FormEvent) => {
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitted(true);
     if (!purpose || !contact || !amount) return;
-    // Placeholder submit handling - replace with API later
-    // console.log({ purpose, contact, amount: Number(amount) });
-    alert('ধন্যবাদ! আপনার অনুদানের তথ্য গৃহীত হয়েছে।');
+
+    const amountNumber = parseFloat(amount.replace(/,/g, ''));
+    if (isNaN(amountNumber) || amountNumber <= 0) {
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const { initiateSslCommerzPayment } = await import('@/services/payments');
+      const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
+      const response = await initiateSslCommerzPayment({
+        purpose,
+        contact,
+        amount: amountNumber,
+        successUrl: `${baseUrl}/payment/success`,
+        failUrl: `${baseUrl}/payment/unsucccesfull`,
+        cancelUrl: `${baseUrl}/payment/unsucccesfull`,
+      });
+
+      if (response.success && response.gatewayUrl) {
+        // Redirect user to SSLCommerz payment page
+        window.location.href = response.gatewayUrl;
+        return;
+      }
+      // If gateway URL not returned, consider it a failure
+      window.location.href = '/payment/unsucccesfull';
+    } catch (error) {
+      console.error('Error submitting donation:', error);
+      window.location.href = '/payment/unsucccesfull';
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const purposeError = submitted && !purpose ? 'তহবিল নির্বাচন করুন' : null;
-  const contactError = submitted && !contact ? 'মোবাইল অথবা ইমেইল দিন' : null;
-  const amountError = submitted && !amount ? 'সংখ্যা লিখুন' : null;
+  const purposeError = submitted && !purpose ? t('selectFundError') : null;
+  const contactError = submitted && !contact ? t('contactError') : null;
+  const amountError = submitted && !amount ? t('amountError') : null;
 
   return (
-    <div className="relative rounded-3xl border border-brand/30 bg-brand/10 backdrop-blur-xl p-6 sm:p-8 lg:p-10 shadow-2xl overflow-hidden">
+    <div className="relative rounded-3xl border border-brand/30 bg-brand/50 backdrop-blur-3xl p-6 sm:p-8 lg:p-10 shadow-2xl overflow-visible w-[300px] md: w-[500px] lg:w-[1100px] ">
       {/* Decorative gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-brand/15 via-brand/10 to-brand/5 opacity-50"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-brand/15 via-brand/10 to-brand/5 opacity-50 rounded-3xl "></div>
       
       {/* Glass morphism effect */}
-      <div className="absolute inset-0 bg-gradient-to-r from-brand/12 via-brand/8 to-brand/12 backdrop-blur-2xl"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-brand/12 via-brand/8 to-brand/12 backdrop-blur-2xl rounded-3xl "></div>
       
       {/* Subtle pattern overlay */}
-      <div className="pointer-events-none absolute inset-0 opacity-8" aria-hidden>
-        <svg viewBox="0 0 400 200" className="h-full w-full fill-none stroke-brand/30">
+      <div className="pointer-events-none absolute inset-0 opacity-8 w-full h-full overflow-hidden rounded-3xl " aria-hidden>
+        <svg viewBox="0 0 90% 90%" className="h-full w-full fill-none stroke-brand/30 rounded-3xl ">
           <defs>
             <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
               <path d="M0 20h40M20 0v40" />
@@ -90,13 +145,13 @@ export default function DonationForm({ purposes = defaultPurposes }: DonationFor
         </svg>
       </div>
 
-      <h2 className="relative z-10 text-center text-xl sm:text-2xl font-extrabold text-white mb-6 drop-shadow-lg">
-        আপনার অনুদান প্রদান করুন
+      <h2 className="relative z-10 text-center text-2xl sm:text-4xl font-bold text-white mb-6 drop-shadow-lg">
+        {t('makeDonation')}
       </h2>
-      <form onSubmit={onSubmit} className="relative z-10 space-y-4">
-        <div>
-          <label htmlFor="purpose" className="block text-sm font-medium mb-2 text-white drop-shadow-md">
-            তহবিল <span className="text-red-300">*</span>
+      <form onSubmit={onSubmit} className="relative z-10 space-y-4 flex gap-5 flex-col lg:flex-row lg:items-center ">
+        <div className='mt-4 flex-1'>
+          <label htmlFor="purpose" className="block text-[18px] font-medium mb-2 text-white drop-shadow-md">
+            {t('selectFund')} <span className="text-red-300">{t('required')}</span>
           </label>
           <div className="relative" ref={dropdownRef}>
             {/* Dropdown Header */}
@@ -118,10 +173,10 @@ export default function DonationForm({ purposes = defaultPurposes }: DonationFor
 
             {/* Dropdown List */}
             {isOpen && (
-              <div className="absolute z-50 w-full mt-1 bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden">
+              <div className="absolute z-50 w-full mt-1 bg-white rounded-lg shadow-xl border border-gray-200">
                 {/* Scrollable Options List */}
-                <div className="overflow-y-auto custom-scrollbar rounded-t-lg" style={{ maxHeight: '420px' }}>
-                  {purposes.map((opt) => (
+                <div className="overflow-y-auto custom-scrollbar rounded-t-lg" style={{ maxHeight: '300px' }}>
+                  {displayPurposes.map((opt) => (
                     <button
                       key={opt.value}
                       type="button"
@@ -149,15 +204,15 @@ export default function DonationForm({ purposes = defaultPurposes }: DonationFor
           {purposeError && <p className="mt-1 text-xs text-red-300 drop-shadow-md">{purposeError}</p>}
         </div>
         
-        <div className="flex flex-col sm:flex-row gap-4">
+        {/* <div className="flex flex-col sm:flex-row gap-4"> */}
           <div className="flex-1">
-            <label htmlFor="contact" className="block text-sm font-medium mb-2 text-white drop-shadow-md">
-              মোবাইল / ইমেইল <span className="text-red-300">*</span>
+            <label htmlFor="contact" className="block text-[18px] font-medium mb-2 text-white drop-shadow-md">
+              {t('contactLabel')} <span className="text-red-300">{t('required')}</span>
             </label>
             <input
               id="contact"
               type="text"
-              placeholder="মোবাইল নম্বর / ইমেইল লিখুন"
+              placeholder={t('contactPlaceholder')}
               value={contact}
               onChange={(e) => setContact(e.target.value)}
               className="w-full rounded-lg border border-white/30 bg-white/20 backdrop-blur-md px-4 py-3 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-white/40 transition-all"
@@ -166,30 +221,34 @@ export default function DonationForm({ purposes = defaultPurposes }: DonationFor
           </div>
           
           <div className="flex-1">
-            <label htmlFor="amount" className="block text-sm font-medium mb-2 text-white drop-shadow-md">
-              পরিমাণ <span className="text-red-300">*</span>
+            <label htmlFor="amount" className="block text-[18px] font-medium mb-2 text-white drop-shadow-md">
+              {t('amount')} <span className="text-red-300">{t('required')}</span>
             </label>
             <input
               id="amount"
               type="text"
               inputMode="numeric"
-              placeholder="৳ সংখ্যা লিখুন"
+              placeholder={t('amountPlaceholder')}
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               className="w-full rounded-lg border border-white/30 bg-white/20 backdrop-blur-md px-4 py-3 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-white/40 transition-all"
             />
             {amountError && <p className="mt-1 text-xs text-red-300 drop-shadow-md">{amountError}</p>}
           </div>
-        </div>
+        {/* </div> */}
         
         <div className="pt-2">
-          <Button type="submit" className="w-full px-4 py-3 text-base font-semibold bg-white text-black hover:bg-white/90 transition-all shadow-lg">
-            দান করুন
+          <Button 
+            type="submit" 
+            disabled={isSubmitting}
+            className="w-full mt-4 px-4 py-6 text-xl font-semibold bg-white text-black hover:bg-white/90 transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isSubmitting ? (t('submitting') || 'Submitting...') : t('donate')}
           </Button>
         </div>
       </form>
-      <p className="relative z-0 mt-4 text-center text-xs sm:text-sm text-white/90 drop-shadow-md">
-        দারুল কুরআন ফাউন্ডেশনে দান করতে করেই আপনি | <a className="underline hover:text-white transition-colors" href="#details">বিস্তারিত জানতে ক্লিক করুন</a>
+      <p className="relative z-0 mt-4 text-center text-sm sm:text-md text-white/90 drop-shadow-md">
+        {t('donationNote')} | <a className="underline hover:text-white transition-colors" href="#details">{t('clickForDetails')}</a>
       </p>
     </div>
   );
