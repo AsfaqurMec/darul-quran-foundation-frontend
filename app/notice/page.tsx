@@ -4,9 +4,10 @@ import NoticeCard from '../../components/notice/NoticeCard';
 import PageHero from '../../components/common/PageHero';
 import { getAllNotices } from '../../services/notices';
 
-export default async function NoticePage({ searchParams }: { searchParams?: { page?: string } }): Promise<JSX.Element> {
+export default async function NoticePage({ searchParams }: { searchParams?: Promise<{ page?: string }> }): Promise<JSX.Element> {
   const perPage = 10;
-  const current = Math.max(1, Number(searchParams?.page || '1'));
+  const params = await searchParams;
+  const current = Math.max(1, Number(params?.page || '1'));
 
   // Fetch from backend
   const { data: allNotices = [] } = await getAllNotices();

@@ -5,9 +5,10 @@ import PageHero from '../../components/common/PageHero';
 import { getAllDonationCategories, type DonationCategory } from '../../services/donationCategories';
 import { getImageUrl } from '../../lib/imageUtils';
 
-export default async function DonationCategoriesPage({ searchParams }: { searchParams?: { page?: string } }): Promise<JSX.Element> {
+export default async function DonationCategoriesPage({ searchParams }: { searchParams?: Promise<{ page?: string }> }): Promise<JSX.Element> {
   const perPage = 9;
-  const current = Math.max(1, Number(searchParams?.page || '1'));
+  const params = await searchParams;
+  const current = Math.max(1, Number(params?.page || '1'));
 
   const res = await getAllDonationCategories();
   const list: DonationCategory[] = Array.isArray(res?.data) ? (res.data as DonationCategory[]) : [];

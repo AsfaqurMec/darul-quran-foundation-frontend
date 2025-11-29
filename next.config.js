@@ -29,9 +29,8 @@ const SECURITY_HEADERS = [
 
 const nextConfig = {
   reactStrictMode: true,
-  experimental: {
-    typedRoutes: true,
-  },
+  typedRoutes: true,
+  outputFileTracingRoot: process.cwd(),
   async rewrites() {
     const apiBaseUrl =
       process.env.NEXT_PUBLIC_BASE_API || "http://localhost:5000/api/v1";
