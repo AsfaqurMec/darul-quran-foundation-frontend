@@ -1,7 +1,7 @@
 'use client';
 
 import PageHero from './PageHero';
-import { useI18n } from '@/components/i18n/LanguageProvider';
+import { useI18n } from '../../components/i18n/LanguageProvider';
 
 type Props = {
   translationKey: Parameters<ReturnType<typeof useI18n>['t']>[0];

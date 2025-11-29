@@ -1,8 +1,8 @@
 'use client';
 
-import Container from '@/components/layout/Container';
-import Tabs, { TabItem } from '@/components/ui/Tabs';
-import { useI18n } from '@/components/i18n/LanguageProvider';
+import Container from '../../components/layout/Container';
+import Tabs, { TabItem } from '../../components/ui/Tabs';
+import { useI18n } from '../../components/i18n/LanguageProvider';
 
 function List({ items }: { items: ReadonlyArray<string> }): JSX.Element {
   return (

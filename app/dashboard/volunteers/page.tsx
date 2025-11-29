@@ -1,16 +1,17 @@
 'use client';
 
 import { useEffect, useState, useCallback, Fragment } from 'react';
-import Button from '@/components/ui/button';
+import Button from '../../../components/ui/button';
 import { 
 	getVolunteerApplications, 
 	updateVolunteerApplicationStatus, 
 	deleteVolunteerApplication,
 	VolunteerApplication 
-} from '@/services/volunteers';
+} from '../../../services/volunteers';
 import { toast } from 'sonner';
-import { getImageUrl } from '@/lib/imageUtils';
-import { useI18n } from '@/components/i18n/LanguageProvider';
+import { getImageUrl } from '../../../lib/imageUtils';
+import { useI18n } from '../../../components/i18n/LanguageProvider';
+import { useConfirmDialog } from '../../../components/common/ConfirmDialogProvider';
 
 interface PaginationInfo {
 	currentPage: number;
@@ -32,6 +33,7 @@ interface DetailSection {
 
 export default function VolunteersPage(): JSX.Element {
 	const { t, lang } = useI18n();
+	const confirmDialog = useConfirmDialog();
 	const locale = lang === 'bn' ? 'bn-BD' : lang === 'ar' ? 'ar-SA' : 'en-US';
 	const [applications, setApplications] = useState<VolunteerApplication[]>([]);
 	const [loading, setLoading] = useState(false);
@@ -98,7 +100,14 @@ export default function VolunteersPage(): JSX.Element {
 	};
 
 	const handleDelete = async (id: string) => {
-		if (!confirm(t('deleteVolunteerConfirm'))) return;
+		const confirmed = await confirmDialog({
+			title: t('delete'),
+			description: t('deleteVolunteerConfirm'),
+			confirmText: t('delete'),
+			cancelText: t('cancel'),
+			confirmVariant: 'danger',
+		});
+		if (!confirmed) return;
 
 		try {
 			const response = await deleteVolunteerApplication(id);
@@ -164,7 +173,7 @@ export default function VolunteersPage(): JSX.Element {
 					{ label: t('fatherName'), value: application.fatherName },
 					{ label: t('email'), value: application.email },
 					{ label: t('mobile'), value: `${application.mobileCountryCode} ${application.mobileNumber}` },
-					{ label: t('status'), value: getStatusLabel(application.status) },
+					{ label: t('status'), value: application.status },
 					{ label: t('appliedAt'), value: formatDate(application.createdAt) },
 				],
 			},
@@ -249,7 +258,7 @@ export default function VolunteersPage(): JSX.Element {
 											/>
 										</div>
 										<a
-											href={`${process.env.NEXT_PUBLIC_API_BASE_URL}${application.profileImage}`}
+											href={`${process.env.API_BASE_URL}${application.profileImage}`}
 											target="_blank"
 											rel="noreferrer"
 											className="text-sm font-medium text-emerald-600 hover:underline"
@@ -381,13 +390,41 @@ export default function VolunteersPage(): JSX.Element {
 														</select>
 													</td>
 													<td className="py-3 pr-4">
-														<Button
-															variant={isRowExpanded(application._id) ? 'primary' : 'secondary'}
-															size="sm"
+														<button
 															onClick={() => toggleRowExpansion(application._id)}
+															className="flex items-center justify-center p-2 rounded-lg hover:bg-gray-100 transition-colors"
+															aria-label={isRowExpanded(application._id) ? 'Hide details' : 'Show details'}
 														>
-															{isRowExpanded(application._id) ? 'Hide' : 'Expand'}
-														</Button>
+															{isRowExpanded(application._id) ? (
+																<svg
+																	className="w-5 h-5 text-emerald-600"
+																	fill="none"
+																	stroke="currentColor"
+																	viewBox="0 0 24 24"
+																>
+																	<path
+																		strokeLinecap="round"
+																		strokeLinejoin="round"
+																		strokeWidth={2}
+																		d="M5 15l7-7 7 7"
+																	/>
+																</svg>
+															) : (
+																<svg
+																	className="w-5 h-5 text-gray-600"
+																	fill="none"
+																	stroke="currentColor"
+																	viewBox="0 0 24 24"
+																>
+																	<path
+																		strokeLinecap="round"
+																		strokeLinejoin="round"
+																		strokeWidth={2}
+																		d="M19 9l-7 7-7-7"
+																	/>
+																</svg>
+															)}
+														</button>
 													</td>
 													<td className="py-3 pr-4">
 														<Button

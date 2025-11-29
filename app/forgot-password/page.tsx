@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import Container from '@/components/layout/Container';
-import { app, api } from '@/config';
+import Container from '../../components/layout/Container';
+import { app, api } from '../../config';
 
 export default function ForgotPasswordPage(): JSX.Element {
 	const [email, setEmail] = useState('');
@@ -17,7 +17,7 @@ export default function ForgotPasswordPage(): JSX.Element {
 		setError(null);
 		try {
 			const appUrl = app.url;
-            console.log(appUrl);
+           // console.log(appUrl);
 			await fetch(`${api.baseUrl}/auth/forgot-password`, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },

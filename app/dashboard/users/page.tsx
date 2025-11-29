@@ -1,10 +1,11 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import Button from '@/components/ui/button';
-import { getAllUsersPaginated, deleteUser, updateUser, User } from '@/services/Users';
+import Button from '../../../components/ui/button';
+import { getAllUsersPaginated, deleteUser, updateUser, User } from '../../../services/Users';
 import { toast } from 'sonner';
-import { useI18n } from '@/components/i18n/LanguageProvider';
+import { useI18n } from '../../../components/i18n/LanguageProvider';
+import { useConfirmDialog } from '../../../components/common/ConfirmDialogProvider';
 
 interface PaginationInfo {
   currentPage: number;
@@ -15,6 +16,7 @@ interface PaginationInfo {
 
 export default function UsersPage(): JSX.Element {
   const { t, lang } = useI18n();
+  const confirmDialog = useConfirmDialog();
   const locale = lang === 'bn' ? 'bn-BD' : lang === 'ar' ? 'ar-SA' : 'en-US';
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
@@ -67,7 +69,14 @@ export default function UsersPage(): JSX.Element {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm(t('deleteUserConfirm'))) return;
+    const confirmed = await confirmDialog({
+      title: t('delete'),
+      description: t('deleteUserConfirm'),
+      confirmText: t('delete'),
+      cancelText: t('cancel'),
+      confirmVariant: 'danger',
+    });
+    if (!confirmed) return;
 
     try {
       const response = await deleteUser(id);

@@ -1,4 +1,4 @@
-import { ActivityItem } from '@/components/activity/ActivityCard';
+import { ActivityItem } from '../components/activity/ActivityCard';
 
 // Base activities data
 const baseActivities: ActivityItem[] = [
@@ -30,7 +30,7 @@ const baseActivities: ActivityItem[] = [
     id: 'dev',
     image: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=1600&auto=format&fit=crop',
     tag: 'নিয়মিত কার্যক্রম',
-    title: 'আস-সুন্নাহ স্কিল ডেভেলপমেন্ট…',
+    title: 'দারুল কুরআন স্কিল ডেভেলপমেন্ট…',
     description: 'দক্ষতা উন্নয়ন, কর্মমুখী প্রশিক্ষণ এবং জ্ঞান বৃদ্ধি।',
     href: '/activities/dev',
   },

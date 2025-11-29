@@ -1,5 +1,5 @@
-import { api } from '@/config';
-import { getClientToken } from '@/lib/tokenUtils';
+import { api } from '../../config';
+import { getClientToken } from '../../lib/tokenUtils';
 
 export async function getMyDonations(): Promise<{
 	success: boolean;
@@ -38,10 +38,13 @@ import apiClient from '@/lib/apiClient';
 
 export interface Donation {
   id?: string;
+  tran_id?: string;
   purpose: string;
   contact: string;
   amount: number;
   status?: 'pending' | 'completed' | 'failed';
+  transactionId?: string;
+  gatewayData?: Record<string, unknown>;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -50,19 +53,38 @@ export type DonationInput = {
   purpose: string;
   contact: string;
   amount: number;
+  transactionId?: string;
+  gatewayData?: Record<string, unknown>;
 };
 
 export interface DonationResponse<T = Donation | Donation[]> {
   success: boolean;
   data?: T;
   message?: string;
+  pagination?: {
+    page: number;
+    totalPages: number;
+    total: number;
+    limit: number;
+  };
+  totalDonationAmount?: number;
 }
 
-const unwrap = <T,>(response: { success?: boolean; data?: T; message?: string } & T) => {
+export interface GetAllDonationsParams {
+  page?: number;
+  limit?: number;
+  tran_id?: string;
+  purpose?: string;
+  contact?: string;
+  startDate?: string;
+  endDate?: string;
+}
+
+const unwrap = <T,>(response: { success?: boolean; data?: T; message?: string; pagination?: any; totalDonationAmount?: number } & T) => {
   if ('success' in response) {
-    return response as DonationResponse<T>;
+    return response as unknown as DonationResponse<T>;
   }
-  return { success: true, data: response } satisfies DonationResponse<T>;
+  return { success: true, data: response, pagination: { page: 1, totalPages: 1, total: 0, limit: 10 }, totalDonationAmount: 0 } satisfies DonationResponse<T>;
 };
 
 export const createDonation = async (donationData: DonationInput): Promise<DonationResponse<Donation>> => {
@@ -70,8 +92,21 @@ export const createDonation = async (donationData: DonationInput): Promise<Donat
   return unwrap<Donation>(data);
 };
 
-export const getAllDonations = async (): Promise<DonationResponse<Donation[]>> => {
-  const { data } = await apiClient.get('/donations');
+export const getAllDonations = async (params?: GetAllDonationsParams): Promise<DonationResponse<Donation[]>> => {
+  const queryParams = new URLSearchParams();
+  
+  if (params?.page) queryParams.append('page', params.page.toString());
+  if (params?.limit) queryParams.append('limit', params.limit.toString());
+  if (params?.tran_id) queryParams.append('tran_id', params.tran_id);
+  if (params?.purpose) queryParams.append('purpose', params.purpose);
+  if (params?.contact) queryParams.append('contact', params.contact);
+  if (params?.startDate) queryParams.append('startDate', params.startDate);
+  if (params?.endDate) queryParams.append('endDate', params.endDate);
+  
+  const queryString = queryParams.toString();
+  const url = queryString ? `/donations?${queryString}` : '/donations';
+  
+  const { data } = await apiClient.get(url);
   return unwrap<Donation[]>(data);
 };
 

@@ -1,11 +1,15 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
-import Button from '@/components/ui/button';
-import MediaUploader from '@/components/common/MediaUploader';
-import { Activity, ActivityInput, createActivity, deleteActivity, getAllActivities, updateActivity } from '@/services/activities';
+import { useCallback, useEffect, useState } from 'react';
+import Button from '../../../components/ui/button';
+import MediaUploader from '../../../components/common/MediaUploader';
+import PaginationBar from '../../../components/admin/PaginationBar';
+import { Activity, ActivityInput, getAllActivities } from '../../../services/activities';
+import { createActivity, deleteActivity, updateActivity } from '../../../services/activities/mutations';
 import { toast } from 'sonner';
-import { useI18n } from '@/components/i18n/LanguageProvider';
+import { useI18n } from '../../../components/i18n/LanguageProvider';
+import { useConfirmDialog } from '../../../components/common/ConfirmDialogProvider';
+import { PaginationInfo } from '../../../types/pagination';
 
 const initialForm: ActivityInput = {
   title: '',
@@ -26,33 +30,58 @@ const normalizeSingle = (value: MediaValue | MediaValue[] | '' | undefined): Med
 
 export default function ActivitiesPage(): JSX.Element {
   const { t } = useI18n();
+  const confirmDialog = useConfirmDialog();
   const [activities, setActivities] = useState<Activity[]>([]);
   const [formData, setFormData] = useState<ActivityInput>(initialForm);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pagination, setPagination] = useState<PaginationInfo>({
+    currentPage: 1,
+    totalPages: 1,
+    totalItems: 0,
+    itemsPerPage: 10,
+  });
+  const [pageSize, setPageSize] = useState(10);
 
-  const loadActivities = useMemo(
-    () => async () => {
-      setLoading(true);
-      try {
-        const response = await getAllActivities();
-        if (response.success && response.data) {
-          const data = Array.isArray(response.data) ? response.data : [response.data];
-          setActivities(data);
+  const loadActivities = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await getAllActivities({
+        page: currentPage,
+        limit: pageSize,
+      });
+      if (response.success && response.data) {
+        const data = Array.isArray(response.data) ? response.data : [response.data];
+        setActivities(data);
+        if (response.pagination) {
+          setPagination(response.pagination);
+          if (response.pagination.itemsPerPage) {
+            setPageSize(response.pagination.itemsPerPage);
+          }
+          if (response.pagination.currentPage) {
+            setCurrentPage(response.pagination.currentPage);
+          }
         } else {
-          toast.error(response.message ?? t('operationFailed'));
+          setPagination({
+            currentPage,
+            totalPages: Math.max(1, Math.ceil(Math.max(data.length, 1) / pageSize)),
+            totalItems: data.length,
+            itemsPerPage: pageSize,
+          });
         }
-      } catch (error) {
-        const message = error instanceof Error ? error.message : t('operationFailed');
-        toast.error(message);
-      } finally {
-        setLoading(false);
+      } else {
+        toast.error(response.message ?? t('operationFailed'));
       }
-    },
-    [t]
-  );
+    } catch (error) {
+      const message = error instanceof Error ? error.message : t('operationFailed');
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
+  }, [currentPage, pageSize, t]);
 
   useEffect(() => {
     void loadActivities();
@@ -98,7 +127,14 @@ export default function ActivitiesPage(): JSX.Element {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm(t('deleteActivityConfirm'))) return;
+    const confirmed = await confirmDialog({
+      title: t('delete'),
+      description: t('deleteActivityConfirm'),
+      confirmText: t('delete'),
+      cancelText: t('cancel'),
+      confirmVariant: 'danger',
+    });
+    if (!confirmed) return;
     setSubmitting(true);
     try {
       await deleteActivity(id);
@@ -239,6 +275,17 @@ export default function ActivitiesPage(): JSX.Element {
           </div>
         )}
       </div>
+      <PaginationBar
+        entityLabel={t('activities')}
+        pagination={pagination}
+        currentPage={currentPage}
+        onPageChange={(page) => setCurrentPage(page)}
+        onPageSizeChange={(size) => {
+          setCurrentPage(1);
+          setPageSize(size);
+          setPagination((prev) => ({ ...prev, itemsPerPage: size }));
+        }}
+      />
     </div>
   );
 }

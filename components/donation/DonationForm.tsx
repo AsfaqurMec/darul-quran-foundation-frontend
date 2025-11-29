@@ -1,10 +1,16 @@
 'use client';
 
 import * as React from 'react';
-import Input from '@/components/ui/input';
-import Select, { SelectOption } from '@/components/ui/Select';
-import Button from '@/components/ui/button';
-import { useI18n } from '@/components/i18n/LanguageProvider';
+import Input from '../../components/ui/input';
+import Select, { SelectOption } from '../../components/ui/Select';
+import Button from '../../components/ui/button';
+import { useI18n } from '../../components/i18n/LanguageProvider';
+import {
+  DonationCachePayload,
+  SSL_COMMERZ_REDIRECT_URL,
+  storeDonationPayload,
+} from '../../lib/donationPayment';
+import config from '../../config';
 
 export type DonationFormProps = {
   purposes?: ReadonlyArray<SelectOption>;
@@ -83,7 +89,19 @@ export default function DonationForm({ purposes }: DonationFormProps): JSX.Eleme
 
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
-  const onSubmit = async (e: React.FormEvent) => {
+  const buildGatewayUrl = React.useCallback(
+    (amountNumber: number, purposeValue: string) => {
+      const paymentUrl = new URL(SSL_COMMERZ_REDIRECT_URL);
+      paymentUrl.searchParams.set('amount', amountNumber.toFixed(2));
+      if (purposeValue) {
+        paymentUrl.searchParams.set('purpose', purposeValue);
+      }
+      return paymentUrl.toString();
+    },
+    [],
+  );
+
+  const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitted(true);
     if (!purpose || !contact || !amount) return;
@@ -95,27 +113,28 @@ export default function DonationForm({ purposes }: DonationFormProps): JSX.Eleme
 
     setIsSubmitting(true);
     try {
-      const { initiateSslCommerzPayment } = await import('@/services/payments');
-      const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
-      const response = await initiateSslCommerzPayment({
+      const payload: DonationCachePayload = {
         purpose,
         contact,
         amount: amountNumber,
-        successUrl: `${baseUrl}/payment/success`,
-        failUrl: `${baseUrl}/payment/unsucccesfull`,
-        cancelUrl: `${baseUrl}/payment/unsucccesfull`,
-      });
+        purposeLabel: selectedLabel,
+      };
+      // Store payload before redirecting to payment gateway
+      storeDonationPayload(payload);
+      fetch(`${config.api.baseUrl}/donations`,{
+        method: "POST",
+        headers: {"content-type": "application/json"},
+        body: JSON.stringify(payload)
+      })
+      .then((res) => res.json())
+      .then((result) => {
+        console.log(result);
+        window.location.replace(result.data.url);
+      })
 
-      if (response.success && response.gatewayUrl) {
-        // Redirect user to SSLCommerz payment page
-        window.location.href = response.gatewayUrl;
-        return;
-      }
-      // If gateway URL not returned, consider it a failure
-      window.location.href = '/payment/unsucccesfull';
     } catch (error) {
-      console.error('Error submitting donation:', error);
-      window.location.href = '/payment/unsucccesfull';
+      console.error('Error preparing payment redirect:', error);
+      window.location.href = '/payment/fail';
     } finally {
       setIsSubmitting(false);
     }

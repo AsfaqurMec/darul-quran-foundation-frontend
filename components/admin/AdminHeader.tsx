@@ -1,10 +1,11 @@
 'use client';
 
-import Button from '@/components/ui/button';
-import { removeClientToken } from '@/lib/tokenUtils';
+import Button from '../../components/ui/button';
+import { removeClientToken } from '../../lib/tokenUtils';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
-import { useI18n } from '@/components/i18n/LanguageProvider';
+import { useI18n } from '../../components/i18n/LanguageProvider';
+import TokenMonitor from '../../components/auth/TokenMonitor';
 
 type AdminHeaderProps = {
   user: {
@@ -51,8 +52,10 @@ export default function AdminHeader({ user }: AdminHeaderProps): JSX.Element {
   };
 
   return (
-    <header className="sticky top-0 z-30 bg-white border-b">
-      <div className="h-14 px-4 md:px-6 flex items-center justify-between">
+    <>
+      <TokenMonitor />
+      <header className="sticky top-0 z-30 bg-white border-b">
+        <div className="h-14 px-4 md:px-6 flex items-center justify-between">
         <div className="font-semibold">{t('adminDashboard')}</div>
         <div className="flex items-center gap-3">
           {/* <div className="relative" ref={langDropdownRef}>
@@ -99,18 +102,19 @@ export default function AdminHeader({ user }: AdminHeaderProps): JSX.Element {
             </button>
             {open && (
               <div className="absolute right-0 mt-2 w-48 rounded-md border bg-white shadow-lg z-50">
-                <a href="/admin/profile" className="block px-3 py-2 hover:bg-gray-50">{t('updateProfile')}</a>
-                <div className="px-3 py-2">
+                <a href="/dashboard/profile" className="block px-3 py-2 hover:bg-gray-50">{t('updateProfile')}</a>
+                {/* <div className="px-3 py-2">
                   <Button type="button" variant="secondary" className="w-full" onClick={handleLogout}>
                     {t('logout')}
                   </Button>
-                </div>
+                </div> */}
               </div>
             )}
           </div>
         </div>
       </div>
     </header>
+    </>
   );
 }
 

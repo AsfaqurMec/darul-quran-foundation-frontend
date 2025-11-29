@@ -1,16 +1,18 @@
 'use client';
 
 import { useEffect, useState, useCallback, Fragment } from 'react';
-import Button from '@/components/ui/button';
-import { useI18n, useTranslateEnum } from '@/components/i18n/LanguageProvider';
+import Button from '../../../components/ui/button';
+import { useI18n, useTranslateEnum } from '../../../components/i18n/LanguageProvider';
 import {
 	getMemberApplications,
 	updateMemberApplicationStatus,
+	updateMemberApplicationPaymentStatus,
 	deleteMemberApplication,
 	MemberApplication
-} from '@/services/memberApplication';
+} from '../../../services/memberApplication';
 import { toast } from 'sonner';
-import { getImageUrl } from '@/lib/imageUtils';
+import { getImageUrl } from '../../../lib/imageUtils';
+import { useConfirmDialog } from '../../../components/common/ConfirmDialogProvider';
 
 interface PaginationInfo {
 	currentPage: number;
@@ -32,6 +34,7 @@ interface DetailSection {
 
 export default function MembersPage(): JSX.Element {
 	const { t, lang } = useI18n();
+	const confirmDialog = useConfirmDialog();
 	const translateEnum = useTranslateEnum();
 	const locale = lang === 'bn' ? 'bn-BD' : lang === 'ar' ? 'ar-SA' : 'en-US';
 	const [applications, setApplications] = useState<MemberApplication[]>([]);
@@ -102,8 +105,30 @@ export default function MembersPage(): JSX.Element {
 		}
 	};
 
+	const handlePaymentStatusChange = async (id: string, newPaymentStatus: 'pending' | 'completed' | 'pending_verification' | 'failed') => {
+		try {
+			const response = await updateMemberApplicationPaymentStatus(id, newPaymentStatus);
+			if (response.success) {
+				toast.success(t('memberPaymentStatusUpdateSuccess') || t('memberStatusUpdateSuccess'));
+				loadApplications();
+			} else {
+				toast.error(response.message || t('memberPaymentStatusUpdateFailure') || t('memberStatusUpdateFailure'));
+			}
+		} catch (error) {
+			const message = error instanceof Error ? error.message : '';
+			toast.error(message || t('memberPaymentStatusUpdateFailure') || t('memberStatusUpdateFailure'));
+		}
+	};
+
 	const handleDelete = async (id: string) => {
-		if (!confirm(t('memberDeleteConfirm'))) return;
+		const confirmed = await confirmDialog({
+			title: t('delete'),
+			description: t('memberDeleteConfirm'),
+			confirmText: t('delete'),
+			cancelText: t('cancel'),
+			confirmVariant: 'danger',
+		});
+		if (!confirmed) return;
 
 		try {
 			const response = await deleteMemberApplication(id);
@@ -213,7 +238,7 @@ export default function MembersPage(): JSX.Element {
 					{ label: t('applicationStatus'), value: getApplicationStatusLabel(application.applicationStatus) },
 					{ label: t('paymentMethod'), value: getPaymentMethodLabel(application.paymentMethod) },
 					{ label: t('paymentStatus'), value: getPaymentStatusLabel(application.paymentStatus) },
-					{ label: t('transactionId'), value: application.transactionId },
+					{ label: t('transactionId'), value: application.transactionId || application.tran_id },
 					{ label: t('appliedAt'), value: formatDate(application.createdAt) },
 					{ label: t('lastUpdated'), value: formatDate(application.updatedAt) },
 				],
@@ -374,6 +399,7 @@ export default function MembersPage(): JSX.Element {
 										<th className="py-3 pr-4">{t('memberTablePaymentStatus')}</th>
 										<th className="py-3 pr-4">{t('memberTableStatus')}</th>
 										<th className="py-3 pr-4">{t('memberTableAppliedDate')}</th>
+										<th className="py-3 pr-4">{t('memberTablePaymentStatusActions')}</th>
 										<th className="py-3 pr-4">{t('memberTableStatusActions')}</th>
 										<th className="py-3 pr-4">{t('memberTableDetails')}</th>
 										<th className="py-3 pr-4">{t('memberTableActions')}</th>
@@ -382,7 +408,7 @@ export default function MembersPage(): JSX.Element {
 								<tbody>
 									{applications.length === 0 ? (
 										<tr>
-											<td colSpan={10} className="py-8 text-center text-gray-500">
+											<td colSpan={11} className="py-8 text-center text-gray-500">
 												{t('noMemberApplications')}
 											</td>
 										</tr>
@@ -415,6 +441,18 @@ export default function MembersPage(): JSX.Element {
 													<td className="py-3 pr-4">{formatDate(application.createdAt)}</td>
 													<td className="py-3 pr-4">
 														<select
+															value={application.paymentStatus}
+															onChange={(e) => handlePaymentStatusChange(application._id, e.target.value as 'pending' | 'completed' | 'pending_verification' | 'failed')}
+															className="w-full rounded-lg border px-3 py-1.5 text-xs transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500"
+														>
+															<option value="pending">{t('pending')}</option>
+															<option value="completed">{t('completed')}</option>
+															<option value="pending_verification">{t('pendingVerification')}</option>
+															<option value="failed">{t('failed')}</option>
+														</select>
+													</td>
+													<td className="py-3 pr-4">
+														<select
 															value={application.applicationStatus}
 															onChange={(e) => handleStatusChange(application._id, e.target.value as 'pending_approval' | 'approved' | 'rejected')}
 															className="w-full rounded-lg border px-3 py-1.5 text-xs transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500"
@@ -425,13 +463,41 @@ export default function MembersPage(): JSX.Element {
 														</select>
 													</td>
 													<td className="py-3 pr-4">
-														<Button
-															variant={isRowExpanded(application._id) ? 'primary' : 'secondary'}
-															size="sm"
+														<button
 															onClick={() => toggleRowExpansion(application._id)}
+															className="flex items-center justify-center p-2 rounded-lg hover:bg-gray-100 transition-colors"
+															aria-label={isRowExpanded(application._id) ? t('hide') || 'Hide details' : t('expand') || 'Show details'}
 														>
-															{isRowExpanded(application._id) ? t('hide') : t('expand')}
-														</Button>
+															{isRowExpanded(application._id) ? (
+																<svg
+																	className="w-5 h-5 text-emerald-600"
+																	fill="none"
+																	stroke="currentColor"
+																	viewBox="0 0 24 24"
+																>
+																	<path
+																		strokeLinecap="round"
+																		strokeLinejoin="round"
+																		strokeWidth={2}
+																		d="M5 15l7-7 7 7"
+																	/>
+																</svg>
+															) : (
+																<svg
+																	className="w-5 h-5 text-gray-600"
+																	fill="none"
+																	stroke="currentColor"
+																	viewBox="0 0 24 24"
+																>
+																	<path
+																		strokeLinecap="round"
+																		strokeLinejoin="round"
+																		strokeWidth={2}
+																		d="M19 9l-7 7-7-7"
+																	/>
+																</svg>
+															)}
+														</button>
 													</td>
 													<td className="py-3 pr-4">
 														<Button
@@ -445,7 +511,7 @@ export default function MembersPage(): JSX.Element {
 												</tr>
 												{isRowExpanded(application._id) && (
 													<tr className="border-t bg-gray-50/70">
-														<td colSpan={10} className="p-4">
+														<td colSpan={11} className="p-4">
 															{renderDetailSections(application)}
 														</td>
 													</tr>

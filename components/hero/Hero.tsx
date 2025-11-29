@@ -69,12 +69,12 @@
 'use client';
 
 import * as React from 'react';
-import DonationForm from '@/components/donation/DonationForm';
-import Container from '@/components/layout/Container';
-import { useI18n } from '@/components/i18n/LanguageProvider';
-import { getAllActiveHeroImages, HeroImage } from '@/services/hero';
-import { getImageUrl } from '@/lib/imageUtils';
-import heroimage from '@/public/img/hero.png';
+import DonationForm from '../../components/donation/DonationForm';
+import Container from '../../components/layout/Container';
+import { useI18n } from '../../components/i18n/LanguageProvider';
+import { getAllActiveHeroImages, HeroImage } from '../../services/hero';
+import { getImageUrl } from '../../lib/imageUtils';
+import heroimage from '../../public/img/hero.png';
 
 export default function Hero(): JSX.Element {
   const { t } = useI18n();
@@ -138,10 +138,10 @@ export default function Hero(): JSX.Element {
   // Debug: Log images
   React.useEffect(() => {
     if (heroImages.length > 0) {
-      console.log('Hero images loaded:', heroImages);
+  //    console.log('Hero images loaded:', heroImages);
       heroImages.forEach((img, idx) => {
         const imageUrl = img.image ? getImageUrl(img.image) : heroimage.src;
-        console.log(`Image ${idx}:`, { image: img.image, url: imageUrl, isActive: img.isActive });
+    //    console.log(`Image ${idx}:`, { image: img.image, url: imageUrl, isActive: img.isActive });
       });
     }
   }, [heroImages]);
@@ -269,22 +269,22 @@ export default function Hero(): JSX.Element {
             <div className="relative h-full px-4 md:px-16 lg:px-32 py-12 md:py-32">
               {/* Left Side - Hero Content */}
               <div className="text-white">
-                <h1 className="text-4xl sm:text-4xl lg:text-6xl font-bold mb-4 tracking-tight leading-tight drop-shadow-lg">
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4 tracking-tight leading-tight drop-shadow-lg">
                   {heroImages[currentIndex]?.title || t('heroTitle')}
                 </h1>
-                <p className="text-lg sm:text-lg lg:text-xl text-gray-100 mb-2 leading-relaxed drop-shadow-md w-[90%] lg:w-2/3  ">
+                <p className="text-md sm:text-lg lg:text-xl text-gray-100 mb-2 leading-relaxed drop-shadow-md w-[90%] lg:w-2/3  ">
                   {heroImages[currentIndex]?.description || `${t('heroSubtitle')} ${t('regNoLabel')}: ${t('regNo')}`}
                 </p>
                 <div className="mt-6 flex flex-wrap items-center gap-4">
                   <a
                     href="/about"
-                    className="text-xl rounded-lg bg-brand hover:bg-brand-dark text-white px-6 py-3 font-semibold transition-all hover:shadow-lg"
+                    className="text-base md:text-xl rounded-lg bg-brand hover:bg-brand-dark text-white px-6 py-3 font-semibold transition-all hover:shadow-lg"
                   >
                     {t('learnMore')}
                   </a>
                   <a
                     href="/programs"
-                    className="text-xl rounded-lg bg-white/10 hover:bg-white/20 text-white px-6 py-3 font-semibold border border-white/30 transition-all"
+                    className="text-base md:text-xl rounded-lg bg-white/10 hover:bg-white/20 text-white px-6 py-3 font-semibold border border-white/30 transition-all"
                   >
                     {t('programs')}
                   </a>
@@ -296,7 +296,7 @@ export default function Hero(): JSX.Element {
             </div>
           </Container>
         </div>
-        <div className="absolute -bottom-[450px] md:-bottom-[500px] lg:-bottom-32 z-[5] w-full  px-4 flex justify-center">
+        <div className="absolute -bottom-[500px] md:-bottom-[500px] lg:-bottom-32 z-[5] w-full  px-4 flex justify-center">
           
             <DonationForm />
           

@@ -1,5 +1,5 @@
-import { DonationCategory, DonationCategoryInput } from '@/types/donationCategory';
-import { generateSlug } from '@/lib/validations/donationCategory';
+import { DonationCategory, DonationCategoryInput } from '../../types/donationCategory';
+import { generateSlug } from '../../lib/validations/donationCategory';
 
 // In-memory storage (replace with database in production)
 class DonationCategoryStorage {

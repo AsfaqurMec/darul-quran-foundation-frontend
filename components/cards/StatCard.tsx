@@ -1,4 +1,4 @@
-import CardBox from '@/components/CardBox';
+import CardBox from '../../components/CardBox';
 
 export default function StatCard({ title, value, hint }: { title: string; value: number | string; hint?: string }): JSX.Element {
   return (

@@ -1,12 +1,16 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
-import Button from '@/components/ui/button';
-import MediaUploader from '@/components/common/MediaUploader';
-import { DonationCategory, DonationCategoryInput, createDonationCategory, deleteDonationCategory, getAllDonationCategories, getDonationCategoryById, updateDonationCategory } from '@/services/donationCategories';
+import { useCallback, useEffect, useState } from 'react';
+import Button from '../../../components/ui/button';
+import MediaUploader from '../../../components/common/MediaUploader';
+import PaginationBar from '../../../components/admin/PaginationBar';
+import { DonationCategory, DonationCategoryInput, getAllDonationCategories, getDonationCategoryById } from '../../../services/donationCategories';
+import { createDonationCategory, deleteDonationCategory, updateDonationCategory } from '../../../services/donationCategories/mutations';
 import { toast } from 'sonner';
-import { getImageUrl } from '@/lib/imageUtils';
-import { useI18n } from '@/components/i18n/LanguageProvider';
+import { getImageUrl } from '../../../lib/imageUtils';
+import { useI18n } from '../../../components/i18n/LanguageProvider';
+import { useConfirmDialog } from '../../../components/common/ConfirmDialogProvider';
+import { PaginationInfo } from '../../../types/pagination';
 
 const initialForm: DonationCategoryInput = {
   title: '',
@@ -44,12 +48,21 @@ function generateSlug(title: string): string {
 
 export default function DonationCategoriesPage(): JSX.Element {
   const { t } = useI18n();
+  const confirmDialog = useConfirmDialog();
   const [categories, setCategories] = useState<DonationCategory[]>([]);
   const [formData, setFormData] = useState<DonationCategoryInput>(initialForm);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pagination, setPagination] = useState<PaginationInfo>({
+    currentPage: 1,
+    totalPages: 1,
+    totalItems: 0,
+    itemsPerPage: 10,
+  });
+  const [pageSize, setPageSize] = useState(10);
   
   // Checkbox states
   const [hasDaily, setHasDaily] = useState(false);
@@ -61,26 +74,43 @@ export default function DonationCategoriesPage(): JSX.Element {
   const [amountInput, setAmountInput] = useState<string>('');
   const [expenseInput, setExpenseInput] = useState<string>('');
 
-  const loadCategories = useMemo(
-    () => async () => {
-      setLoading(true);
-      try {
-        const response = await getAllDonationCategories();
-        if (response.success && response.data) {
-          const data = Array.isArray(response.data) ? response.data : [response.data];
-          setCategories(data);
+  const loadCategories = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await getAllDonationCategories({
+        page: currentPage,
+        limit: pageSize,
+      });
+      if (response.success && response.data) {
+        console.log("response", response);
+        const data = Array.isArray(response.data) ? response.data : [response.data];
+        setCategories(data);
+        if (response.pagination) {
+          setPagination(response.pagination);
+          if (response.pagination.itemsPerPage) {
+            setPageSize(response.pagination.itemsPerPage);
+          }
+          if (response.pagination.currentPage) {
+            setCurrentPage(response.pagination.currentPage);
+          }
         } else {
-          toast.error(response.message ?? t('operationFailed'));
+          setPagination({
+            currentPage,
+            totalPages: Math.max(1, Math.ceil(Math.max(data.length, 1) / pageSize)),
+            totalItems: data.length,
+            itemsPerPage: pageSize,
+          });
         }
-      } catch (error) {
-        const message = error instanceof Error ? error.message : t('operationFailed');
-        toast.error(message);
-      } finally {
-        setLoading(false);
+      } else {
+        toast.error(response.message ?? t('operationFailed'));
       }
-    },
-    [t]
-  );
+    } catch (error) {
+      const message = error instanceof Error ? error.message : t('operationFailed');
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
+  }, [currentPage, pageSize, t]);
 
   useEffect(() => {
     void loadCategories();
@@ -203,39 +233,58 @@ export default function DonationCategoriesPage(): JSX.Element {
       toast.error(t('categoryIdMissing'));
       return;
     }
-
+    console.log("category", category);
     try {
       // Fetch full category data
       const response = await getDonationCategoryById(category.id);
-      const fullCategory = response.success && response.data ? response.data : category;
+      console.log("response", response);
+      
+      // Use the fetched data if available, otherwise fall back to the category from list
+      // But prefer the fetched data as it should have all fields
+      const fullCategory = (response.success && response.data) ? response.data : category;
+      console.log("fullCategory", fullCategory);
 
       // Set checkbox states based on existing data
-      const hasDailyData = fullCategory.daily && fullCategory.daily.length > 0;
-      const hasMonthlyData = fullCategory.monthly && fullCategory.monthly.length > 0;
+      const hasDailyData = !!(fullCategory.daily && Array.isArray(fullCategory.daily) && fullCategory.daily.length > 0);
+      const hasMonthlyData = !!(fullCategory.monthly && Array.isArray(fullCategory.monthly) && fullCategory.monthly.length > 0);
       setHasDaily(hasDailyData);
       setHasMonthly(hasMonthlyData);
 
-      setFormData({
-        title: fullCategory.title || '',
-        subtitle: fullCategory.subtitle || '',
+      // Clear input states
+      setDailyInput('');
+      setMonthlyInput('');
+      setAmountInput('');
+      setExpenseInput('');
+
+      // Ensure amount is set properly - preserve it regardless of checkbox state
+      const amountValue = (fullCategory.amount && Array.isArray(fullCategory.amount) && fullCategory.amount.length > 0)
+        ? fullCategory.amount
+        : null;
+
+      // Build form data with explicit field mapping
+      const newFormData: DonationCategoryInput = {
+        title: fullCategory.title ?? '',
+        subtitle: fullCategory.subtitle ?? '',
+        video: fullCategory.video ?? '',
+        description: fullCategory.description ?? '',
+        slug: fullCategory.slug ?? '',
+        expenseCategory: Array.isArray(fullCategory.expenseCategory) ? fullCategory.expenseCategory : [],
         thumbnail: fullCategory.thumbnail 
           ? (fullCategory.thumbnail.startsWith('data:') || fullCategory.thumbnail.startsWith('http://') || fullCategory.thumbnail.startsWith('https://') || fullCategory.thumbnail.startsWith('blob:')
             ? fullCategory.thumbnail 
             : getImageUrl(fullCategory.thumbnail))
           : '',
-        video: fullCategory.video || '',
-        description: fullCategory.description || '',
-        slug: fullCategory.slug || '',
-        expenseCategory: Array.isArray(fullCategory.expenseCategory) ? fullCategory.expenseCategory : [],
-        daily: fullCategory.daily || null,
-        monthly: fullCategory.monthly || null,
-        amount: fullCategory.amount || null,
-        formTitle: fullCategory.formTitle || '',
-        formDescription: fullCategory.formDescription || '',
-      });
-      
+        daily: (fullCategory.daily && Array.isArray(fullCategory.daily)) ? fullCategory.daily : null,
+        monthly: (fullCategory.monthly && Array.isArray(fullCategory.monthly)) ? fullCategory.monthly : null,
+        amount: amountValue,
+        formTitle: fullCategory.formTitle ?? '',
+        formDescription: fullCategory.formDescription ?? '',
+      };
+
+      setFormData(newFormData);
       setEditingId(fullCategory.id ?? null);
       setShowForm(true);
+      console.log("newFormData", newFormData);
     } catch (error) {
       console.error('Error loading category for edit:', error);
       toast.error(t('failedToLoadCategory'));
@@ -243,7 +292,14 @@ export default function DonationCategoriesPage(): JSX.Element {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm(t('deleteDonationCategoryConfirm'))) return;
+    const confirmed = await confirmDialog({
+      title: t('delete'),
+      description: t('deleteDonationCategoryConfirm'),
+      confirmText: t('delete'),
+      cancelText: t('cancel'),
+      confirmVariant: 'danger',
+    });
+    if (!confirmed) return;
     setSubmitting(true);
     try {
       await deleteDonationCategory(id);
@@ -669,8 +725,8 @@ export default function DonationCategoriesPage(): JSX.Element {
                 ) : (
                   categories.map((category) => (
                     <tr key={category.id} className="border-t">
-                      <td className="py-2 pr-4">{category.title}</td>
-                      <td className="py-2 pr-4">{category.subtitle}</td>
+                      <td className="py-2 pr-4">{category.title.slice(0,40)}...</td>
+                      <td className="py-2 pr-4">{category.subtitle.slice(0,40)}...</td>
                       <td className="py-2 pr-4">
                         <code className="text-xs bg-gray-100 px-2 py-1 rounded">{category.slug}</code>
                       </td>
@@ -696,6 +752,17 @@ export default function DonationCategoriesPage(): JSX.Element {
           </div>
         )}
       </div>
+      <PaginationBar
+        entityLabel={t('donationCategories')}
+        pagination={pagination}
+        currentPage={currentPage}
+        onPageChange={(page) => setCurrentPage(page)}
+        onPageSizeChange={(size) => {
+          setCurrentPage(1);
+          setPageSize(size);
+          setPagination((prev) => ({ ...prev, itemsPerPage: size }));
+        }}
+      />
     </div>
   );
 }

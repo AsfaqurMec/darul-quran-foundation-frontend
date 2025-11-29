@@ -1,13 +1,17 @@
+'use client';
+
 import React, { useState } from 'react';
-import { ChangePassword } from '@/services/ChangePassword';
-import { app } from '@/config';
-import { getClientToken, removeClientToken } from '@/lib/tokenUtils';
+import { ChangePassword } from '../../services/ChangePassword';
+import { app } from '../../config';
+import { getClientToken, removeClientToken } from '../../lib/tokenUtils';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff } from 'lucide-react';
+import { useI18n } from '../../components/i18n/LanguageProvider';
 
 type Mode = 'change' | 'forgot';
 
 export default function PasswordForms({ mode }: { mode: Mode }): JSX.Element {
+	const { t } = useI18n();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [message, setMessage] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
@@ -32,7 +36,7 @@ export default function PasswordForms({ mode }: { mode: Mode }): JSX.Element {
 		setError(null);
 		try {
 			if (form.newPassword !== form.confirmPassword) {
-				setError('New password and confirmation do not match.');
+				setError(t('passwordsDoNotMatch'));
 				return;
 			}
 			const res = await ChangePassword({
@@ -42,7 +46,7 @@ export default function PasswordForms({ mode }: { mode: Mode }): JSX.Element {
 			if ((res as any)?.error) {
 				setError((res as any).error);
 			} else {
-				setMessage('Password updated successfully. You will be logged out.');
+				setMessage(t('passwordUpdated'));
 				try {
 					await fetch('/api/logout', { method: 'POST' });
 				} catch {}
@@ -56,7 +60,7 @@ export default function PasswordForms({ mode }: { mode: Mode }): JSX.Element {
 				}, 700);
 			}
 		} catch {
-			setError('Failed to update password.');
+			setError(t('failedToUpdatePassword'));
 		} finally {
 			setLoading(false);
 		}
@@ -83,9 +87,9 @@ export default function PasswordForms({ mode }: { mode: Mode }): JSX.Element {
 					callbackUrl: `${appUrl}/reset-password`,
 				}),
 			});
-			setMessage('If an account exists, a reset link has been sent to your email.');
+			setMessage(t('resetLinkSent'));
 		} catch {
-			setError('Failed to request password reset.');
+			setError(t('failedToRequestPasswordReset'));
 		} finally {
 			setLoading(false);
 		}
@@ -94,10 +98,10 @@ export default function PasswordForms({ mode }: { mode: Mode }): JSX.Element {
 	if (mode === 'change') {
 		return (
 			<div className="max-w-lg rounded-xl border border-gray-200 bg-white p-6">
-				<h2 className="text-lg font-semibold mb-4">Update Password</h2>
+				<h2 className="text-lg font-semibold mb-4">{t('updatePassword')}</h2>
 				<div className="space-y-4">
 					<div>
-						<label className="block text-sm font-medium mb-1">Current Password</label>
+						<label className="block text-sm font-medium mb-1">{t('currentPassword')}</label>
 						<div className="relative">
 							<input
 								name="currentPassword"
@@ -110,14 +114,14 @@ export default function PasswordForms({ mode }: { mode: Mode }): JSX.Element {
 								type="button"
 								onClick={() => setShowCurrent((v) => !v)}
 								className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-gray-600 hover:text-gray-800"
-								aria-label={showCurrent ? 'Hide password' : 'Show password'}
+								aria-label={showCurrent ? t('hidePassword') : t('showPassword')}
 							>
 								{showCurrent ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
 							</button>
 						</div>
 					</div>
 					<div>
-						<label className="block text-sm font-medium mb-1">New Password</label>
+						<label className="block text-sm font-medium mb-1">{t('newPassword')}</label>
 						<div className="relative">
 							<input
 								name="newPassword"
@@ -130,14 +134,14 @@ export default function PasswordForms({ mode }: { mode: Mode }): JSX.Element {
 								type="button"
 								onClick={() => setShowNew((v) => !v)}
 								className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-gray-600 hover:text-gray-800"
-								aria-label={showNew ? 'Hide password' : 'Show password'}
+								aria-label={showNew ? t('hidePassword') : t('showPassword')}
 							>
 								{showNew ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
 							</button>
 						</div>
 					</div>
 					<div>
-						<label className="block text-sm font-medium mb-1">Confirm New Password</label>
+						<label className="block text-sm font-medium mb-1">{t('confirmNewPassword')}</label>
 						<div className="relative">
 							<input
 								name="confirmPassword"
@@ -150,7 +154,7 @@ export default function PasswordForms({ mode }: { mode: Mode }): JSX.Element {
 								type="button"
 								onClick={() => setShowConfirm((v) => !v)}
 								className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-gray-600 hover:text-gray-800"
-								aria-label={showConfirm ? 'Hide password' : 'Show password'}
+								aria-label={showConfirm ? t('hidePassword') : t('showPassword')}
 							>
 								{showConfirm ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
 							</button>
@@ -161,7 +165,7 @@ export default function PasswordForms({ mode }: { mode: Mode }): JSX.Element {
 						onClick={submitChangePassword}
 						className="rounded-lg bg-brand hover:bg-brand-dark text-white px-4 py-2 font-semibold transition-all"
 					>
-						{loading ? 'Updating...' : 'Update Password'}
+						{loading ? t('updating') : t('updatePassword')}
 					</button>
 					{message && <p className="text-green-700 text-sm">{message}</p>}
 					{error && <p className="text-red-600 text-sm">{error}</p>}
@@ -172,10 +176,10 @@ export default function PasswordForms({ mode }: { mode: Mode }): JSX.Element {
 
 	return (
 		<div className="max-w-lg rounded-xl border border-gray-200 bg-white p-6">
-			<h2 className="text-lg font-semibold mb-4">Forgot Password</h2>
+			<h2 className="text-lg font-semibold mb-4">{t('forgotPassword')}</h2>
 			<div className="space-y-4">
 				<div>
-					<label className="block text-sm font-medium mb-1">Email</label>
+					<label className="block text-sm font-medium mb-1">{t('email')}</label>
 					<input
 						name="email"
 						type="email"
@@ -189,7 +193,7 @@ export default function PasswordForms({ mode }: { mode: Mode }): JSX.Element {
 					onClick={submitForgot}
 					className="rounded-lg bg-brand hover:bg-brand-dark text-white px-4 py-2 font-semibold transition-all"
 				>
-					{loading ? 'Submitting...' : 'Send Reset Link'}
+					{loading ? t('submitting') : t('sendResetLink')}
 				</button>
 				{message && <p className="text-green-700 text-sm">{message}</p>}
 				{error && <p className="text-red-600 text-sm">{error}</p>}

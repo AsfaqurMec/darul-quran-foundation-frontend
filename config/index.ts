@@ -66,7 +66,7 @@ interface Config {
       // Optional public token for server-protected read-only GET endpoints
       // Set NEXT_PUBLIC_PUBLIC_TOKEN in env for production
       // Example: 'Bearer eyJhbGciOi...'
-      publicToken: process.env.NEXT_PUBLIC_PUBLIC_TOKEN || "",
+      //publicToken: process.env.NEXT_PUBLIC_PUBLIC_TOKEN || "",
     },
     database: {
       url: process.env.DATABASE_URL || "",

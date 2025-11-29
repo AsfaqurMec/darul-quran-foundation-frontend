@@ -1,6 +1,6 @@
-import { getCurrentUser } from "@/services/AuthService/server";
-import { api } from "@/config";
-import { getClientToken } from "@/lib/tokenUtils";
+import { getCurrentUser } from "../../services/AuthService/server";
+import { api } from "../../config";
+import { getClientToken } from "../../lib/tokenUtils";
 
 export interface ClientRecord {
   _id: string;
@@ -181,7 +181,7 @@ export const createClientRecord = async (
       throw new Error("No access token found");
     }
 
-    console.log("Creating client record with data:", recordData);
+  //  console.log("Creating client record with data:", recordData);
 
     const response = await fetch(`${api.baseUrl}/clients-record`, {
       method: "POST",
@@ -192,9 +192,9 @@ export const createClientRecord = async (
       body: JSON.stringify(recordData),
     });
 
-    console.log("Response status:", response.status);
+  //  console.log("Response status:", response.status);
     const data = await response.json();
-    console.log("Response data:", data);
+   // console.log("Response data:", data);
 
     if (!response.ok) {
       throw new Error(data.message || "Failed to create client record");

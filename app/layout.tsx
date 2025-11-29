@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import LanguageProvider from '@/components/i18n/LanguageProvider';
-import SiteFrame from '@/components/layout/SiteFrame';
-import { AppToaster } from '@/components/ui/toaster';
+import 'react-phone-input-2/lib/style.css';
+import LanguageProvider from '../components/i18n/LanguageProvider';
+import SiteFrame from '../components/layout/SiteFrame';
+import { AppToaster } from '../components/ui/toaster';
 
 export const metadata: Metadata = {
   title: 'DarulQuran Foundation',

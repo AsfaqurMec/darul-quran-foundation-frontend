@@ -1,5 +1,6 @@
-import apiClient from '@/lib/apiClient';
-import { buildRequestPayload } from '@/lib/formData';
+import { api } from '../../config';
+import { ensurePagination } from '../../lib/pagination';
+import { PaginationInfo } from '../../types/pagination';
 
 export interface DonationCategory {
   id?: string;
@@ -38,64 +39,114 @@ export interface DonationCategoryResponse<T = DonationCategory | DonationCategor
   success: boolean;
   data?: T;
   message?: string;
+  pagination?: PaginationInfo;
 }
 
-const unwrap = <T,>(response: { success?: boolean; data?: T; message?: string } & T) => {
+const unwrap = <T,>(response: { success?: boolean; data?: T; message?: string; pagination?: PaginationInfo } & T) => {
   if ('success' in response) {
     return response as DonationCategoryResponse<T>;
   }
   return { success: true, data: response } satisfies DonationCategoryResponse<T>;
 };
 
-export const getAllDonationCategories = async (): Promise<DonationCategoryResponse<DonationCategory[]>> => {
-  // On server, add Accept-Language header from cookie for localized content
-  const lang = typeof window !== 'undefined'
-    ? document.cookie.match(/(?:^|; )lang=([^;]*)/)?.[1]
-    : undefined;
-  const { data } = await apiClient.get('/donation-categories', {
-    headers: lang ? { 'Accept-Language': decodeURIComponent(lang) } : undefined,
-  });
-  return unwrap<DonationCategory[]>(data);
+type DonationCategoryQueryParams = {
+  page?: number;
+  limit?: number;
+  searchTerm?: string;
+};
+
+export const getAllDonationCategories = async (
+  params?: DonationCategoryQueryParams
+): Promise<DonationCategoryResponse<DonationCategory[]>> => {
+  try {
+    const lang = typeof window !== 'undefined'
+      ? document.cookie.match(/(?:^|; )lang=([^;]*)/)?.[1]
+      : undefined;
+    const commonHeaders: HeadersInit = {
+      'Content-Type': 'application/json',
+      ...(lang ? { 'Accept-Language': decodeURIComponent(lang) } : {}),
+    };
+    const query = new URLSearchParams();
+    if (params?.page) query.set('page', String(params.page));
+    if (params?.limit) query.set('limit', String(params.limit));
+    if (params?.searchTerm) query.set('searchTerm', params.searchTerm);
+
+    const queryString = query.toString();
+    const res = await fetch(
+      `${api.baseUrl}/donation-categories${queryString ? `?${queryString}` : ''}`,
+      { headers: commonHeaders }
+    );
+
+    if (!res.ok) {
+      if (res.status === 404) return { success: true, data: [] };
+      throw new Error(`Request failed with status: ${res.status}`);
+    }
+    const json = await res.json();
+    const base = unwrap<DonationCategory[]>(json);
+    const dataArray = Array.isArray(base.data) ? base.data : base.data ? [base.data] : [];
+    return {
+      ...base,
+      data: dataArray,
+      pagination: ensurePagination(
+        json.pagination ?? base.pagination,
+        dataArray.length,
+        params?.page,
+        params?.limit
+      ),
+    };
+  } catch (e) {
+    console.error('Error fetching donation categories:', e);
+    return {
+      success: true,
+      data: [],
+      pagination: ensurePagination(undefined, 0, params?.page, params?.limit),
+    };
+  }
 };
 
 export const getDonationCategoryById = async (id: string): Promise<DonationCategoryResponse<DonationCategory>> => {
-  const lang = typeof window !== 'undefined'
-    ? document.cookie.match(/(?:^|; )lang=([^;]*)/)?.[1]
-    : undefined;
-  const { data } = await apiClient.get(`/donation-categories/${id}`, {
-    headers: lang ? { 'Accept-Language': decodeURIComponent(lang) } : undefined,
-  });
-  return unwrap<DonationCategory>(data);
+  try {
+    const lang = typeof window !== 'undefined'
+      ? document.cookie.match(/(?:^|; )lang=([^;]*)/)?.[1]
+      : undefined;
+    const commonHeaders: HeadersInit = {
+      'Content-Type': 'application/json',
+      ...(lang ? { 'Accept-Language': decodeURIComponent(lang) } : {}),
+    };
+    const res = await fetch(`${api.baseUrl}/donation-categories/${id}`, { headers: commonHeaders });
+
+    if (!res.ok) {
+      if (res.status === 404) return { success: true, data: undefined as unknown as DonationCategory };
+      throw new Error(`Request failed with status: ${res.status}`);
+    }
+    const json = await res.json();
+    return unwrap<DonationCategory>(json);
+  } catch (e) {
+    console.error('Error fetching donation category by id:', e);
+    return { success: true, data: undefined as unknown as DonationCategory };
+  }
 };
 
 export const getDonationCategoryBySlug = async (slug: string): Promise<DonationCategoryResponse<DonationCategory>> => {
-  const lang = typeof window !== 'undefined'
-    ? document.cookie.match(/(?:^|; )lang=([^;]*)/)?.[1]
-    : undefined;
-  const { data } = await apiClient.get(`/donation-categories/${slug}`, {
-    headers: lang ? { 'Accept-Language': decodeURIComponent(lang) } : undefined,
-  });
-  return unwrap<DonationCategory>(data);
-};
+  try {
+    const lang = typeof window !== 'undefined'
+      ? document.cookie.match(/(?:^|; )lang=([^;]*)/)?.[1]
+      : undefined;
+    const commonHeaders: HeadersInit = {
+      'Content-Type': 'application/json',
+      ...(lang ? { 'Accept-Language': decodeURIComponent(lang) } : {}),
+    };
+    const res = await fetch(`${api.baseUrl}/donation-categories/${slug}`, { headers: commonHeaders });
 
-export const createDonationCategory = async (categoryData: DonationCategoryInput): Promise<DonationCategoryResponse<DonationCategory>> => {
-  const { body, headers } = buildRequestPayload({ ...categoryData });
-  const { data } = await apiClient.post('/donation-categories', body, headers ? { headers } : undefined);
-  return unwrap<DonationCategory>(data);
-};
-
-export const updateDonationCategory = async (
-  id: string,
-  categoryData: Partial<DonationCategoryInput>
-): Promise<DonationCategoryResponse<DonationCategory>> => {
-  const { body, headers } = buildRequestPayload({ ...categoryData });
-  const { data } = await apiClient.put(`/donation-categories/${id}`, body, headers ? { headers } : undefined);
-  return unwrap<DonationCategory>(data);
-};
-
-export const deleteDonationCategory = async (id: string): Promise<DonationCategoryResponse<null>> => {
-  const { data } = await apiClient.delete(`/donation-categories/${id}`);
-  if (data?.success !== undefined) return data;
-  return { success: true, data: null, message: 'Donation category deleted' };
+    if (!res.ok) {
+      if (res.status === 404) return { success: true, data: undefined as unknown as DonationCategory };
+      throw new Error(`Request failed with status: ${res.status}`);
+    }
+    const json = await res.json();
+    return unwrap<DonationCategory>(json);
+  } catch (e) {
+    console.error('Error fetching donation category by slug:', e);
+    return { success: true, data: undefined as unknown as DonationCategory };
+  }
 };
 

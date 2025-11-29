@@ -1,10 +1,9 @@
 "use server";
 
-import { BlogPostForm } from "@/components/module/users/CreateBlog/CreateBlog";
-import { IPost } from "@/type";
+//import { BlogPostForm } from "@/components/module/users/CreateBlog/CreateBlog";
 import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
-import { api } from "@/config";
+import { api } from "../../config";
 
 // --------------------------
 // Public read fallbacks
@@ -109,8 +108,20 @@ export const SingleBlog = async (id: string) => {
   }
 };
 
+type IPost = {
+  title: string;
+  excerpt: string;
+  date?: string;
+  readTime?: string;
+  fullContent?: string;
+  category?: string;
+  thumbnail?: string | File | null;
+  images?: Array<string | File> | null;
+  [key: string]: unknown;
+};
+
 export const BlogPost = async (data: IPost) => {
-  console.log(data);
+ // console.log(data);
   try {
     const token = (await cookies()).get("accessToken")?.value;
 
@@ -138,7 +149,7 @@ export const BlogPost = async (data: IPost) => {
 };
 
 export const DeleteBlog = async (id: string) => {
-  console.log(id);
+ // console.log(id);
   try {
     const cookieStore = await cookies();
     let token = cookieStore.get("accessToken")!.value;
@@ -217,7 +228,7 @@ export const UpdateBlog = async (id: string, data: UpdatableBlog) => {
       // Debug: show JSON payload being sent
       try {
         // eslint-disable-next-line no-console
-        console.log("UpdateBlog JSON payload:", jsonPayload);
+    //    console.log("UpdateBlog JSON payload:", jsonPayload);
       } catch {}
 
       const response = await fetch(`${api.baseUrl}/blog/${id}`, {
@@ -280,7 +291,7 @@ export const UpdateBlog = async (id: string, data: UpdatableBlog) => {
         }
       }
       // eslint-disable-next-line no-console
-      console.log("UpdateBlog FormData payload:", debugEntries);
+   //   console.log("UpdateBlog FormData payload:", debugEntries);
     } catch {}
 
     const response = await fetch(`${api.baseUrl}/blog/${id}`, {

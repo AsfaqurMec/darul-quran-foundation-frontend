@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import Accordion, { AccordionItem } from '@/components/ui/Accordion';
+import Accordion, { AccordionItem } from '../../components/ui/Accordion';
 
 const categories: { id: string; label: string; items: AccordionItem[] }[] = [
   {

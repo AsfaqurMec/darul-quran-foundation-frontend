@@ -166,3 +166,82 @@ select::-webkit-scrollbar-thumb:hover {
   height: auto !important;
   box-sizing: border-box !important;
 }
+
+.phone-input-container {
+  width: 100%;
+  max-width: 100%;
+}
+
+.phone-input-container .form-control {
+  width: 100% !important;
+  flex: 1 1 auto;
+}
+
+.phone-input-container .flag-dropdown {
+  border: 1px solid #d1d5db;
+  border-right: none;
+  border-radius: 0.5rem 0 0 0.5rem;
+  background-color: #fff;
+}
+
+.phone-input-container .selected-flag {
+  border-radius: 0.5rem 0 0 0.5rem;
+  padding: 0 0.75rem;
+}
+
+.phone-input-field {
+  width: 100%;
+  border-radius: 0 0.8rem 0.8rem 0;
+  border: 1px solid #d1d5db;
+  border-left: none;
+  padding: 20px 2px;
+  font-size: 0.95rem;
+  color: #0f172a;
+  background-color: #fff;
+}
+
+.phone-input-field:focus {
+  border-color: #059669;
+  box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.15);
+}
+
+.phone-input-field-error {
+  border-color: #f87171 !important;
+  box-shadow: 0 0 0 2px rgba(248, 113, 113, 0.2) !important;
+}
+
+.phone-input-dropdown {
+  border-radius: 1rem;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.15);
+  width: 320px !important;
+}
+
+.phone-input-dropdown .country {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+}
+
+.phone-input-dropdown .country.highlight {
+  background-color: rgba(5, 150, 105, 0.08);
+  color: #065f46;
+}
+
+.phone-input-dropdown .search {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.phone-input-dropdown .search input {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.9rem;
+}
+
+.phone-input-dropdown .search input:focus {
+  border-color: #059669;
+  outline: none;
+  box-shadow: 0 0 0 1px rgba(5, 150, 105, 0.4);
+}

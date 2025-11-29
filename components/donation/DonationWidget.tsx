@@ -1,8 +1,13 @@
 'use client';
 
 import * as React from 'react';
-import Button from '@/components/ui/button';
-import { useI18n } from '@/components/i18n/LanguageProvider';
+import Button from '../../components/ui/button';
+import { useI18n } from '../../components/i18n/LanguageProvider';
+import {
+  DonationCachePayload,
+  storeDonationPayload,
+} from '../../lib/donationPayment';
+import config from '../../config';
 
 type Period = 'daily' | 'monthly';
 
@@ -15,6 +20,7 @@ export default function DonationWidget(): JSX.Element {
   const [behalf, setBehalf] = React.useState('');
   const [method, setMethod] = React.useState<'bkash' | 'nagad' | 'card'>('bkash');
   const [submitted, setSubmitted] = React.useState(false);
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   const dailyPresetsTop = ['10', '20', '30'];
   const dailyPresetsBottom = ['50', '100'];
@@ -25,7 +31,56 @@ export default function DonationWidget(): JSX.Element {
     e.preventDefault();
     setSubmitted(true);
     if (!contact || !amount) return;
-    alert(t('donationReceived'));
+
+    const amountNumber = parseFloat(amount.replace(/,/g, ''));
+    if (isNaN(amountNumber) || amountNumber <= 0) {
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const purposeLabel = period === 'daily' 
+        ? `${t('daily')} ${t('donation')}` 
+        : `${t('monthly')} ${t('donation')}`;
+
+      const payload: DonationCachePayload = {
+        purpose: purposeLabel, 
+        contact,
+        amount: amountNumber,
+        purposeLabel,
+        name: name || undefined,
+        behalf: behalf || undefined,
+      };
+      
+      // Store payload before redirecting to payment gateway
+      storeDonationPayload(payload);
+      
+      fetch(`${config.api.baseUrl}/donations`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(payload)
+      })
+        .then((res) => res.json())
+        .then((result) => {
+          console.log(result);
+          if (result.data?.url) {
+            window.location.replace(result.data.url);
+          } else {
+            throw new Error('No payment URL in response');
+          }
+        })
+        .catch((error) => {
+          console.error('Error preparing payment redirect:', error);
+          window.location.href = '/payment/fail';
+        })
+        .finally(() => {
+          setIsSubmitting(false);
+        });
+    } catch (error) {
+      console.error('Error preparing payment redirect:', error);
+      window.location.href = '/payment/fail';
+      setIsSubmitting(false);
+    }
   };
 
   React.useEffect(() => {
@@ -155,7 +210,13 @@ export default function DonationWidget(): JSX.Element {
           </div>
         </div>
 
-        <Button type="submit" className="w-full py-3 text-base font-semibold">{t('nextStep')}</Button>
+        <Button 
+          type="submit" 
+          disabled={isSubmitting}
+          className="w-full py-3 text-base font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isSubmitting ? (t('submitting') || 'Submitting...') : t('nextStep')}
+        </Button>
       </form>
     </div>
   );

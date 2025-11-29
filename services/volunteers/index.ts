@@ -1,5 +1,5 @@
-import config from "@/config";
-import { getClientToken } from "@/lib/tokenUtils";
+import config from "../../config";
+import { getClientToken } from "../../lib/tokenUtils";
 
 export interface VolunteerApplication {
   _id: string;

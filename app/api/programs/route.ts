@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { programStorage } from '@/lib/storage/programs';
-import { createProgramSchema } from '@/lib/validations/program';
-import { ProgramResponse, Program } from '@/types/program';
+import { programStorage } from '../../../lib/storage/programs';
+import { createProgramSchema } from '../../../lib/validations/program';
+import { ProgramResponse, Program } from '../../../types/program';
 
 // GET /api/programs - Get all programs
 export async function GET(request: NextRequest) {

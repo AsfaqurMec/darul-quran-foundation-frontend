@@ -1,5 +1,5 @@
-import { config } from '@/config';
-import { getClientToken } from '@/lib/tokenUtils';
+import { config } from '../../config';
+import { getClientToken } from '../../lib/tokenUtils';
 
 export interface MemberApplication {
   _id: string;
@@ -16,6 +16,7 @@ export interface MemberApplication {
   address: string;
   paymentMethod: 'online' | 'bank_transfer' | 'bank_deposit';
   transactionId?: string;
+  tran_id?: string;
   paymentDocument?: string; // File path/URL
   paymentStatus: 'pending' | 'completed' | 'pending_verification' | 'failed';
   applicationStatus: 'pending_approval' | 'approved' | 'rejected';
@@ -34,7 +35,7 @@ export interface MemberApplicationData {
   mobile: string;
   isOverseas: boolean;
   email?: string;
-  district: string; // Actually occupation field
+  occupation: string; // Actually occupation field
   reference?: string;
   address: string;
   paymentMethod: 'online' | 'bank_transfer' | 'bank_deposit';
@@ -70,7 +71,7 @@ export async function submitMemberApplication(
     if (data.email) {
       formData.append('email', data.email);
     }
-    formData.append('district', data.district); // Actually occupation
+    formData.append('occupation', data.occupation); // Actually occupation
     if (data.reference) {
       formData.append('reference', data.reference);
     }
@@ -134,12 +135,13 @@ export interface InitiateMemberPaymentPayload {
   mobile: string;
   isOverseas: boolean;
   email?: string;
-  district: string; // Actually occupation
+  occupation: string; // Actually occupation
   reference?: string;
   address: string;
   successUrl?: string;
   failUrl?: string;
   cancelUrl?: string;
+  paymentMethod: 'online' | 'bank_transfer' | 'bank_deposit';
 }
 
 export interface InitiateMemberPaymentResponse {
@@ -363,6 +365,47 @@ export const updateMemberApplicationStatus = async (
         error instanceof Error
           ? error.message
           : 'Failed to update member application status',
+    };
+  }
+};
+
+/**
+ * Update member application payment status
+ */
+export const updateMemberApplicationPaymentStatus = async (
+  id: string,
+  paymentStatus: 'pending' | 'completed' | 'pending_verification' | 'failed'
+): Promise<{ success: boolean; data?: MemberApplication; message?: string }> => {
+  try {
+    const token = getClientToken();
+    if (!token) {
+      throw new Error('No access token found');
+    }
+    
+    const response = await fetch(`${config.api.baseUrl}/members/${id}/payment-status`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ paymentStatus }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Failed to update member application payment status');
+    }
+
+    return { success: true, data: data.data || data };
+  } catch (error) {
+    console.error('Error updating member application payment status:', error);
+    return {
+      success: false,
+      message:
+        error instanceof Error
+          ? error.message
+          : 'Failed to update member application payment status',
     };
   }
 };

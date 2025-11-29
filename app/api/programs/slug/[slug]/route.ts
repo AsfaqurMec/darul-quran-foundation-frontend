@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { programStorage } from '@/lib/storage/programs';
-import { ProgramResponse, Program } from '@/types/program';
+import { programStorage } from '../../../../../lib/storage/programs';
+import { ProgramResponse, Program } from '../../../../../types/program';
 
 // GET /api/programs/slug/[slug] - Get program by slug
 export async function GET(

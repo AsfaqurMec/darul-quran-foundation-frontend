@@ -1,6 +1,6 @@
-import apiClient from '@/lib/apiClient';
-import { buildRequestPayload } from '@/lib/formData';
-import { api } from '@/config';
+import { api } from '../../config';
+import { ensurePagination } from '../../lib/pagination';
+import { PaginationInfo } from '../../types/pagination';
 
 export interface Activity {
   id?: string;
@@ -25,16 +25,26 @@ export interface ActivityResponse<T = Activity | Activity[]> {
   success: boolean;
   data?: T;
   message?: string;
+  pagination?: PaginationInfo;
 }
 
-const unwrap = <T,>(response: { success?: boolean; data?: T; message?: string } & T) => {
+const unwrap = <T,>(response: { success?: boolean; data?: T; message?: string; pagination?: PaginationInfo } & T) => {
   if ('success' in response) {
     return response as ActivityResponse<T>;
   }
   return { success: true, data: response } satisfies ActivityResponse<T>;
 };
 
-export const getAllActivities = async (): Promise<ActivityResponse<Activity[]>> => {
+type ActivityQueryParams = {
+  page?: number;
+  limit?: number;
+  searchTerm?: string;
+  tag?: string;
+};
+
+export const getAllActivities = async (
+  params?: ActivityQueryParams
+): Promise<ActivityResponse<Activity[]>> => {
   try {
     const lang = typeof window !== 'undefined'
       ? document.cookie.match(/(?:^|; )lang=([^;]*)/)?.[1]
@@ -43,30 +53,41 @@ export const getAllActivities = async (): Promise<ActivityResponse<Activity[]>> 
       'Content-Type': 'application/json',
       ...(lang ? { 'Accept-Language': decodeURIComponent(lang) } : {}),
     };
-    // Try public, token-less route first
-    let res = await fetch(`${api.baseUrl}/programs`, { headers: commonHeaders });
 
-    if (res.status === 401 || res.status === 403) {
-      // Fallbacks for different deployments
-      const fallbacks = ['/activities', '/activities/public', '/public/activities', '/public/programs'];
-      for (const p of fallbacks) {
-        const alt = await fetch(`${api.baseUrl}${p}`, { headers: commonHeaders });
-        if (alt.ok) {
-          const json = await alt.json();
-          return unwrap<Activity[]>(json);
-        }
-      }
-    }
+    const query = new URLSearchParams();
+    if (params?.page) query.set('page', String(params.page));
+    if (params?.limit) query.set('limit', String(params.limit));
+    if (params?.searchTerm) query.set('searchTerm', params.searchTerm);
+    if (params?.tag) query.set('tag', params.tag);
+
+    const queryString = query.toString();
+    const url = `${api.baseUrl}/activities${queryString ? `?${queryString}` : ''}`;
+    const res = await fetch(url, { headers: commonHeaders });
 
     if (!res.ok) {
       if (res.status === 404) return { success: true, data: [] };
       throw new Error(`Request failed with status: ${res.status}`);
     }
     const json = await res.json();
-    return unwrap<Activity[]>(json);
+    const base = unwrap<Activity[]>(json);
+    const dataArray = Array.isArray(base.data) ? base.data : base.data ? [base.data] : [];
+    return {
+      ...base,
+      data: dataArray,
+      pagination: ensurePagination(
+        json.pagination ?? base.pagination,
+        dataArray.length,
+        params?.page,
+        params?.limit
+      ),
+    };
   } catch (e) {
     console.error('Error fetching activities:', e);
-    return { success: true, data: [] };
+    return {
+      success: true,
+      data: [],
+      pagination: ensurePagination(undefined, 0, params?.page, params?.limit),
+    };
   }
 };
 
@@ -104,24 +125,4 @@ export const getActivityById = async (id: string): Promise<ActivityResponse<Acti
   }
 };
 
-export const createActivity = async (activityData: ActivityInput): Promise<ActivityResponse<Activity>> => {
-  const { body, headers } = buildRequestPayload({ ...activityData });
-  const { data } = await apiClient.post('/activities', body, headers ? { headers } : undefined);
-  return unwrap<Activity>(data);
-};
-
-export const updateActivity = async (
-  id: string,
-  activityData: Partial<ActivityInput>
-): Promise<ActivityResponse<Activity>> => {
-  const { body, headers } = buildRequestPayload({ ...activityData });
-  const { data } = await apiClient.put(`/activities/${id}`, body, headers ? { headers } : undefined);
-  return unwrap<Activity>(data);
-};
-
-export const deleteActivity = async (id: string): Promise<ActivityResponse<null>> => {
-  const { data } = await apiClient.delete(`/activities/${id}`);
-  if (data?.success !== undefined) return data;
-  return { success: true, data: null, message: 'Activity deleted' };
-};
 

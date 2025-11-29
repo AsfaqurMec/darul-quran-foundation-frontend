@@ -1,6 +1,6 @@
-import config from "@/config";
-import { getCurrentUser } from "@/services/AuthService/server";
-import { getClientToken } from "@/lib/tokenUtils";
+import config from "../../config";
+import { getCurrentUser } from "../../services/AuthService/server";
+import { getClientToken } from "../../lib/tokenUtils";
 export interface Client {
   _id: string;
   fullName: string;
@@ -67,7 +67,7 @@ export const getAllClients = async (params?: {
       queryString ? `?${queryString}` : ""
     }`;
 
-    console.log("API URL:", apiUrl);
+  //    console.log("API URL:", apiUrl);
 
     const response = await fetch(apiUrl, {
       method: "GET",
@@ -77,9 +77,9 @@ export const getAllClients = async (params?: {
       },
     });
 
-    console.log("Response status:", response.status);
+  //  console.log("Response status:", response.status);
     const data = await response.json();
-    console.log("Response data:", data);
+   // console.log("Response data:", data);
 
     if (!response.ok) {
       throw new Error(data.message || "Failed to fetch clients");
@@ -126,7 +126,7 @@ export const createClient = async (
       formData.append("photo", clientData.photo);
     }
 
-    console.log("the creted data", formData);
+  //  console.log("the creted data", formData);
     const response = await fetch(`${config.api.baseUrl}/client/create-client`, {
       method: "POST",
       headers: {

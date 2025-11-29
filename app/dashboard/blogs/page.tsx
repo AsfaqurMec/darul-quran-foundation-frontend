@@ -1,12 +1,15 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
-import Button from '@/components/ui/button';
-import MediaUploader from '@/components/common/MediaUploader';
-import { Blog, BlogInput, createBlog, deleteBlog, getAllBlogs, updateBlog } from '@/services/blogs/api';
+import { useCallback, useEffect, useState } from 'react';
+import Button from '../../../components/ui/button';
+import MediaUploader from '../../../components/common/MediaUploader';
+import PaginationBar from '../../../components/admin/PaginationBar';
+import { Blog, BlogInput, createBlog, deleteBlog, getAllBlogs, updateBlog } from '../../../services/blogs/api';
 import { toast } from 'sonner';
-import { useI18n } from '@/components/i18n/LanguageProvider';
-import { getImageUrl } from '@/lib/imageUtils';
+import { useI18n } from '../../../components/i18n/LanguageProvider';
+import { getImageUrl } from '../../../lib/imageUtils';
+import { useConfirmDialog } from '../../../components/common/ConfirmDialogProvider';
+import { PaginationInfo } from '../../../types/pagination';
 
 type MediaValue = string | File;
 
@@ -34,33 +37,58 @@ const normalizeMultiple = (val: MediaValue | MediaValue[] | '' | undefined): Med
 
 export default function BlogsPage(): JSX.Element {
   const { t } = useI18n();
+  const confirmDialog = useConfirmDialog();
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [formData, setFormData] = useState<BlogInput>(initialForm);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pagination, setPagination] = useState<PaginationInfo>({
+    currentPage: 1,
+    totalPages: 1,
+    totalItems: 0,
+    itemsPerPage: 10,
+  });
+  const [pageSize, setPageSize] = useState(10);
 
-  const loadBlogs = useMemo(
-    () => async () => {
-      setLoading(true);
-      try {
-        const response = await getAllBlogs();
-        if (response.success && response.data) {
-          const data = Array.isArray(response.data) ? response.data : [response.data];
-          setBlogs(data);
+  const loadBlogs = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await getAllBlogs({
+        page: currentPage,
+        limit: pageSize,
+      });
+      if (response.success && response.data) {
+        const data = Array.isArray(response.data) ? response.data : [response.data];
+        setBlogs(data);
+        if (response.pagination) {
+          setPagination(response.pagination);
+          if (response.pagination.itemsPerPage) {
+            setPageSize(response.pagination.itemsPerPage);
+          }
+          if (response.pagination.currentPage) {
+            setCurrentPage(response.pagination.currentPage);
+          }
         } else {
-          toast.error(response.message ?? t('operationFailed'));
+          setPagination({
+            currentPage,
+            totalPages: Math.max(1, Math.ceil(Math.max(data.length, 1) / pageSize)),
+            totalItems: data.length,
+            itemsPerPage: pageSize,
+          });
         }
-      } catch (error) {
-        const message = error instanceof Error ? error.message : t('operationFailed');
-        toast.error(message);
-      } finally {
-        setLoading(false);
+      } else {
+        toast.error(response.message ?? t('operationFailed'));
       }
-    },
-    [t]
-  );
+    } catch (error) {
+      const message = error instanceof Error ? error.message : t('operationFailed');
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
+  }, [currentPage, pageSize, t]);
 
   useEffect(() => {
     void loadBlogs();
@@ -107,7 +135,14 @@ export default function BlogsPage(): JSX.Element {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm(t('deleteBlogConfirm'))) return;
+    const confirmed = await confirmDialog({
+      title: t('delete'),
+      description: t('deleteBlogConfirm'),
+      confirmText: t('delete'),
+      cancelText: t('cancel'),
+      confirmVariant: 'danger',
+    });
+    if (!confirmed) return;
     setSubmitting(true);
     try {
       await deleteBlog(id);
@@ -248,7 +283,7 @@ export default function BlogsPage(): JSX.Element {
                 ) : (
                   blogs.map((blog) => (
                     <tr key={blog.id} className="border-t">
-                      <td className="py-2 pr-4">{blog.title}</td>
+                      <td className="py-2 pr-4">{blog.title.slice(0,40)}...</td>
                       <td className="py-2 pr-4">{blog.date}</td>
                       <td className="py-2 pr-4">
                         {blog.thumbnail ? (
@@ -272,6 +307,17 @@ export default function BlogsPage(): JSX.Element {
           </div>
         )}
       </div>
+      <PaginationBar
+        entityLabel={t('blog')}
+        pagination={pagination}
+        currentPage={currentPage}
+        onPageChange={(page) => setCurrentPage(page)}
+        onPageSizeChange={(size) => {
+          setCurrentPage(1);
+          setPageSize(size);
+          setPagination((prev) => ({ ...prev, itemsPerPage: size }));
+        }}
+      />
     </div>
   );
 }

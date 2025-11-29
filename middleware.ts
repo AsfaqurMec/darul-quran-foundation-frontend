@@ -1,4 +1,4 @@
-import { getCurrentUser } from "@/services/AuthService/server";
+import { getCurrentUser } from "./services/AuthService/server";
 import { NextRequest, NextResponse } from "next/server";
 
 // Public routes that don't require authentication

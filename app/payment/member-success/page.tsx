@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { submitMemberAfterPayment } from '@/services/memberApplication';
+import { submitMemberAfterPayment } from '../../../services/memberApplication';
 
 export default function MemberPaymentSuccessPage(): JSX.Element {
   const searchParams = useSearchParams();

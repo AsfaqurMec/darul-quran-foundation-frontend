@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import Container from '@/components/layout/Container';
-import { api } from '@/config';
+import Container from '../../../components/layout/Container';
+import { api } from '../../../config';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Eye, EyeOff } from 'lucide-react';
 

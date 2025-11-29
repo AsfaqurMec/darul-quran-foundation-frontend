@@ -1,7 +1,7 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { api } from "@/config";
+import { api } from "../../config";
 
 export const ChangePassword = async (data: any) => {
   try {

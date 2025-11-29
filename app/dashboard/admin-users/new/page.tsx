@@ -1,7 +1,7 @@
 'use client';
 
-import Button from '@/components/ui/button';
-import { createAdminUser } from '@/services/Users';
+import Button from '../../../../components/ui/button';
+import { createAdminUser } from '../../../../services/Users';
 import { toast } from 'sonner';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';

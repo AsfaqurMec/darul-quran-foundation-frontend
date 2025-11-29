@@ -4,14 +4,16 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import * as React from 'react';
 import { createPortal } from 'react-dom';
-import Button from '@/components/ui/button';
-import Container from '@/components/layout/Container';
-import logo from '@/public/img/logo-foundation.png';
+import Button from '../../components/ui/button';
+import Container from '../../components/layout/Container';
+import logo from '../../public/img/logo-foundation.png';
 import Image from 'next/image';
 import { Route } from 'next';
-import { useI18n } from '@/components/i18n/LanguageProvider';
-import { getClientToken, removeClientToken } from '@/lib/tokenUtils';
+import { useI18n } from '../../components/i18n/LanguageProvider';
+import type { Lang } from '../../components/i18n/LanguageProvider';
+import { getClientToken, removeClientToken } from '../../lib/tokenUtils';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 type NavItem = { href: string; labelKey: Parameters<ReturnType<typeof useI18n>['t']>[0] };
 
@@ -26,31 +28,44 @@ const navItems: ReadonlyArray<NavItem> = [
   { href: 'contact', labelKey: 'contact' },
 ];
 
+const getRoleFromToken = (token: string | null): string | null => {
+  if (!token || token.split('.').length !== 3) return null;
+  try {
+    const payloadSegment = token.split('.')[1];
+    const normalizedPayload = payloadSegment.replace(/-/g, '+').replace(/_/g, '/');
+    const payload = JSON.parse(atob(normalizedPayload));
+    return typeof payload?.role === 'string' ? payload.role : null;
+  } catch {
+    return null;
+  }
+};
+
 export default function Header(): JSX.Element {
   const [open, setOpen] = React.useState(false);
   const { lang, setLang, t } = useI18n();
   const [langOpen, setLangOpen] = React.useState(false);
   const [mounted, setMounted] = React.useState(false);
   const [authed, setAuthed] = React.useState(false);
+  const [userRole, setUserRole] = React.useState<string | null>(null);
   const [userMenuOpen, setUserMenuOpen] = React.useState(false);
   const pathname = usePathname();
   const router = useRouter();
 
   React.useEffect(() => {
     setMounted(true);
-    setAuthed(!!getClientToken());
-  }, []);
-
-  React.useEffect(() => {
-    const handleStorage = () => {
-      setAuthed(!!getClientToken());
+    const updateAuthState = () => {
+      const token = getClientToken();
+      setAuthed(!!token);
+      setUserRole(getRoleFromToken(token));
     };
+    updateAuthState();
+    const handleStorage: EventListener = () => updateAuthState();
     window.addEventListener('storage', handleStorage);
-    const handleAuthChange = () => setAuthed(!!getClientToken());
-    window.addEventListener('auth-change', handleAuthChange as EventListener);
+    const handleAuthChange: EventListener = () => updateAuthState();
+    window.addEventListener('auth-change', handleAuthChange);
     return () => {
       window.removeEventListener('storage', handleStorage);
-      window.removeEventListener('auth-change', handleAuthChange as EventListener);
+      window.removeEventListener('auth-change', handleAuthChange);
     };
   }, []);
 
@@ -63,6 +78,7 @@ export default function Header(): JSX.Element {
     } finally {
       removeClientToken();
       setAuthed(false);
+      setUserRole(null);
       // Dispatch auth-change event to notify other components
       if (typeof window !== 'undefined') {
         window.dispatchEvent(new CustomEvent('auth-change'));
@@ -84,6 +100,17 @@ export default function Header(): JSX.Element {
       </>
     );
   };
+
+  const isDashboardUser = userRole === 'admin' || userRole === 'editor';
+  const userMenuTarget = (isDashboardUser ? '/dashboard' : '/profile') as Route;
+  const handleLanguageChange = React.useCallback(
+    (nextLang: Lang) => {
+      setLang(nextLang);
+      setLangOpen(false);
+      toast.success(t('languageSwitchSuccess', nextLang));
+    },
+    [setLang, t]
+  );
 
   return (
     <header className="sticky top-0 z-40 w-full backdrop-blur supports-[backdrop-filter]:bg-white/70 bg-white/90 border-b border-gray-200">
@@ -130,13 +157,13 @@ export default function Header(): JSX.Element {
             {langOpen && (
               <ul className="absolute right-0 mt-1 min-w-[140px] rounded-md border border-gray-200 bg-white shadow-lg z-50 text-md" role="listbox">
                 <li>
-                  <button className="w-full text-left px-3 py-2 hover:bg-gray-50" onClick={()=>{setLang('bn'); setLangOpen(false);}}>{t('bengali')}</button>
+                  <button className="w-full text-left px-3 py-2 hover:bg-gray-50" onClick={()=>handleLanguageChange('bn')}>{t('bengali')}</button>
                 </li>
                 <li>
-                  <button className="w-full text-left px-3 py-2 hover:bg-gray-50" onClick={()=>{setLang('en'); setLangOpen(false);}}>{t('english')}</button>
+                  <button className="w-full text-left px-3 py-2 hover:bg-gray-50" onClick={()=>handleLanguageChange('en')}>{t('english')}</button>
                 </li>
                 <li>
-                  <button className="w-full text-left px-3 py-2 hover:bg-gray-50" onClick={()=>{setLang('ar'); setLangOpen(false);}}>{t('arabic')}</button>
+                  <button className="w-full text-left px-3 py-2 hover:bg-gray-50" onClick={()=>handleLanguageChange('ar')}>{t('arabic')}</button>
                 </li>
               </ul>
             )}
@@ -156,7 +183,7 @@ export default function Header(): JSX.Element {
               {userMenuOpen && (
                 <ul className="absolute right-0 mt-2 min-w-[160px] rounded-md border border-gray-200 bg-white shadow-lg z-50" role="menu">
                   <li>
-                    <Link href="/profile" className="block px-3 py-2 hover:bg-gray-50" onClick={() => setUserMenuOpen(false)}>My Profile</Link>
+                    <Link href={userMenuTarget} className="block px-3 py-2 hover:bg-gray-50" onClick={() => setUserMenuOpen(false)}>My Profile</Link>
                   </li>
                   <li>
                     <button className="w-full text-left px-3 py-2 hover:bg-gray-50" onClick={handleLogout}>Logout</button>
@@ -218,14 +245,21 @@ export default function Header(): JSX.Element {
                 </button>
                 {langOpen && (
                   <ul className="absolute left-0 bottom-full mb-1 min-w-[140px] rounded-md border border-gray-200 bg-white shadow-lg z-50 text-xl">
-                    <li><button className="w-full text-left px-3 py-2 hover:bg-gray-50" onClick={()=>{setLang('bn'); setLangOpen(false);}}>{t('bengali')}</button></li>
-                    <li><button className="w-full text-left px-3 py-2 hover:bg-gray-50" onClick={()=>{setLang('en'); setLangOpen(false);}}>{t('english')}</button></li>
-                    <li><button className="w-full text-left px-3 py-2 hover:bg-gray-50" onClick={()=>{setLang('ar'); setLangOpen(false);}}>{t('arabic')}</button></li>
+                    <li><button className="w-full text-left px-3 py-2 hover:bg-gray-50" onClick={()=>handleLanguageChange('bn')}>{t('bengali')}</button></li>
+                    <li><button className="w-full text-left px-3 py-2 hover:bg-gray-50" onClick={()=>handleLanguageChange('en')}>{t('english')}</button></li>
+                    <li><button className="w-full text-left px-3 py-2 hover:bg-gray-50" onClick={()=>handleLanguageChange('ar')}>{t('arabic')}</button></li>
                   </ul>
                 )}
               </div>
-              <Link href="/login" onClick={() => setOpen(false)} className="ml-auto px-3 py-1.5 rounded border text-xl">{t('login')}</Link>
-              <Link href="#donate" onClick={() => setOpen(false)}>
+              {!authed ? (
+                <Link href="/login" onClick={() => setOpen(false)} className="ml-auto px-3 py-1.5 rounded border text-xl">{t('login')}</Link>
+              ) : (
+                <div className="ml-auto flex items-center gap-2">
+                  <Link href={userMenuTarget} onClick={() => setOpen(false)} className="px-3 py-1.5 rounded border text-xl">My Profile</Link>
+                  <button onClick={() => { handleLogout(); setOpen(false); }} className="px-3 py-1.5 rounded border text-xl">Logout</button>
+                </div>
+              )}
+              <Link href="/donation" onClick={() => setOpen(false)}>
                 <Button className="px-3 py-1.5 text-xl">{t('donate')}</Button>
               </Link>
             </div>

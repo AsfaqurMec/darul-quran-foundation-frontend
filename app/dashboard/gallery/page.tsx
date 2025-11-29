@@ -1,14 +1,23 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import Button from '@/components/ui/button';
-import MediaUploader from '@/components/common/MediaUploader';
-import { GalleryInput, GalleryItem, createGalleryItem, deleteGalleryItem, getAllGalleryItems, updateGalleryItem } from '@/services/gallery';
+import Button from '../../../components/ui/button';
+import MediaUploader from '../../../components/common/MediaUploader';
+import PaginationBar from '../../../components/admin/PaginationBar';
+import {
+  GalleryInput,
+  GalleryItem,
+  createGalleryItem,
+  deleteGalleryItem,
+  getAllGalleryItems,
+  updateGalleryItem,
+} from '../../../services/gallery';
 import { toast } from 'sonner';
-import { getImageUrl } from '@/lib/imageUtils';
-import config from '@/config';
-import { useI18n } from '@/components/i18n/LanguageProvider';
+import { getImageUrl } from '../../../lib/imageUtils';
+import { useI18n } from '../../../components/i18n/LanguageProvider';
+import { useConfirmDialog } from '../../../components/common/ConfirmDialogProvider';
+import { PaginationInfo } from '../../../types/pagination';
 
 type MediaValue = string | File;
 
@@ -37,40 +46,67 @@ const normalizeSingle = (value: MediaValue | MediaValue[] | '' | undefined): Med
 export default function GalleryPage(): JSX.Element {
   const { t } = useI18n();
   const searchParams = useSearchParams();
+  const confirmDialog = useConfirmDialog();
+  const filtersKey = searchParams.toString();
   const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([]);
   const [formData, setFormData] = useState<GalleryInput>(initialForm);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pagination, setPagination] = useState<PaginationInfo>({
+    currentPage: 1,
+    totalPages: 1,
+    totalItems: 0,
+    itemsPerPage: 12,
+  });
+  const [pageSize, setPageSize] = useState(12);
 
-  const loadGalleryItems = useMemo(
-    () => async () => {
-      setLoading(true);
-      try {
-        const categoryFilter = searchParams.get('category') || undefined;
-        const typeParam = searchParams.get('type');
-        const typeFilter = typeParam === 'image' || typeParam === 'video' ? (typeParam as 'image' | 'video') : undefined;
+  const loadGalleryItems = useCallback(async () => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams(filtersKey);
+      const categoryFilter = params.get('category') || undefined;
+      const typeParam = params.get('type');
+      const typeFilter =
+        typeParam === 'image' || typeParam === 'video' ? (typeParam as 'image' | 'video') : undefined;
 
-        const response = await getAllGalleryItems({
-          ...(categoryFilter ? { category: categoryFilter } : {}),
-          ...(typeFilter ? { type: typeFilter } : {}),
-        });
-        if (response.success && response.data) {
-          const data = Array.isArray(response.data) ? response.data : [response.data];
-          setGalleryItems(data);
+      const response = await getAllGalleryItems({
+        ...(categoryFilter ? { category: categoryFilter } : {}),
+        ...(typeFilter ? { type: typeFilter } : {}),
+        page: currentPage,
+        limit: pageSize,
+      });
+      if (response.success && response.data) {
+        const data = Array.isArray(response.data) ? response.data : [response.data];
+        setGalleryItems(data);
+        if (response.pagination) {
+          setPagination(response.pagination);
+          if (response.pagination.itemsPerPage) {
+            setPageSize(response.pagination.itemsPerPage);
+          }
+          if (response.pagination.currentPage) {
+            setCurrentPage(response.pagination.currentPage);
+          }
         } else {
-          toast.error(response.message ?? t('operationFailed'));
+          setPagination({
+            currentPage,
+            totalPages: Math.max(1, Math.ceil(Math.max(data.length, 1) / pageSize)),
+            totalItems: data.length,
+            itemsPerPage: pageSize,
+          });
         }
-      } catch (error) {
-        const message = error instanceof Error ? error.message : t('operationFailed');
-        toast.error(message);
-      } finally {
-        setLoading(false);
+      } else {
+        toast.error(response.message ?? t('operationFailed'));
       }
-    },
-    [searchParams, t]
-  );
+    } catch (error) {
+      const message = error instanceof Error ? error.message : t('operationFailed');
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
+  }, [filtersKey, currentPage, pageSize, t]);
 
   useEffect(() => {
     void loadGalleryItems();
@@ -123,7 +159,14 @@ export default function GalleryPage(): JSX.Element {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm(t('deleteGalleryItemConfirm'))) return;
+    const confirmed = await confirmDialog({
+      title: t('delete'),
+      description: t('deleteGalleryItemConfirm'),
+      confirmText: t('delete'),
+      cancelText: t('cancel'),
+      confirmVariant: 'danger',
+    });
+    if (!confirmed) return;
     setSubmitting(true);
     try {
       await deleteGalleryItem(id);
@@ -303,6 +346,18 @@ export default function GalleryPage(): JSX.Element {
           </div>
         )}
       </div>
+      <PaginationBar
+        entityLabel={t('gallery')}
+        pagination={pagination}
+        currentPage={currentPage}
+        onPageChange={(page) => setCurrentPage(page)}
+        onPageSizeChange={(size) => {
+          setCurrentPage(1);
+          setPageSize(size);
+          setPagination((prev) => ({ ...prev, itemsPerPage: size }));
+        }}
+        pageSizeOptions={[6, 12, 24, 36]}
+      />
     </div>
   );
 }

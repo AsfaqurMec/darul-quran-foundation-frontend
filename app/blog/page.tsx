@@ -1,15 +1,16 @@
 'use server';
 
-import Container from '@/components/layout/Container';
-import Pagination from '@/components/ui/Pagination';
-import BlogCard, { BlogPost } from '@/components/blog/BlogCard';
-import PageHero from '@/components/common/PageHero';
-import { GetAllBlog } from '@/services/blogs';
-import { getImageUrl } from '@/lib/imageUtils';
+import Container from '../../components/layout/Container';
+import Pagination from '../../components/ui/Pagination';
+import BlogCard, { BlogPost } from '../../components/blog/BlogCard';
+import PageHero from '../../components/common/PageHero';
+import { GetAllBlog } from '../../services/blogs';
+import { getImageUrl } from '../../lib/imageUtils';
 
-export default async function BlogArchive({ searchParams }: { searchParams: { page?: string } }): Promise<JSX.Element> {
+export default async function BlogArchive({ searchParams }: { searchParams: Promise<{ page?: string }> }): Promise<JSX.Element> {
   const perPage = 12;
-  const current = Math.max(1, Number(searchParams?.page || '1'));
+  const params = await searchParams;
+  const current = Math.max(1, Number(params?.page || '1'));
 
   const res = await GetAllBlog();
   const list = Array.isArray(res?.data) ? res!.data : [];

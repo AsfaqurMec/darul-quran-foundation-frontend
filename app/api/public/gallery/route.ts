@@ -1,7 +1,7 @@
 "use server";
 
 import { NextRequest } from "next/server";
-import { api } from "@/config";
+import { api } from "../../../../config";
 
 export async function GET(req: NextRequest) {
   const url = new URL(req.url);

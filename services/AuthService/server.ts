@@ -4,8 +4,8 @@ import { jwtDecode } from "jwt-decode";
 import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
 import { FieldValues } from "react-hook-form";
-import { api } from "@/config";
-import { JWTPayload } from "@/type";
+import { api } from "../../config";
+import { JWTPayload } from "jose";
 
 export const registerUser = async (data: unknown) => {
   const token = (await cookies()).get("accessToken")?.value;
@@ -89,9 +89,6 @@ export const getCurrentUser = async () => {
 
 export const logout = async () => {
   (await cookies()).delete("accessToken");
-  if (typeof window !== "undefined") {
-    localStorage.removeItem("token");
-  }
   revalidateTag("loginuser");
 };
 

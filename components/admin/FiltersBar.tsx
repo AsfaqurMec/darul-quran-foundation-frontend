@@ -1,8 +1,8 @@
 'use client';
 
-import Button from '@/components/ui/button';
+import Button from '../../components/ui/button';
 import { useState } from 'react';
-import { useI18n } from '@/components/i18n/LanguageProvider';
+import { useI18n } from '../../components/i18n/LanguageProvider';
 
 type Props = {
   onChange?: (val: { preset: 'today' | 'week' | 'month' | 'year' | 'range'; from?: string; to?: string }) => void;

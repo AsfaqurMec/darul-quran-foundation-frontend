@@ -1,13 +1,13 @@
 'use server';
 
-import Container from '@/components/layout/Container';
-import BlogDetail from '@/components/blog/BlogDetail';
-import { GetAllBlog, SingleBlog } from '@/services/blogs';
-import { getImageUrl } from '@/lib/imageUtils';
-import type { BlogPost } from '@/components/blog/BlogCard';
+import Container from '../../../components/layout/Container';
+import BlogDetail from '../../../components/blog/BlogDetail';
+import { GetAllBlog, SingleBlog } from '../../../services/blogs';
+import { getImageUrl } from '../../../lib/imageUtils';
+import type { BlogPost } from '../../../components/blog/BlogCard';
 
-export default async function BlogDetailPage({ params }: { params: { id: string } }): Promise<JSX.Element> {
-  const id = params?.id;
+export default async function BlogDetailPage({ params }: { params: Promise<{ id: string }> }): Promise<JSX.Element> {
+  const { id } = await params;
   const blogRes = await SingleBlog(id);
   const blog = blogRes?.data;
 

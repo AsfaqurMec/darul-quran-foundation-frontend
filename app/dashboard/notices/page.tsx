@@ -1,10 +1,13 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
-import Button from '@/components/ui/button';
-import { Notice, createNotice, deleteNotice, getAllNotices, updateNotice } from '@/services/notices';
+import { useCallback, useEffect, useState } from 'react';
+import Button from '../../../components/ui/button';
+import PaginationBar from '../../../components/admin/PaginationBar';
+import { Notice, createNotice, deleteNotice, getAllNotices, updateNotice } from '../../../services/notices';
 import { toast } from 'sonner';
-import { useI18n } from '@/components/i18n/LanguageProvider';
+import { useI18n } from '../../../components/i18n/LanguageProvider';
+import { useConfirmDialog } from '../../../components/common/ConfirmDialogProvider';
+import { PaginationInfo } from '../../../types/pagination';
 
 const initialForm: Omit<Notice, 'id'> = {
   title: '',
@@ -16,6 +19,7 @@ const initialForm: Omit<Notice, 'id'> = {
 
 export default function NoticesPage(): JSX.Element {
   const { t, lang } = useI18n();
+  const confirmDialog = useConfirmDialog();
   const locale = lang === 'bn' ? 'bn-BD' : lang === 'ar' ? 'ar-SA' : 'en-US';
   const [notices, setNotices] = useState<Notice[]>([]);
   const [formData, setFormData] = useState(initialForm);
@@ -23,27 +27,51 @@ export default function NoticesPage(): JSX.Element {
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pagination, setPagination] = useState<PaginationInfo>({
+    currentPage: 1,
+    totalPages: 1,
+    totalItems: 0,
+    itemsPerPage: 10,
+  });
+  const [pageSize, setPageSize] = useState(10);
 
-  const loadNotices = useMemo(
-    () => async () => {
-      setLoading(true);
-      try {
-        const response = await getAllNotices();
-        if (response.success && response.data) {
-          const data = Array.isArray(response.data) ? response.data : [response.data];
-          setNotices(data);
+  const loadNotices = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await getAllNotices({
+        page: currentPage,
+        limit: pageSize,
+      });
+      if (response.success && response.data) {
+        const data = Array.isArray(response.data) ? response.data : [response.data];
+        setNotices(data);
+        if (response.pagination) {
+          setPagination(response.pagination);
+          if (response.pagination.itemsPerPage) {
+            setPageSize(response.pagination.itemsPerPage);
+          }
+          if (response.pagination.currentPage) {
+            setCurrentPage(response.pagination.currentPage);
+          }
         } else {
-          toast.error(response.message ?? t('operationFailed'));
+          setPagination({
+            currentPage,
+            totalPages: Math.max(1, Math.ceil(Math.max(data.length, 1) / pageSize)),
+            totalItems: data.length,
+            itemsPerPage: pageSize,
+          });
         }
-      } catch (error) {
-        const message = error instanceof Error ? error.message : t('operationFailed');
-        toast.error(message);
-      } finally {
-        setLoading(false);
+      } else {
+        toast.error(response.message ?? t('operationFailed'));
       }
-    },
-    [t]
-  );
+    } catch (error) {
+      const message = error instanceof Error ? error.message : t('operationFailed');
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
+  }, [currentPage, pageSize, t]);
 
   useEffect(() => {
     void loadNotices();
@@ -89,7 +117,14 @@ export default function NoticesPage(): JSX.Element {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm(t('deleteNoticeConfirm'))) return;
+    const confirmed = await confirmDialog({
+      title: t('delete'),
+      description: t('deleteNoticeConfirm'),
+      confirmText: t('delete'),
+      cancelText: t('cancel'),
+      confirmVariant: 'danger',
+    });
+    if (!confirmed) return;
     setSubmitting(true);
     try {
       await deleteNotice(id);
@@ -220,8 +255,8 @@ export default function NoticesPage(): JSX.Element {
                 ) : (
                   notices.map((notice) => (
                     <tr key={notice.id} className="border-t">
-                      <td className="py-2 pr-4">{notice.title}</td>
-                      <td className="py-2 pr-4">{notice.subTitle}</td>
+                      <td className="py-2 pr-4">{notice.title.slice(0,40)}...</td>
+                      <td className="py-2 pr-4">{notice.subTitle.slice(0,40)}...</td>
                       <td className="py-2 pr-4">{notice.date}</td>
                       <td className="py-2 pr-4">{notice.category}</td>
                       <td className="py-2 pr-4 space-x-2">
@@ -238,6 +273,17 @@ export default function NoticesPage(): JSX.Element {
           </div>
         )}
       </div>
+      <PaginationBar
+        entityLabel={t('notice')}
+        pagination={pagination}
+        currentPage={currentPage}
+        onPageChange={(page) => setCurrentPage(page)}
+        onPageSizeChange={(size) => {
+          setCurrentPage(1);
+          setPageSize(size);
+          setPagination((prev) => ({ ...prev, itemsPerPage: size }));
+        }}
+      />
     </div>
   );
 }

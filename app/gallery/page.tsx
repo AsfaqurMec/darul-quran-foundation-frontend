@@ -1,34 +1,69 @@
-import Container from '@/components/layout/Container';
-import Pagination from '@/components/ui/Pagination';
-import Gallery from '@/components/sections/Gallery';
+import Container from '../../components/layout/Container';
+import Pagination from '../../components/ui/Pagination';
+import Gallery from '../../components/sections/Gallery';
+import type { Route } from 'next';
 import Link from 'next/link';
-import PageHero from '@/components/common/PageHero';
-import { GetGallery } from '@/services/gallery';
+import PageHero from '../../components/common/PageHero';
+import { GetGallery } from '../../services/gallery';
+
+const CATEGORY_OPTIONS = ['Flood', 'Food Distribution', 'Self Reliance', 'Qurbani', 'Winter Relief'] as const;
+const ALL_CATEGORY = 'All';
+
+const getValidCategory = (value?: string | null): string => {
+  if (!value) return ALL_CATEGORY;
+  return CATEGORY_OPTIONS.includes(value as (typeof CATEGORY_OPTIONS)[number]) ? value : ALL_CATEGORY;
+};
+
+const deriveYearsFromItems = (items: { year?: number; createdAt?: string }[]) => {
+  const yearSet = new Set<number>();
+  items.forEach((item) => {
+    const fromYearProp = item.year;
+    if (fromYearProp) {
+      yearSet.add(fromYearProp);
+      return;
+    }
+    if (item.createdAt) {
+      const parsedYear = Number(new Date(item.createdAt).getFullYear());
+      if (!Number.isNaN(parsedYear)) yearSet.add(parsedYear);
+    }
+  });
+  return Array.from(yearSet).sort((a, b) => b - a);
+};
 
 export default async function GalleryPage({ searchParams }: { searchParams?: { page?: string; year?: string; category?: string; type?: string } }) {
   const current = Math.max(1, Number(searchParams?.page || '1'));
-  const year = searchParams?.year ? Number(searchParams.year) : undefined;
-  const category = searchParams?.category || 'সবগুলো';
-  const type = searchParams?.type || 'image';
+  const selectedYear = searchParams?.year ? Number(searchParams.year) : undefined;
+  const normalizedCategory = getValidCategory(searchParams?.category);
+  const type = searchParams?.type === 'video' ? 'video' : 'image';
   const perPage = 12;
 
   const data = await GetGallery({
     page: current,
     limit: perPage,
-    year,
-    category: category === 'সবগুলো' ? undefined : category,
-    type: type as 'image' | 'video',
+    year: selectedYear,
+    category: normalizedCategory === ALL_CATEGORY ? undefined : normalizedCategory,
+    type,
   });
   const totalPages = Math.max(1, Math.ceil((data.total || 0) / perPage));
   const pageItems = data.items;
+  const availableYears = deriveYearsFromItems(pageItems);
 
-  const makeHref = (p: number) => {
+  const makeHref = (p: number, overrides?: { year?: number | null; category?: string; type?: string }): Route => {
     const qs = new URLSearchParams();
     qs.set('page', String(p));
-    if (year) qs.set('year', String(year));
-    if (category) qs.set('category', category);
-    if (type) qs.set('type', type);
-    return `/gallery?${qs.toString()}`;
+    const yearValue = overrides?.year ?? selectedYear ?? null;
+    const categoryValue = overrides?.category ?? normalizedCategory;
+    const typeValue = overrides?.type ?? type;
+    if (yearValue) {
+      qs.set('year', String(yearValue));
+    }
+    if (categoryValue && categoryValue !== ALL_CATEGORY) {
+      qs.set('category', categoryValue);
+    }
+    if (typeValue) {
+      qs.set('type', typeValue);
+    }
+    return `/gallery?${qs.toString()}` as Route;
   };
 
   return (
@@ -41,7 +76,7 @@ export default async function GalleryPage({ searchParams }: { searchParams?: { p
             {['image', 'video'].map((t) => (
               <Link
                 key={t}
-                href={makeHref(1).replace(`type=${type}`, `type=${t}`)}
+                href={makeHref(1, { type: t })}
                 className={`px-6 py-3 rounded-full border font-semibold transition-all ${
                   type === t
                     ? 'bg-brand text-white border-brand shadow-md'
@@ -56,29 +91,21 @@ export default async function GalleryPage({ searchParams }: { searchParams?: { p
           <div className="grid grid-cols-1 lg:grid-cols-[240px_1fr] gap-8 lg:gap-12">
             {/* Left category filter */}
             <aside className="rounded-2xl border border-emerald-200 bg-emerald-50 p-6 h-max sticky top-8">
-              <h3 className="text-lg font-bold text-emerald-900 mb-4">বিষয়শ্রেণী</h3>
+              <h3 className="text-lg font-bold text-emerald-900 mb-4">Categories</h3>
               <div className="space-y-2">
-                {data.categories.map((c) => {
-                  const selected = (category || 'সবগুলো') === c;
-                  const href = (() => {
-                    const qs = new URLSearchParams();
-                    qs.set('page', '1');
-                    if (year) qs.set('year', String(year));
-                    qs.set('category', c);
-                    qs.set('type', type);
-                    return `/gallery?${qs.toString()}`;
-                  })();
+                {[ALL_CATEGORY, ...CATEGORY_OPTIONS].map((c) => {
+                  const selected = normalizedCategory === c;
                   return (
                     <Link
                       key={c}
-                      href={href}
+                      href={makeHref(1, { category: c, year: selectedYear ?? null })}
                       className={`block rounded-lg px-4 py-3 transition-all ${
                         selected
                           ? 'bg-white text-brand font-semibold shadow-sm border border-brand/20'
                           : 'hover:bg-white/60 text-gray-700'
                       }`}
                     >
-                      {c}
+                      {c === ALL_CATEGORY ? 'All' : c}
                     </Link>
                   );
                 })}
@@ -91,29 +118,21 @@ export default async function GalleryPage({ searchParams }: { searchParams?: { p
               <div className="relative overflow-x-auto pb-2">
                 <div className="flex items-center gap-3 min-w-max">
                   <Link
-                    href={makeHref(1).replace(/year=\d+/, '').replace('??', '?')}
+                    href={makeHref(1, { year: null })}
                     className={`px-5 py-2.5 rounded-full border font-medium transition-all whitespace-nowrap ${
-                      !year
+                      !selectedYear
                         ? 'bg-brand text-white border-brand shadow-md'
                         : 'bg-white hover:bg-gray-50 border-gray-300 text-gray-700'
                     }`}
                   >
-                    সবগুলো
+                    All Years
                   </Link>
-                  {data.years.map((y) => {
-                    const href = (() => {
-                      const qs = new URLSearchParams();
-                      qs.set('page', '1');
-                      qs.set('year', String(y));
-                      qs.set('category', category);
-                      qs.set('type', type);
-                      return `/gallery?${qs.toString()}`;
-                    })();
-                    const selected = year === y;
+                  {availableYears.map((y) => {
+                    const selected = selectedYear === y;
                     return (
                       <Link
                         key={y}
-                        href={href}
+                        href={makeHref(1, { year: y })}
                         className={`px-5 py-2.5 rounded-full border font-medium transition-all whitespace-nowrap ${
                           selected
                             ? 'bg-brand text-white border-brand shadow-md'
@@ -129,7 +148,7 @@ export default async function GalleryPage({ searchParams }: { searchParams?: { p
 
               {/* Grid */}
               <div className="mb-8">
-                <Gallery items={pageItems.map((i) => ({ id: i.id, src: i.src, alt: i.alt }))} />
+                <Gallery items={pageItems.map((i) => ({ id: i.id, src: i.src, alt: i.alt, type: i.type }))} show={false} />
               </div>
 
               {/* Pagination */}

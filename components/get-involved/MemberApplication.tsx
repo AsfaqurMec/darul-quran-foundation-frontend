@@ -1,14 +1,25 @@
 'use client';
 
 import * as React from 'react';
-import Button from '@/components/ui/button';
+import dynamic from 'next/dynamic';
+import type { CountryData } from 'react-phone-input-2';
+import Button from '../../components/ui/button';
 import {
   submitMemberApplication,
-  initiateMemberPayment,
   type MemberApplicationData,
   type InitiateMemberPaymentPayload,
-} from '@/services/memberApplication';
-import { useI18n } from '@/components/i18n/LanguageProvider';
+} from '../../services/memberApplication';
+import { useI18n } from '../../components/i18n/LanguageProvider';
+import config from '../../config';
+
+const PhoneInput = dynamic(() => import('react-phone-input-2'), {
+  ssr: false,
+});
+
+const BANGLADESH_ISO2 = 'bd';
+const BANGLADESH_DIAL_CODE = '880';
+const BANGLADESH_PREFIX = '+880';
+const BANGLADESH_FLAG = '🇧🇩';
 
 type Props = {
   embedded?: boolean;
@@ -23,8 +34,10 @@ export default function MemberApplication({ embedded = false }: Props): JSX.Elem
   const [gender, setGender] = React.useState<'male' | 'female'>('male');
   const [mobile, setMobile] = React.useState('');
   const [isOverseas, setIsOverseas] = React.useState(false);
+  const [mobileDialCode, setMobileDialCode] = React.useState(BANGLADESH_DIAL_CODE);
+  const [mobileCountryIso, setMobileCountryIso] = React.useState(BANGLADESH_ISO2);
   const [email, setEmail] = React.useState('');
-  const [district, setDistrict] = React.useState('');
+  const [occupation, setOccupation] = React.useState('');
   const [reference, setReference] = React.useState('');
   const [address, setAddress] = React.useState('');
   const [paymentMethod, setPaymentMethod] = React.useState<'online' | 'bank_transfer' | 'bank_deposit'>('online');
@@ -50,6 +63,10 @@ export default function MemberApplication({ embedded = false }: Props): JSX.Elem
   }, [type]);
 
   const minAmount = type === 'lifetime' ? 100000 : 50000;
+  const phoneInputValue = React.useMemo(() => {
+    const digitsOnly = mobile.replace(/\D/g, '');
+    return digitsOnly ? `${mobileDialCode}${digitsOnly}` : mobileDialCode;
+  }, [mobile, mobileDialCode]);
 
   const clearFieldError = React.useCallback((key: string) => {
     setFieldErrors((prev) => {
@@ -58,6 +75,22 @@ export default function MemberApplication({ embedded = false }: Props): JSX.Elem
       return rest;
     });
   }, [setFieldErrors]);
+
+  const handleOverseasPhoneChange = React.useCallback(
+    (value: string, data: CountryData | {}) => {
+      const countryData = data as CountryData;
+      const dialCode = countryData?.dialCode ?? mobileDialCode;
+      const iso = countryData?.countryCode ? countryData.countryCode.toLowerCase() : mobileCountryIso;
+      const digitsOnly = value.replace(/\D/g, '');
+      const nationalNumber = digitsOnly.startsWith(dialCode) ? digitsOnly.slice(dialCode.length) : digitsOnly;
+
+      setMobileDialCode(dialCode);
+      setMobileCountryIso(iso);
+      setMobile(nationalNumber);
+      clearFieldError('mobile');
+    },
+    [clearFieldError, mobileCountryIso, mobileDialCode]
+  );
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -95,8 +128,8 @@ export default function MemberApplication({ embedded = false }: Props): JSX.Elem
       hasError = true;
     }
 
-    if (!district.trim()) {
-      errors.district = requiredMessage;
+    if (!occupation.trim()) {
+      errors.occupation = requiredMessage;
       hasError = true;
     }
 
@@ -145,6 +178,15 @@ export default function MemberApplication({ embedded = false }: Props): JSX.Elem
     handleDirectSubmission(amountNum);
   };
 
+  const formatMobileNumber = React.useCallback(() => {
+    const sanitized = mobile.trim();
+    if (!sanitized) {
+      return '';
+    }
+    const dialCode = mobileDialCode ? `+${mobileDialCode}` : '';
+    return dialCode ? `${dialCode}-${sanitized}` : sanitized;
+  }, [mobile, mobileDialCode]);
+
   const handleOnlinePayment = async (amountNum: number) => {
     setIsSubmitting(true);
     setSubmitError('');
@@ -158,27 +200,32 @@ export default function MemberApplication({ embedded = false }: Props): JSX.Elem
         name,
         fatherName,
         gender,
-        mobile,
+        mobile: formatMobileNumber(),
         isOverseas,
         email: email.trim() || undefined,
-        district,
+        occupation: occupation,
         reference: reference.trim() || undefined,
         address,
-        successUrl: `${baseUrl}/payment/member-success`,
-        failUrl: `${baseUrl}/payment/member-failed`,
-        cancelUrl: `${baseUrl}/payment/member-failed`,
+        paymentMethod: 'online',
       };
 
-      const response = await initiateMemberPayment(paymentPayload);
-
-      if (response.success && response.gatewayUrl) {
-        // Redirect to SSLCommerz payment page
-        window.location.href = response.gatewayUrl;
-        return;
-      }
+      fetch(`${config.api.baseUrl}/members/online-payment`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(paymentPayload),
+      })
+        .then((res) => res.json())
+        .then((result) => {
+          console.log(result);
+          window.location.replace(result.data.url);
+        })
+        .catch((error) => {
+          console.error('Error preparing payment redirect:', error);
+        //  window.location.href = '/payment/fail';
+        });
 
       // If gateway URL not returned, show error
-      setSubmitError(response.message || t('paymentGatewayError'));
+    //  setSubmitError(response.message || t('paymentGatewayError'));
     } catch (error) {
       console.error('Error initiating payment:', error);
       setSubmitError(t('paymentInitError'));
@@ -198,10 +245,10 @@ export default function MemberApplication({ embedded = false }: Props): JSX.Elem
         name,
         fatherName,
         gender,
-        mobile,
+        mobile: formatMobileNumber(),
         isOverseas,
         email: email.trim() || undefined,
-        district,
+        occupation,
         reference: reference.trim() || undefined,
         address,
         paymentMethod,
@@ -218,7 +265,7 @@ export default function MemberApplication({ embedded = false }: Props): JSX.Elem
         setFatherName('');
         setMobile('');
         setEmail('');
-        setDistrict('');
+        setOccupation('');
         setReference('');
         setAddress('');
         setTransactionId('');
@@ -264,6 +311,8 @@ export default function MemberApplication({ embedded = false }: Props): JSX.Elem
   React.useEffect(() => {
     if (!isOverseas) {
       setEmailError('');
+      setMobileCountryIso(BANGLADESH_ISO2);
+      setMobileDialCode(BANGLADESH_DIAL_CODE);
     }
   }, [isOverseas]);
 
@@ -366,22 +415,51 @@ export default function MemberApplication({ embedded = false }: Props): JSX.Elem
               {t('mobileNumber')} <span className="text-red-500">*</span>
             </label>
             <label className="inline-flex items-center gap-2 text-sm">
-              <input type="checkbox" checked={isOverseas} onChange={(e)=>setIsOverseas(e.target.checked)} />
+              <input type="checkbox" checked={isOverseas} onChange={(e) => setIsOverseas(e.target.checked)} />
               <span>{t('volunteerFormOverseas')}</span>
             </label>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="h-9 w-12 rounded-lg border border-gray-300 flex items-center justify-center text-lg">🇧🇩</div>
-            <input
-              value={mobile}
-              onChange={(e) => {
-                setMobile(e.target.value);
-                clearFieldError('mobile');
+          {isOverseas ? (
+            <PhoneInput
+              country={mobileCountryIso}
+              value={phoneInputValue}
+              onChange={handleOverseasPhoneChange}
+              enableSearch
+              disableSearchIcon
+              searchPlaceholder="Search..."
+              placeholder={t('enterPhoneNumber')}
+              specialLabel=""
+              countryCodeEditable={false}
+              prefix="+"
+              inputProps={{
+                name: 'overseas-mobile',
+                autoComplete: 'tel',
+                required: true,
               }}
-              className={`flex-1 rounded-lg border px-3 py-2 ${fieldErrors.mobile ? 'border-red-400' : 'border-gray-300'}`}
-              placeholder="01XXXXXXXXX"
+              containerClass="w-full phone-input-container"
+              inputClass={`phone-input-field ${fieldErrors.mobile ? 'phone-input-field-error' : ''}`}
+              buttonClass="phone-input-flag"
+              dropdownClass="phone-input-dropdown custom-scrollbar"
+              searchClass="phone-input-search"
+              
             />
-          </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm font-semibold">
+                <span className="text-lg">{BANGLADESH_FLAG}</span>
+                <span>{BANGLADESH_PREFIX}</span>
+              </div>
+              <input
+                value={mobile}
+                onChange={(e) => {
+                  setMobile(e.target.value);
+                  clearFieldError('mobile');
+                }}
+                className={`flex-1 rounded-lg border px-3 py-2 ${fieldErrors.mobile ? 'border-red-400' : 'border-gray-300'}`}
+                placeholder="01XXXXXXXXX"
+              />
+            </div>
+          )}
           {fieldErrors.mobile && <p className="text-red-500 text-sm mt-1">{fieldErrors.mobile}</p>}
         </div>
 
@@ -412,12 +490,12 @@ export default function MemberApplication({ embedded = false }: Props): JSX.Elem
               {t('profession')} <span className="text-red-500">*</span>
             </label>
             <select
-              value={district}
+              value={occupation}
               onChange={(e) => {
-                setDistrict(e.target.value);
-                clearFieldError('district');
+                setOccupation(e.target.value);
+                clearFieldError('job');
               }}
-              className={`w-full rounded-lg border px-3 py-2 bg-white ${fieldErrors.district ? 'border-red-400' : 'border-gray-300'}`}
+              className={`w-full rounded-lg border px-3 py-2 bg-white ${fieldErrors.occupation ? 'border-red-400' : 'border-gray-300'}`}
             >
               <option value="">{t('selectProfession')}</option>
               <option value="গৃহিণী">গৃহিণী</option>
@@ -443,7 +521,7 @@ export default function MemberApplication({ embedded = false }: Props): JSX.Elem
               <option value="প্রকৌশলী">প্রকৌশলী</option>
               <option value="আইনজীবী">আইনজীবী</option>
             </select>
-            {fieldErrors.district && <p className="text-red-500 text-sm mt-1">{fieldErrors.district}</p>}
+            {fieldErrors.occupation && <p className="text-red-500 text-sm mt-1">{fieldErrors.occupation}</p>}
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">{t('reference')}</label>

@@ -1,7 +1,7 @@
 'use client';
 
-import Button from '@/components/ui/button';
-import { useI18n } from '@/components/i18n/LanguageProvider';
+import Button from '../../components/ui/button';
+import { useI18n } from '../../components/i18n/LanguageProvider';
 
 export default function ContactForm(): JSX.Element {
   const { t } = useI18n();

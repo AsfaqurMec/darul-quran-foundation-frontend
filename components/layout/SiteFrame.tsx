@@ -1,20 +1,27 @@
 'use client';
 
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
-import Container from '@/components/layout/Container';
+import Header from '../../components/layout/Header';
+import Footer from '../../components/layout/Footer';
+import Container from '../../components/layout/Container';
 import { usePathname } from 'next/navigation';
+import TokenMonitor from '../../components/auth/TokenMonitor';
 
 export default function SiteFrame({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isAdmin = pathname?.startsWith('/admin');
 
   if (isAdmin) {
-    return <>{children}</>;
+    return (
+      <>
+        <TokenMonitor />
+        {children}
+      </>
+    );
   }
 
   return (
     <div className="min-h-screen grid grid-rows-[auto_1fr_auto]">
+      <TokenMonitor />
       <Header />
       <main className="w-full">
     

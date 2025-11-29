@@ -1,11 +1,11 @@
 'use client';
 
-import Tabs from '@/components/ui/Tabs';
-import MemberApplication from '@/components/get-involved/MemberApplication';
-import RegularDonorTab from '@/components/get-involved/RegularDonorTab';
-import LifetimeMemberTab from '@/components/get-involved/LifetimeMemberTab';
-import VolunteerTab from '@/components/get-involved/VolunteerTab';
-import { useI18n } from '@/components/i18n/LanguageProvider';
+import Tabs from '../../components/ui/Tabs';
+import MemberApplication from '../../components/get-involved/MemberApplication';
+import RegularDonorTab from '../../components/get-involved/RegularDonorTab';
+import LifetimeMemberTab from '../../components/get-involved/LifetimeMemberTab';
+import VolunteerTab from '../../components/get-involved/VolunteerTab';
+import { useI18n } from '../../components/i18n/LanguageProvider';
 
 export default function JoinTabs(): JSX.Element {
   const { t } = useI18n();

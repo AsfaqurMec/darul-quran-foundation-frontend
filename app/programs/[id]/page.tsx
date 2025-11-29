@@ -1,7 +1,7 @@
-import Container from '@/components/layout/Container';
-import ProgramDetail, { ProgramDetailData } from '@/components/program/ProgramDetail';
-import { getProgramById } from '@/services/programs';
-import { getImageUrl } from '@/lib/imageUtils';
+import Container from '../../../components/layout/Container';
+import ProgramDetail, { ProgramDetailData } from '../../../components/program/ProgramDetail';
+import { getProgramById } from '../../../services/programs';
+import { getImageUrl } from '../../../lib/imageUtils';
 
 export default async function ProgramDetailPage({
   params,
@@ -12,7 +12,7 @@ export default async function ProgramDetailPage({
 
   const res = await getProgramById(id);
   const p: any = res?.data ?? null;
-  console.log(p);
+ // console.log(p);
 
   if (!p) {
     return (

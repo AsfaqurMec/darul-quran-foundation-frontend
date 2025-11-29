@@ -1,15 +1,19 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
-import Button from '@/components/ui/button';
-import MediaUploader from '@/components/common/MediaUploader';
-import { Program, ProgramInput, createProgram, deleteProgram, getAllPrograms, getProgramById, updateProgram } from '@/services/programs';
+import { useCallback, useEffect, useState } from 'react';
+import Button from '../../../components/ui/button';
+import MediaUploader from '../../../components/common/MediaUploader';
+import PaginationBar from '../../../components/admin/PaginationBar';
+import { getAllPrograms, getProgramById } from '../../../services/programs';
+import { createProgram, deleteProgram, updateProgram } from '../../../services/programs/mutations';
 import { toast } from 'sonner';
-import { generateSlug } from '@/lib/validations/program';
-import { getImageUrl } from '@/lib/imageUtils';
-import { useI18n } from '@/components/i18n/LanguageProvider';
+import { generateSlug } from '../../../lib/validations/program';
+import { getImageUrl } from '../../../lib/imageUtils';
+import { useI18n } from '../../../components/i18n/LanguageProvider';
+import { useConfirmDialog } from '../../../components/common/ConfirmDialogProvider';
+import { PaginationInfo } from '../../../types/pagination';
 
-const initialForm: ProgramInput = {
+const initialForm: any = {
   title: '',
   subtitle: '',
   thumbnail: '',
@@ -42,8 +46,9 @@ const normalizeMultiple = (val: MediaValue | MediaValue[] | '' | undefined): Med
 
 export default function ProgramsPage(): JSX.Element {
   const { t } = useI18n();
-  const [programs, setPrograms] = useState<Program[]>([]);
-  const [formData, setFormData] = useState<ProgramInput>(initialForm);
+  const confirmDialog = useConfirmDialog();
+  const [programs, setPrograms] = useState<any[]>([]);
+  const [formData, setFormData] = useState<any>(initialForm);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -59,27 +64,51 @@ export default function ProgramsPage(): JSX.Element {
     projectGoalsAndObjectives: '',
     activities: '',
   });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pagination, setPagination] = useState<PaginationInfo>({
+    currentPage: 1,
+    totalPages: 1,
+    totalItems: 0,
+    itemsPerPage: 10,
+  });
+  const [pageSize, setPageSize] = useState(10);
 
-  const loadPrograms = useMemo(
-    () => async () => {
-      setLoading(true);
-      try {
-        const response = await getAllPrograms();
-        if (response.success && response.data) {
-          const data = Array.isArray(response.data) ? response.data : [response.data];
-          setPrograms(data);
+  const loadPrograms = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await getAllPrograms({
+        page: currentPage,
+        limit: pageSize,
+      });
+      if (response.success && response.data) {
+        const data = Array.isArray(response.data) ? response.data : [response.data];
+        setPrograms(data);
+        if (response.pagination) {
+          setPagination(response.pagination);
+          if (response.pagination.itemsPerPage) {
+            setPageSize(response.pagination.itemsPerPage);
+          }
+          if (response.pagination.currentPage) {
+            setCurrentPage(response.pagination.currentPage);
+          }
         } else {
-          toast.error(response.message ?? t('operationFailed'));
+          setPagination({
+            currentPage,
+            totalPages: Math.max(1, Math.ceil(Math.max(data.length, 1) / pageSize)),
+            totalItems: data.length,
+            itemsPerPage: pageSize,
+          });
         }
-      } catch (error) {
-        const message = error instanceof Error ? error.message : t('operationFailed');
-        toast.error(message);
-      } finally {
-        setLoading(false);
+      } else {
+        toast.error(response.message ?? t('operationFailed'));
       }
-    },
-    [t]
-  );
+    } catch (error) {
+      const message = error instanceof Error ? error.message : t('operationFailed');
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
+  }, [currentPage, pageSize, t]);
 
   useEffect(() => {
     void loadPrograms();
@@ -117,7 +146,7 @@ export default function ProgramsPage(): JSX.Element {
     const current = formData[field] || [];
     setFormData({
       ...formData,
-      [field]: current.filter((_, i) => i !== index),
+      [field]: current.filter((_: any, i: number) => i !== index),
     });
   };
 
@@ -143,7 +172,7 @@ export default function ProgramsPage(): JSX.Element {
     }
   };
 
-  const handleEdit = async (program: Program) => {
+  const handleEdit = async (program: any) => {
     if (!program.id) {
       toast.error(t('programIdMissing'));
       return;
@@ -156,7 +185,7 @@ export default function ProgramsPage(): JSX.Element {
 
       // Ensure media arrays are properly formatted
       const mediaArray = Array.isArray(fullProgram.media) 
-        ? fullProgram.media.map(m => {
+        ? fullProgram.media.map((m: any) => {
             if (typeof m === 'string') {
               // If it's already a data URL or full URL, use it as is
               if (m.startsWith('data:') || m.startsWith('http://') || m.startsWith('https://') || m.startsWith('blob:')) {
@@ -206,7 +235,14 @@ export default function ProgramsPage(): JSX.Element {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm(t('deleteProgramConfirm'))) return;
+    const confirmed = await confirmDialog({
+      title: t('delete'),
+      description: t('deleteProgramConfirm'),
+      confirmText: t('delete'),
+      cancelText: t('cancel'),
+      confirmVariant: 'danger',
+    });
+    if (!confirmed) return;
     setSubmitting(true);
     try {
       await deleteProgram(id);
@@ -398,7 +434,7 @@ export default function ProgramsPage(): JSX.Element {
                   </Button>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {(formData[field] || []).map((item, index) => (
+                  {(formData[field] || []).map((item: any, index: number) => (
                     <span
                       key={index}
                       className="inline-flex items-center gap-1 px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full text-sm"
@@ -452,8 +488,8 @@ export default function ProgramsPage(): JSX.Element {
                 ) : (
                   programs.map((program) => (
                     <tr key={program.id} className="border-t">
-                      <td className="py-2 pr-4">{program.title}</td>
-                      <td className="py-2 pr-4">{program.subtitle}</td>
+                      <td className="py-2 pr-4">{program.title.slice(0,40)}...</td>
+                      <td className="py-2 pr-4">{program.subtitle.slice(0,40)}...</td>
                       <td className="py-2 pr-4">
                         <code className="text-xs bg-gray-100 px-2 py-1 rounded">{program.slug}</code>
                       </td>
@@ -478,6 +514,17 @@ export default function ProgramsPage(): JSX.Element {
           </div>
         )}
       </div>
+      <PaginationBar
+        entityLabel={t('programs')}
+        pagination={pagination}
+        currentPage={currentPage}
+        onPageChange={(page) => setCurrentPage(page)}
+        onPageSizeChange={(size) => {
+          setCurrentPage(1);
+          setPageSize(size);
+          setPagination((prev) => ({ ...prev, itemsPerPage: size }));
+        }}
+      />
     </div>
   );
 }

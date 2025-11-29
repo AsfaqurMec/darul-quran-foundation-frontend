@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useI18n } from "@/components/i18n/LanguageProvider";
-import { translateText } from "@/lib/translate";
+import { useI18n } from '../../components/i18n/LanguageProvider';
+import { translateText } from '../../lib/translate';
 
 export type ActivityItem = {
   id: string;
@@ -18,7 +18,7 @@ export type ActivityItem = {
 export default function ActivityCard({ item }: { item: ActivityItem }): JSX.Element {
   const { lang, t } = useI18n();
   const [translatedTitle, setTranslatedTitle] = useState(item.title);
-  const [translatedDescription, setTranslatedDescription] = useState(item.description);
+  const [translatedDescription, setTranslatedDescription] = useState(item.description.slice(0,80));
   const [translatedTag, setTranslatedTag] = useState(item.tag || "নিয়মিত কার্যক্রম");
   const [isTranslating, setIsTranslating] = useState(false);
 
@@ -30,7 +30,7 @@ export default function ActivityCard({ item }: { item: ActivityItem }): JSX.Elem
       // If the item already has a locale and it matches current language, use original
       if (item.locale && item.locale === lang) {
         setTranslatedTitle(item.title);
-        setTranslatedDescription(item.description);
+        setTranslatedDescription(item.description.slice(0,80));
         setTranslatedTag(item.tag || "নিয়মিত কার্যক্রম");
         return;
       }
@@ -40,7 +40,7 @@ export default function ActivityCard({ item }: { item: ActivityItem }): JSX.Elem
         // Translate title, description, and tag in parallel
         const [titleResult, descriptionResult, tagResult] = await Promise.all([
           translateText(item.title, lang),
-          translateText(item.description, lang),
+          translateText(item.description.slice(0,80), lang),
           translateText(item.tag || "নিয়মিত কার্যক্রম", lang),
         ]);
 
@@ -51,7 +51,7 @@ export default function ActivityCard({ item }: { item: ActivityItem }): JSX.Elem
         console.error('Failed to translate activity content:', error);
         // Fallback to original text on error
         setTranslatedTitle(item.title);
-        setTranslatedDescription(item.description);
+        setTranslatedDescription(item.description.slice(0,80));
         setTranslatedTag(item.tag || "নিয়মিত কার্যক্রম");
       } finally {
         setIsTranslating(false);
@@ -83,7 +83,7 @@ export default function ActivityCard({ item }: { item: ActivityItem }): JSX.Elem
             )}
           </span>
         </div>
-        <h3 className="text-xl md:text-2xl font-extrabold text-emerald-900 mb-3 leading-tight line-clamp-2 group-hover:text-emerald-700 transition-colors">
+        <h3 className="text-xl md:text-2xl font-extrabold text-emerald-900 mb-3 leading-tight line-clamp-1 group-hover:text-emerald-700 transition-colors">
           {isTranslating ? (
             <span className="inline-flex items-center gap-2">
               <span className="animate-pulse">{item.title}</span>
@@ -96,11 +96,11 @@ export default function ActivityCard({ item }: { item: ActivityItem }): JSX.Elem
         <p className="text-gray-700 leading-7 line-clamp-2 mb-4 flex-1">
           {isTranslating ? (
             <span className="inline-flex items-center gap-2">
-              <span className="animate-pulse">{item.description}</span>
+              <span className="animate-pulse">{item.description.slice(0,80)}</span>
               <span className="text-xs text-gray-400">...</span>
             </span>
           ) : (
-            translatedDescription
+            translatedDescription + "..."
           )}
         </p>
         <div className="mt-auto">

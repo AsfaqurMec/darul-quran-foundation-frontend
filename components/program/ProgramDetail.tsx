@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Container from '@/components/layout/Container';
+import Container from '../../components/layout/Container';
 import ImageCarousel from '../activity/ImageCarousel';
-import { useI18n, Lang } from '@/components/i18n/LanguageProvider';
-import { translateText } from '@/lib/translate';
+import { useI18n, Lang } from '../../components/i18n/LanguageProvider';
+import { translateText } from '../../lib/translate';
 
 export type ProgramDetailData = {
   id: string;

@@ -1,8 +1,8 @@
 'use client';
 
 import * as React from 'react';
-import DonationWidget from '@/components/donation/DonationWidget';
-import { useI18n } from '@/components/i18n/LanguageProvider';
+import DonationWidget from '../../components/donation/DonationWidget';
+import { useI18n } from '../../components/i18n/LanguageProvider';
 
 function YouTube({ id, title }: { id: string; title: string }): JSX.Element {
 	return (
@@ -29,7 +29,7 @@ export default function RegularDonorTab(): JSX.Element {
 			<div className="lg:col-span-2 -mt-2">
 				<div className="rounded-2xl bg-gray-100 border border-gray-200 text-gray-800 text-sm px-4 py-3">
 					{t('regularDonorNotice')}
-					&nbsp;<a href="mailto:autopay@assunnahfoundation.org" className="font-semibold text-emerald-700 underline">autopay@assunnahfoundation.org</a>&nbsp;- {t('regularDonorNoticeEmail')}
+					&nbsp;<a href="mailto:autopay@darulquranfoundation.org" className="font-semibold text-emerald-700 underline">autopay@darulquranfoundation.org</a>&nbsp;- {t('regularDonorNoticeEmail')}
 				</div>
 			</div>
 			{/* Left column: video + intro + benefits */}

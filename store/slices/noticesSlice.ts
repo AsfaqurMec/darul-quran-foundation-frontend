@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import * as noticesApi from '@/services/notices';
-import { Notice } from '@/services/notices';
+import * as noticesApi from '../../services/notices';
+import { Notice } from '../../services/notices';
 
 interface NoticesState {
   items: Notice[];

@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import * as blogsApi from '@/services/blogs/api';
-import { Blog } from '@/services/blogs/api';
+import * as blogsApi from '../../services/blogs/api';
+import { Blog } from '../../services/blogs/api';
 
 interface BlogsState {
   items: Blog[];

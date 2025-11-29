@@ -1,7 +1,7 @@
 "use server";
 
-import { api, auth } from "@/config";
-import { getImageUrl } from "@/lib/imageUtils";
+import { api, auth } from "../../config";
+import { getImageUrl } from "../../lib/imageUtils";
 import { cookies } from "next/headers";
 
 export type GalleryMediaType = "image" | "video";
@@ -15,13 +15,16 @@ export interface GalleryApiItem {
   src?: string;
   url?: string;
   image?: string;
+  media?: string;
   thumbnail?: string;
   type?: GalleryMediaType;
   category?: string;
   year?: number | string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
-export interface GalleryResponse {
+export interface PublicGalleryResponse {
   items: {
     id: string;
     src: string;
@@ -30,6 +33,8 @@ export interface GalleryResponse {
     title?: string;
     category?: string;
     year?: number;
+    createdAt?: string;
+    updatedAt?: string;
   }[];
   total: number;
   years: number[];
@@ -44,7 +49,7 @@ type FetchParams = {
   type?: GalleryMediaType;
 };
 
-export async function GetGallery(params: FetchParams = {}): Promise<GalleryResponse> {
+export async function GetGallery(params: FetchParams = {}): Promise<PublicGalleryResponse> {
   const { page = 1, limit = 12, year, category, type = "image" } = params;
 
   try {
@@ -110,14 +115,30 @@ export async function GetGallery(params: FetchParams = {}): Promise<GalleryRespo
       .map((it) => {
         const id = String(it.id ?? it._id ?? "");
         const srcCandidate = it.media ?? it.src ?? it.url ?? it.image ?? it.thumbnail ?? "";
+        const declaredType = (it.type as GalleryMediaType) ?? undefined;
+        const inferredType: GalleryMediaType =
+          declaredType ??
+          (() => {
+            try {
+              const host = new URL(srcCandidate).hostname.toLowerCase();
+              return host.includes("youtube.com") || host.includes("youtu.be") ? "video" : "image";
+            } catch {
+              return "image";
+            }
+          })();
+        const rawYear = typeof it.year === "string" ? Number(it.year) : (it.year as number | undefined);
+        const createdYear = it.createdAt ? Number(new Date(it.createdAt).getFullYear()) : undefined;
+        const resolvedYear = rawYear ?? createdYear;
         return {
           id,
-          src: getImageUrl(srcCandidate),
+          src: inferredType === "video" ? srcCandidate : getImageUrl(srcCandidate),
           alt: it.alt ?? it.caption ?? it.title ?? "",
-          type: (it.type as GalleryMediaType) ?? "image",
+          type: inferredType,
           title: it.title ?? "",
           category: it.category ?? "",
-          year: typeof it.year === "string" ? Number(it.year) : (it.year as number | undefined),
+          year: resolvedYear,
+          createdAt: it.createdAt,
+          updatedAt: it.updatedAt,
         };
       })
       .filter((it) => it.src);
@@ -150,7 +171,17 @@ export async function GetGallery(params: FetchParams = {}): Promise<GalleryRespo
     const filtered = items.filter((i) => (type ? (i.type ?? "image") === type : true));
 
     return {
-      items: filtered.map((i) => ({ id: i.id, src: i.src, alt: i.alt, type: i.type, title: i.title, category: i.category, year: i.year })),
+      items: filtered.map((i) => ({
+        id: i.id,
+        src: i.src,
+        alt: i.alt,
+        type: i.type,
+        title: i.title,
+        category: i.category,
+        year: i.year,
+        createdAt: i.createdAt,
+        updatedAt: i.updatedAt,
+      })),
       total,
       years,
       categories: ["সবগুলো", ...categories.filter((c) => c && c !== "সবগুলো")],
@@ -163,6 +194,8 @@ export async function GetGallery(params: FetchParams = {}): Promise<GalleryRespo
 
 import apiClient from '@/lib/apiClient';
 import { buildRequestPayload } from '@/lib/formData';
+import { ensurePagination } from '@/lib/pagination';
+import { PaginationInfo } from '@/types/pagination';
 
 export interface GalleryItem {
   id?: string;
@@ -185,26 +218,56 @@ export interface GalleryResponse<T = GalleryItem | GalleryItem[]> {
   success: boolean;
   data?: T;
   message?: string;
+  pagination?: PaginationInfo;
 }
 
-const unwrap = <T,>(response: { success?: boolean; data?: T; message?: string } & T) => {
-  if ('success' in response) {
+const unwrap = <T,>(response: unknown): GalleryResponse<T> => {
+  if (
+    response &&
+    typeof response === 'object' &&
+    'success' in response &&
+    typeof (response as { success: unknown }).success === 'boolean'
+  ) {
     return response as GalleryResponse<T>;
   }
-  return { success: true, data: response } satisfies GalleryResponse<T>;
+  return { success: true, data: response as T };
+};
+
+type GalleryQueryParams = {
+  category?: string;
+  type?: 'image' | 'video';
+  page?: number;
+  limit?: number;
+  searchTerm?: string;
 };
 
 export const getAllGalleryItems = async (
-  params?: { category?: string; type?: 'image' | 'video' }
+  params?: GalleryQueryParams
 ): Promise<GalleryResponse<GalleryItem[]>> => {
-  const query: Record<string, string> = {};
+  const query: Record<string, string | number> = {};
   if (params?.category) query.category = params.category;
   if (params?.type === 'image' || params?.type === 'video') query.type = params.type;
+  if (params?.page) query.page = params.page;
+  if (params?.limit) query.limit = params.limit;
+  if (params?.searchTerm) query.searchTerm = params.searchTerm;
 
   const { data } = await apiClient.get('/gallery', {
     params: Object.keys(query).length ? query : undefined,
   });
-  return unwrap<GalleryItem[]>(data);
+
+  const base = unwrap<GalleryItem[]>(data);
+  const dataArray = Array.isArray(base.data) ? base.data : base.data ? [base.data] : [];
+
+  return {
+    ...base,
+    data: dataArray,
+    pagination: ensurePagination(
+      data.pagination ?? base.pagination,
+      dataArray.length,
+      params?.page,
+      params?.limit
+    ),
+  };
 };
 
 export const getGalleryItemById = async (id: string): Promise<GalleryResponse<GalleryItem>> => {

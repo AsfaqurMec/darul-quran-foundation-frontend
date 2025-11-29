@@ -1,5 +1,7 @@
-import apiClient from '@/lib/apiClient';
-import { buildRequestPayload } from '@/lib/formData';
+import apiClient from '../../lib/apiClient';
+import { ensurePagination } from '../../lib/pagination';
+import { buildRequestPayload } from '../../lib/formData';
+import { PaginationInfo } from '../../types/pagination';
 
 export interface Blog {
   id?: string;
@@ -28,18 +30,46 @@ export interface BlogResponse<T = Blog | Blog[]> {
   success: boolean;
   data?: T;
   message?: string;
+  pagination?: PaginationInfo;
 }
 
-const unwrap = <T,>(response: { success?: boolean; data?: T; message?: string } & T) => {
+const unwrap = <T,>(response: { success?: boolean; data?: T; message?: string; pagination?: PaginationInfo } & T) => {
   if ('success' in response) {
     return response as BlogResponse<T>;
   }
   return { success: true, data: response } satisfies BlogResponse<T>;
 };
 
-export const getAllBlogs = async (): Promise<BlogResponse<Blog[]>> => {
-  const { data } = await apiClient.get('/blogs');
-  return unwrap<Blog[]>(data);
+type BlogQueryParams = {
+  page?: number;
+  limit?: number;
+  searchTerm?: string;
+  category?: string;
+};
+
+export const getAllBlogs = async (params?: BlogQueryParams): Promise<BlogResponse<Blog[]>> => {
+  const lang = typeof window !== 'undefined'
+    ? document.cookie.match(/(?:^|; )lang=([^;]*)/)?.[1]
+    : undefined;
+
+  const query: Record<string, string | number> = {};
+  if (params?.page) query.page = params.page;
+  if (params?.limit) query.limit = params.limit;
+  if (params?.searchTerm) query.searchTerm = params.searchTerm;
+  if (params?.category) query.category = params.category;
+
+  const { data } = await apiClient.get('/blogs', {
+    params: Object.keys(query).length ? query : undefined,
+    headers: lang ? { 'Accept-Language': decodeURIComponent(lang) } : undefined,
+  });
+
+  const base = unwrap<Blog[]>(data);
+  const dataArray = Array.isArray(base.data) ? base.data : base.data ? [base.data] : [];
+  return {
+    ...base,
+    data: dataArray,
+    pagination: ensurePagination(data.pagination ?? base.pagination, dataArray.length, params?.page, params?.limit),
+  };
 };
 
 export const getBlogById = async (id: string): Promise<BlogResponse<Blog>> => {

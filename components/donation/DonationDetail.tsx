@@ -2,10 +2,15 @@
 
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import Container from '@/components/layout/Container';
-import Button from '@/components/ui/button';
-import { useI18n, Lang } from '@/components/i18n/LanguageProvider';
-import { translateText } from '@/lib/translate';
+import Container from '../../components/layout/Container';
+import Button from '../../components/ui/button';
+import { useI18n, Lang } from '../../components/i18n/LanguageProvider';
+import { translateText } from '../../lib/translate';
+import {
+  DonationCachePayload,
+  storeDonationPayload,
+} from '../../lib/donationPayment';
+import config from '../../config';
 
 export type DonationDetailData = {
   id: string;
@@ -46,6 +51,14 @@ export default function DonationDetail({ data }: Props): JSX.Element {
   const [translatedFormDescription, setTranslatedFormDescription] = useState(data.formDescription || '');
   const [translatedCategories, setTranslatedCategories] = useState<string[]>(data.expenditureCategories || []);
   const [isTranslating, setIsTranslating] = useState(false);
+
+  // Form state
+  const [name, setName] = useState<string>('');
+  const [contact, setContact] = useState<string>('');
+  const [behalf, setBehalf] = useState<string>('');
+  const [paymentMethod, setPaymentMethod] = useState<'online' | 'bank_transfer' | 'bank_deposit'>('online');
+  const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const videoId = getYouTubeVideoId(data.videoUrl);
 
@@ -229,6 +242,77 @@ const activePresets = hasFlatPresets
   ? (data.daily || [])
   : (data.monthly || []);
 
+  // Parse amount from input (remove currency symbols, commas, and spaces)
+  const parseAmount = (value: string): number => {
+    const cleaned = value.replace(/[৳,\s]/g, '');
+    return parseFloat(cleaned) || 0;
+  };
+
+  // Get current amount value
+  const getCurrentAmount = (): number => {
+    if (selectedPreset !== null) {
+      return selectedPreset;
+    }
+    return parseAmount(customAmount);
+  };
+
+  // Form validation errors
+  const contactError = submitted && !contact ? t('contactError') : null;
+  const amountError = submitted && getCurrentAmount() <= 0 ? t('amountError') : null;
+
+  // Form submission handler
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitted(true);
+
+    const currentAmount = getCurrentAmount();
+    
+    // Validate required fields
+    if (!contact || currentAmount <= 0) {
+      return;
+    }
+
+    // Only proceed if payment method is online (other methods may need different handling)
+    if (paymentMethod !== 'online') {
+      // For now, only handle online payments
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const payload: DonationCachePayload = {
+        purpose: data.slug,
+        contact,
+        amount: currentAmount,
+        purposeLabel: translatedTitle || data.title,
+        behalf: behalf || '',
+        name: name || '',
+      };
+      
+      // Store payload before redirecting to payment gateway
+      storeDonationPayload(payload);
+      
+      fetch(`${config.api.baseUrl}/donations`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+        .then((res) => res.json())
+        .then((result) => {
+          console.log(result);
+          window.location.replace(result.data.url);
+        })
+        .catch((error) => {
+          console.error('Error preparing payment redirect:', error);
+        //  window.location.href = '/payment/fail';
+        });
+    } catch (error) {
+      console.error('Error preparing payment redirect:', error);
+     // window.location.href = '/payment/fail';
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div>
@@ -337,7 +421,7 @@ const activePresets = hasFlatPresets
 
             {/* Right: form widget */}
             <div>
-              <div className="rounded-2xl overflow-hidden border border-gray-200">
+              <form onSubmit={onSubmit} className="rounded-2xl overflow-hidden border border-gray-200">
                 {/* Green header */}
                 <div className="bg-emerald-700 text-white p-6">
                   <h3 className="text-xl md:text-2xl font-bold">
@@ -480,11 +564,7 @@ const activePresets = hasFlatPresets
       type="button"
       onClick={() => {
         setSelectedPreset(null);
-
-        // Also only blank input for daily/monthly
-        if (!hasFlatPresets) {
-          setCustomAmount('');
-        }
+        setCustomAmount(''); // Clear input when selecting "any amount"
       }}
       className={`rounded-lg border px-4 py-3 font-semibold transition-colors ${
         selectedPreset == null
@@ -506,7 +586,12 @@ const activePresets = hasFlatPresets
                       type="text"
                       inputMode="numeric"
                       value={selectedPreset !== null ? `৳ ${formatNumber(selectedPreset, lang)}` : customAmount}
-                      onChange={(e) => setCustomAmount(e.target.value)}
+                      onChange={(e) => {
+                        // Allow user to type freely when no preset is selected
+                        if (selectedPreset === null) {
+                          setCustomAmount(e.target.value);
+                        }
+                      }}
                       disabled={selectedPreset !== null}
                       placeholder={t('amountPlaceholder')}
                       className={`w-full rounded-lg px-4 py-3 ${
@@ -515,23 +600,43 @@ const activePresets = hasFlatPresets
                           : 'bg-white border border-gray-300'
                       }`}
                     />
+                    {amountError && <p className="mt-1 text-xs text-red-500">{amountError}</p>}
                   </div>
 
-                  {/* Basic donor fields (placeholder UI) */}
+                  {/* Basic donor fields */}
                   <div className="space-y-3 pt-2">
                     <div className="space-y-1">
                       <label className="text-sm font-semibold text-gray-700">{t('yourName')}</label>
-                      <input className="w-full rounded-lg border border-gray-300 px-4 py-3" placeholder={t('write')} />
+                      <input
+                        type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className="w-full rounded-lg border border-gray-300 px-4 py-3"
+                        placeholder={t('write')}
+                      />
                     </div>
                     <div className="space-y-1">
                       <label className="text-sm font-semibold text-gray-700">
                         {t('contactLabel')} <span className="text-red-500">*</span>
                       </label>
-                      <input className="w-full rounded-lg border border-gray-300 px-4 py-3" placeholder={t('contactPlaceholder')} />
+                      <input
+                        type="text"
+                        value={contact}
+                        onChange={(e) => setContact(e.target.value)}
+                        className="w-full rounded-lg border border-gray-300 px-4 py-3"
+                        placeholder={t('contactPlaceholder')}
+                      />
+                      {contactError && <p className="mt-1 text-xs text-red-500">{contactError}</p>}
                     </div>
                     <div className="space-y-1">
-                      <label className="text-sm font-semibold text-gray-700">{t('donationNote')}</label>
-                      <input className="w-full rounded-lg border border-gray-300 px-4 py-3" placeholder={t('write')} />
+                      <label className="text-sm font-semibold text-gray-700">{t('donateOnBehalf')}</label>
+                      <input
+                        type="text"
+                        value={behalf}
+                        onChange={(e) => setBehalf(e.target.value)}
+                        className="w-full rounded-lg border border-gray-300 px-4 py-3"
+                        placeholder={t('write')}
+                      />
                     </div>
                   </div>
 
@@ -542,25 +647,52 @@ const activePresets = hasFlatPresets
                     </label>
                     <div className="rounded-lg border border-gray-200 p-3 flex items-center gap-6">
                       <label className="inline-flex items-center gap-2 cursor-pointer">
-                        <input type="radio" name="pm" defaultChecked className="accent-emerald-600" />
+                        <input
+                          type="radio"
+                          name="pm"
+                          value="online"
+                          checked={paymentMethod === 'online'}
+                          onChange={(e) => setPaymentMethod(e.target.value as 'online')}
+                          className="accent-emerald-600"
+                        />
                         <span className="font-semibold">{t('paymentMethodOnline')}</span>
                       </label>
-                      <label className="inline-flex items-center gap-2 cursor-pointer">
-                        <input type="radio" name="pm" className="accent-emerald-600" />
+                      {/* <label className="inline-flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="pm"
+                          value="bank_transfer"
+                          checked={paymentMethod === 'bank_transfer'}
+                          onChange={(e) => setPaymentMethod(e.target.value as 'bank_transfer')}
+                          className="accent-emerald-600"
+                        />
                         <span className="font-semibold">{t('paymentMethodBankTransfer')}</span>
                       </label>
                       <label className="inline-flex items-center gap-2 cursor-pointer">
-                        <input type="radio" name="pm" className="accent-emerald-600" />
+                        <input
+                          type="radio"
+                          name="pm"
+                          value="bank_deposit"
+                          checked={paymentMethod === 'bank_deposit'}
+                          onChange={(e) => setPaymentMethod(e.target.value as 'bank_deposit')}
+                          className="accent-emerald-600"
+                        />
                         <span className="font-semibold">{t('paymentMethodBankDeposit')}</span>
-                      </label>
+                      </label> */}
                     </div>
                   </div>
 
                   <div className="pt-2">
-                    <Button className="w-full px-4 py-4 text-lg font-semibold">{t('next')}</Button>
+                    <Button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="w-full px-4 py-4 text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isSubmitting ? (t('submitting') || 'Submitting...') : t('donate')}
+                    </Button>
                   </div>
                 </div>
-              </div>
+              </form>
             </div>
           </div>
         </Container>

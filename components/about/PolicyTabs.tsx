@@ -1,8 +1,8 @@
 'use client';
 
-import Container from '@/components/layout/Container';
-import Tabs, { TabItem } from '@/components/ui/Tabs';
-import { useI18n } from '@/components/i18n/LanguageProvider';
+import Container from '../../components/layout/Container';
+import Tabs, { TabItem } from '../../components/ui/Tabs';
+import { useI18n } from '../../components/i18n/LanguageProvider';
 
 export default function PolicyTabs(): JSX.Element {
   const { t } = useI18n();

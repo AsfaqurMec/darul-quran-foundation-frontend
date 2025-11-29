@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import * as activitiesApi from '@/services/activities';
-import { Activity } from '@/services/activities';
+import * as activityQueries from '../../services/activities';
+import { Activity } from '../../services/activities';
+import * as activityMutations from '../../services/activities/mutations';
 
 interface ActivitiesState {
   items: Activity[];
@@ -20,7 +21,7 @@ const initialState: ActivitiesState = {
 export const fetchActivities = createAsyncThunk(
   'activities/fetchAll',
   async (_, { rejectWithValue }) => {
-    const response = await activitiesApi.getAllActivities();
+    const response = await activityQueries.getAllActivities();
     if (response.success && response.data) {
       return Array.isArray(response.data) ? response.data : [response.data];
     }
@@ -31,7 +32,7 @@ export const fetchActivities = createAsyncThunk(
 export const fetchActivityById = createAsyncThunk(
   'activities/fetchById',
   async (id: string, { rejectWithValue }) => {
-    const response = await activitiesApi.getActivityById(id);
+    const response = await activityQueries.getActivityById(id);
     if (response.success && response.data) {
       return Array.isArray(response.data) ? response.data[0] : response.data;
     }
@@ -42,7 +43,7 @@ export const fetchActivityById = createAsyncThunk(
 export const createActivity = createAsyncThunk(
   'activities/create',
   async (activityData: Omit<Activity, 'id'>, { rejectWithValue }) => {
-    const response = await activitiesApi.createActivity(activityData);
+    const response = await activityMutations.createActivity(activityData);
     if (response.success && response.data) {
       return Array.isArray(response.data) ? response.data[0] : response.data;
     }
@@ -53,7 +54,7 @@ export const createActivity = createAsyncThunk(
 export const updateActivity = createAsyncThunk(
   'activities/update',
   async ({ id, data }: { id: string; data: Partial<Activity> }, { rejectWithValue }) => {
-    const response = await activitiesApi.updateActivity(id, data);
+    const response = await activityMutations.updateActivity(id, data);
     if (response.success && response.data) {
       return Array.isArray(response.data) ? response.data[0] : response.data;
     }
@@ -64,7 +65,7 @@ export const updateActivity = createAsyncThunk(
 export const deleteActivity = createAsyncThunk(
   'activities/delete',
   async (id: string, { rejectWithValue }) => {
-    const response = await activitiesApi.deleteActivity(id);
+    const response = await activityMutations.deleteActivity(id);
     if (response.success) {
       return id;
     }

@@ -1,7 +1,7 @@
 "use server";
 
 
-import { getNewToken } from "@/services/AuthService";
+///import { getNewToken } from "@/services/AuthService";
 import { jwtDecode } from "jwt-decode";
 import { cookies } from "next/headers";
 
@@ -21,13 +21,17 @@ export const isTokenExpired = async (token: string): Promise<boolean> => {
 export const getValidToken = async (): Promise<string> => {
   const cookieStore = await cookies();
 
-  let token = cookieStore.get("accessToken")!.value;
+  const tokenCookie = cookieStore.get("accessToken");
 
-  if (!token || (await isTokenExpired(token))) {
-    const { data } = await getNewToken();
-    token = data?.accessToken;
-    console.log(token)
-    cookieStore.set("accessToken", token);
+  if (!tokenCookie?.value) {
+    throw new Error("Access token not found");
+  }
+
+  const token = tokenCookie.value;
+
+  if (await isTokenExpired(token)) {
+    cookieStore.delete("accessToken");
+    throw new Error("Access token expired");
   }
 
   return token;

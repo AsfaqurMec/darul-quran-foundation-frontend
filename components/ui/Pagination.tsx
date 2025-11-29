@@ -35,7 +35,7 @@ export default function Pagination({ currentPage, totalPages, makeHref, classNam
       <Link
         aria-disabled={currentPage <= 1}
         className={`px-3 py-1.5 rounded-full border bg-white hover:bg-gray-50 ${currentPage <= 1 ? 'pointer-events-none opacity-50' : ''}`}
-        href={makeHref(Math.max(1, currentPage - 1))}
+        href={makeHref(Math.max(1, currentPage - 1)) as any}
       >
         পূর্ববর্তী
       </Link>
@@ -44,7 +44,7 @@ export default function Pagination({ currentPage, totalPages, makeHref, classNam
         typeof p === 'number' ? (
           <Link
             key={idx}
-            href={makeHref(p)}
+            href={makeHref(p) as any}
             aria-current={p === currentPage ? 'page' : undefined}
             className={`px-3 py-1.5 rounded-full border ${p === currentPage ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-white hover:bg-gray-50'}`}
           >
@@ -58,7 +58,7 @@ export default function Pagination({ currentPage, totalPages, makeHref, classNam
       <Link
         aria-disabled={currentPage >= totalPages}
         className={`px-3 py-1.5 rounded-full border bg-white hover:bg-gray-50 ${currentPage >= totalPages ? 'pointer-events-none opacity-50' : ''}`}
-        href={makeHref(Math.min(totalPages, currentPage + 1))}
+        href={makeHref(Math.min(totalPages, currentPage + 1)) as any}
       >
         পরবর্তী
       </Link>

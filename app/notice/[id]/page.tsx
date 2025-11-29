@@ -1,6 +1,6 @@
-import Container from '@/components/layout/Container';
-import NoticeDetail from '@/components/notice/NoticeDetail';
-import { getNoticeById } from '@/services/notices';
+import Container from '../../../components/layout/Container';
+import NoticeDetail from '../../../components/notice/NoticeDetail';
+import { getNoticeById } from '../../../services/notices';
 
 export default async function NoticeDetailPage({
   params,

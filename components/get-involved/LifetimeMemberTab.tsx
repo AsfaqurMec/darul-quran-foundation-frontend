@@ -1,8 +1,8 @@
 'use client';
 
 import * as React from 'react';
-import MemberApplication from '@/components/get-involved/MemberApplication';
-import { useI18n } from '@/components/i18n/LanguageProvider';
+import MemberApplication from '../../components/get-involved/MemberApplication';
+import { useI18n } from '../../components/i18n/LanguageProvider';
 
 function YouTube({ id, title }: { id: string; title: string }): JSX.Element {
 	return (

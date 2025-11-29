@@ -1,10 +1,10 @@
 'use client';
 
 import * as React from 'react';
-import Button from '@/components/ui/button';
-import { createVolunteerApplication } from '@/services/volunteers';
+import Button from '../../components/ui/button';
+import { createVolunteerApplication } from '../../services/volunteers';
 import { toast } from 'sonner';
-import { useI18n } from '@/components/i18n/LanguageProvider';
+import { useI18n } from '../../components/i18n/LanguageProvider';
 
 export default function VolunteerTab(): JSX.Element {
 	const { t } = useI18n();

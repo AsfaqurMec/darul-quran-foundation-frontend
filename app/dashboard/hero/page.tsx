@@ -1,12 +1,15 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
-import Button from '@/components/ui/button';
-import MediaUploader from '@/components/common/MediaUploader';
-import { HeroImage, HeroImageInput, createHeroImage, deleteHeroImage, getAllHeroImages, updateHeroImage } from '@/services/hero';
+import { useCallback, useEffect, useState } from 'react';
+import Button from '../../../components/ui/button';
+import MediaUploader from '../../../components/common/MediaUploader';
+import PaginationBar from '../../../components/admin/PaginationBar';
+import { HeroImage, HeroImageInput, createHeroImage, deleteHeroImage, getAllHeroImages, updateHeroImage } from '../../../services/hero';
 import { toast } from 'sonner';
-import { getImageUrl } from '@/lib/imageUtils';
-import { useI18n } from '@/components/i18n/LanguageProvider';
+import { getImageUrl } from '../../../lib/imageUtils';
+import { useI18n } from '../../../components/i18n/LanguageProvider';
+import { useConfirmDialog } from '../../../components/common/ConfirmDialogProvider';
+import { PaginationInfo } from '../../../types/pagination';
 
 type MediaValue = string | File;
 
@@ -27,35 +30,59 @@ const normalizeSingle = (value: MediaValue | MediaValue[] | '' | undefined): Med
 
 export default function HeroPage(): JSX.Element {
   const { t } = useI18n();
+  const confirmDialog = useConfirmDialog();
   const [heroImages, setHeroImages] = useState<HeroImage[]>([]);
   const [formData, setFormData] = useState<HeroImageInput>(initialForm);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pagination, setPagination] = useState<PaginationInfo>({
+    currentPage: 1,
+    totalPages: 1,
+    totalItems: 0,
+    itemsPerPage: 10,
+  });
+  const [pageSize, setPageSize] = useState(10);
 
-  const loadHeroImages = useMemo(
-    () => async () => {
-      setLoading(true);
-      try {
-        const response = await getAllHeroImages();
-        if (response.success && response.data) {
-          const data = Array.isArray(response.data) ? response.data : [response.data];
-          // Sort by order
-          const sortedData = data.sort((a, b) => (a.order || 0) - (b.order || 0));
-          setHeroImages(sortedData);
+  const loadHeroImages = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await getAllHeroImages({
+        page: currentPage,
+        limit: pageSize,
+      });
+      if (response.success && response.data) {
+        const data = Array.isArray(response.data) ? response.data : [response.data];
+        const sortedData = data.sort((a, b) => (a.order || 0) - (b.order || 0));
+        setHeroImages(sortedData);
+        if (response.pagination) {
+          setPagination(response.pagination);
+          if (response.pagination.itemsPerPage) {
+            setPageSize(response.pagination.itemsPerPage);
+          }
+          if (response.pagination.currentPage) {
+            setCurrentPage(response.pagination.currentPage);
+          }
         } else {
-          toast.error((response.message ?? t('operationFailed')) || 'Failed to load hero images');
+          setPagination({
+            currentPage,
+            totalPages: Math.max(1, Math.ceil(Math.max(sortedData.length, 1) / pageSize)),
+            totalItems: sortedData.length,
+            itemsPerPage: pageSize,
+          });
         }
-      } catch (error) {
-        const message = error instanceof Error ? error.message : t('operationFailed') || 'Failed to load hero images';
-        toast.error(message);
-      } finally {
-        setLoading(false);
+      } else {
+        toast.error((response.message ?? t('operationFailed')) || 'Failed to load hero images');
       }
-    },
-    [t]
-  );
+    } catch (error) {
+      const message = error instanceof Error ? error.message : t('operationFailed') || 'Failed to load hero images';
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
+  }, [currentPage, pageSize, t]);
 
   useEffect(() => {
     void loadHeroImages();
@@ -105,7 +132,14 @@ export default function HeroPage(): JSX.Element {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm(t('deleteHeroImageConfirm'))) return;
+    const confirmed = await confirmDialog({
+      title: t('delete'),
+      description: t('deleteHeroImageConfirm'),
+      confirmText: t('delete'),
+      cancelText: t('cancel'),
+      confirmVariant: 'danger',
+    });
+    if (!confirmed) return;
     setSubmitting(true);
     try {
       await deleteHeroImage(id);
@@ -285,6 +319,17 @@ export default function HeroPage(): JSX.Element {
           </div>
         )}
       </div>
+      <PaginationBar
+        entityLabel={t('heroImages')}
+        pagination={pagination}
+        currentPage={currentPage}
+        onPageChange={(page) => setCurrentPage(page)}
+        onPageSizeChange={(size) => {
+          setCurrentPage(1);
+          setPageSize(size);
+          setPagination((prev) => ({ ...prev, itemsPerPage: size }));
+        }}
+      />
     </div>
   );
 }

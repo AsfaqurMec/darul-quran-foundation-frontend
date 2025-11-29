@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useI18n, Lang } from "@/components/i18n/LanguageProvider";
-import { translateText } from "@/lib/translate";
+import { useI18n, Lang } from "../../components/i18n/LanguageProvider";
+import { translateText } from "../../lib/translate";
 
 export type Notice = {
   id: string;
@@ -34,7 +34,7 @@ function formatDateParts(iso: string, locale: Lang) {
 export default function NoticeCard({ notice }: { notice: Notice }): JSX.Element {
   const { lang, t } = useI18n();
   const [translatedTitle, setTranslatedTitle] = useState(notice.title);
-  const [translatedExcerpt, setTranslatedExcerpt] = useState(notice.excerpt || '');
+  const [translatedExcerpt, setTranslatedExcerpt] = useState(notice.excerpt?.slice(0,150) || '');
   const [translatedTag, setTranslatedTag] = useState(notice.tag || '');
   const [isTranslating, setIsTranslating] = useState(false);
 
@@ -47,7 +47,7 @@ export default function NoticeCard({ notice }: { notice: Notice }): JSX.Element 
       // If the notice already has a locale and it matches current language, use original
       if (notice.locale && notice.locale === lang) {
         setTranslatedTitle(notice.title);
-        setTranslatedExcerpt(notice.excerpt || '');
+        setTranslatedExcerpt(notice.excerpt?.slice(0,150) || '');
         setTranslatedTag(notice.tag || '');
         return;
       }
@@ -60,7 +60,7 @@ export default function NoticeCard({ notice }: { notice: Notice }): JSX.Element 
         ];
 
         if (notice.excerpt) {
-          promises.push(translateText(notice.excerpt, lang));
+          promises.push(translateText(notice.excerpt.slice(0,150), lang));
         }
 
         if (notice.tag) {
@@ -81,7 +81,7 @@ export default function NoticeCard({ notice }: { notice: Notice }): JSX.Element 
         console.error('Failed to translate notice content:', error);
         // Fallback to original text on error
         setTranslatedTitle(notice.title);
-        setTranslatedExcerpt(notice.excerpt || '');
+        setTranslatedExcerpt(notice.excerpt?.slice(0,150) || '');
         setTranslatedTag(notice.tag || '');
       } finally {
         setIsTranslating(false);
@@ -127,7 +127,7 @@ export default function NoticeCard({ notice }: { notice: Notice }): JSX.Element 
           <p className="text-gray-700 leading-relaxed text-base md:text-lg">
             {isTranslating ? (
               <span className="inline-flex items-center gap-2">
-                <span className="animate-pulse">{notice.excerpt}</span>
+                <span className="animate-pulse">{notice.excerpt.slice(0,150)}</span>
                 <span className="text-xs text-gray-400">...</span>
               </span>
             ) : (
@@ -135,7 +135,7 @@ export default function NoticeCard({ notice }: { notice: Notice }): JSX.Element 
             )}
           </p>
         )}
-        <div className="mt-4 flex items-center gap-2 text-brand text-sm font-medium group-hover:text-brand-dark transition-colors">
+        <div className="mt-4 flex items-center gap-2 text-white text-sm font-medium group-hover:text-brand-dark transition-colors bg-brand/90 px-4 py-2 rounded-lg w-[120px] text-center">
           <span>{t('readMore')}</span>
           <span>→</span>
         </div>

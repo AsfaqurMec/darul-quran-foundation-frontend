@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useI18n, Lang } from "@/components/i18n/LanguageProvider";
-import { translateText } from "@/lib/translate";
+import { useI18n, Lang } from "../../components/i18n/LanguageProvider";
+import { translateText } from "../../lib/translate";
 
 export type BlogPost = {
   id: string;
@@ -18,7 +18,7 @@ export type BlogPost = {
 export default function BlogCard({ post }: { post: BlogPost }): JSX.Element {
   const { lang } = useI18n();
   const [translatedTitle, setTranslatedTitle] = useState(post.title);
-  const [translatedExcerpt, setTranslatedExcerpt] = useState(post.excerpt);
+  const [translatedExcerpt, setTranslatedExcerpt] = useState(post.excerpt.slice(0,80));
   const [isTranslating, setIsTranslating] = useState(false);
 
   const href = post.href || `/blog/${post.id}`;
@@ -30,7 +30,7 @@ export default function BlogCard({ post }: { post: BlogPost }): JSX.Element {
       // If the post already has a locale and it matches current language, use original
       if (post.locale && post.locale === lang) {
         setTranslatedTitle(post.title);
-        setTranslatedExcerpt(post.excerpt);
+        setTranslatedExcerpt(post.excerpt.slice(0,80));
         return;
       }
 
@@ -39,7 +39,7 @@ export default function BlogCard({ post }: { post: BlogPost }): JSX.Element {
         // Translate title and excerpt in parallel
         const [titleResult, excerptResult] = await Promise.all([
           translateText(post.title, lang),
-          translateText(post.excerpt, lang),
+          translateText(post.excerpt.slice(0,80), lang),
         ]);
 
         setTranslatedTitle(titleResult);
@@ -48,7 +48,7 @@ export default function BlogCard({ post }: { post: BlogPost }): JSX.Element {
         console.error('Failed to translate blog content:', error);
         // Fallback to original text on error
         setTranslatedTitle(post.title);
-        setTranslatedExcerpt(post.excerpt);
+        setTranslatedExcerpt(post.excerpt.slice(0,80));
       } finally {
         setIsTranslating(false);
       }
@@ -68,7 +68,7 @@ export default function BlogCard({ post }: { post: BlogPost }): JSX.Element {
         />
       </div>
       <div className="p-3 sm:p-4 md:p-5">
-        <h3 className="text-lg sm:text-xl md:text-2xl font-extrabold text-emerald-900 mb-1.5 sm:mb-2 group-hover:text-emerald-700 transition-colors line-clamp-2 sm:line-clamp-3">
+        <h3 className="text-lg sm:text-xl md:text-2xl font-extrabold text-emerald-900 mb-1.5 sm:mb-2 group-hover:text-emerald-700 transition-colors line-clamp-1 sm:line-clamp-1">
           {isTranslating ? (
             <span className="inline-flex items-center gap-2">
               <span className="animate-pulse">{post.title}</span>
@@ -78,14 +78,14 @@ export default function BlogCard({ post }: { post: BlogPost }): JSX.Element {
             translatedTitle
           )}
         </h3>
-        <p className="text-gray-700 text-sm sm:text-base leading-6 sm:leading-7 line-clamp-2 sm:line-clamp-3 md:line-clamp-3">
+        <p className="text-gray-700 text-sm sm:text-base leading-6 sm:leading-7 line-clamp-2 sm:line-clamp-2 md:line-clamp-2">
           {isTranslating ? (
             <span className="inline-flex items-center gap-2">
-              <span className="animate-pulse">{post.excerpt}</span>
+              <span className="animate-pulse">{post.excerpt.slice(0,80)}</span>
               <span className="text-xs text-gray-400">...</span>
             </span>
           ) : (
-            translatedExcerpt
+            translatedExcerpt + "..."
           )}
         </p>
         <div className="mt-3 sm:mt-4 text-xs sm:text-sm text-gray-500">{formattedDate}</div>

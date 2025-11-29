@@ -1,7 +1,7 @@
 "use client";
 
 import { FieldValues } from "react-hook-form";
-import { api } from "@/config";
+import { api } from "../../config";
 
 export interface AuthResponse<TData = unknown> {
   success: boolean;

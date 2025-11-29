@@ -1,8 +1,8 @@
-import Container from '@/components/layout/Container';
-import Pagination from '@/components/ui/Pagination';
-import NoticeCard from '@/components/notice/NoticeCard';
-import PageHero from '@/components/common/PageHero';
-import { getAllNotices } from '@/services/notices';
+import Container from '../../components/layout/Container';
+import Pagination from '../../components/ui/Pagination';
+import NoticeCard from '../../components/notice/NoticeCard';
+import PageHero from '../../components/common/PageHero';
+import { getAllNotices } from '../../services/notices';
 
 export default async function NoticePage({ searchParams }: { searchParams?: { page?: string } }): Promise<JSX.Element> {
   const perPage = 10;

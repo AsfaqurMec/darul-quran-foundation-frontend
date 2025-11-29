@@ -1,7 +1,7 @@
-import Container from '@/components/layout/Container';
-import ContactForm from '@/components/contact/ContactForm';
-import ContactFaq from '@/components/contact/ContactFaq';
-import PageHero from '@/components/common/PageHero';
+import Container from '../../components/layout/Container';
+import ContactForm from '../../components/contact/ContactForm';
+import ContactFaq from '../../components/contact/ContactFaq';
+import PageHero from '../../components/common/PageHero';
 
 export default function ContactPage(): JSX.Element {
   return (

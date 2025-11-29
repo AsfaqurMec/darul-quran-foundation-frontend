@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import Container from '@/components/layout/Container';
+import { useEffect, useMemo, useState } from 'react';
+import Container from '../../components/layout/Container';
 import BlogCard, { BlogPost } from './BlogCard';
-import { useI18n, Lang } from '@/components/i18n/LanguageProvider';
-import { translateText, clearCacheForLanguage } from '@/lib/translate';
+import { useI18n, Lang } from '../../components/i18n/LanguageProvider';
+import { translateText, clearCacheForLanguage } from '../../lib/translate';
+import DOMPurify from 'isomorphic-dompurify';
 
 type BlogData = {
   id: string;
@@ -43,7 +44,7 @@ export default function BlogDetail({ blog, otherBlogs = [] }: Props): JSX.Elemen
         return;
       }
 
-      console.log('Translating blog content to:', lang, 'from locale:', blog.locale);
+    //  console.log('Translating blog content to:', lang, 'from locale:', blog.locale);
       setIsTranslating(true);
       
       // Clear cache for this language to force fresh translation
@@ -57,13 +58,13 @@ export default function BlogDetail({ blog, otherBlogs = [] }: Props): JSX.Elemen
           translateText(blog.fullContent, lang, blog.locale),
         ]);
 
-        console.log('Translation results:', { 
-          titleOriginal: blog.title.substring(0, 50),
-          titleTranslated: titleResult.substring(0, 50),
-          excerptOriginal: blog.excerpt.substring(0, 50),
-          excerptTranslated: excerptResult.substring(0, 50),
-          fullContentLength: fullContentResult.length 
-        });
+        // console.log('Translation results:', { 
+        //   titleOriginal: blog.title.substring(0, 50),
+        //   titleTranslated: titleResult.substring(0, 50),
+        //   excerptOriginal: blog.excerpt.substring(0, 50),
+        //   excerptTranslated: excerptResult.substring(0, 50),
+        //   fullContentLength: fullContentResult.length 
+        // });
         
         setTranslatedTitle(titleResult);
         setTranslatedExcerpt(excerptResult);
@@ -81,6 +82,23 @@ export default function BlogDetail({ blog, otherBlogs = [] }: Props): JSX.Elemen
 
     translateContent();
   }, [lang, blog.title, blog.excerpt, blog.fullContent, blog.locale]);
+
+  const safeTranslatedContent = useMemo(
+    () => DOMPurify.sanitize(translatedFullContent || ''),
+    [translatedFullContent],
+  );
+
+  const safeOriginalContent = useMemo(
+    () => DOMPurify.sanitize(blog.fullContent || ''),
+    [blog.fullContent],
+  );
+
+  const contentHtml = isTranslating
+    ? `<div style="display: flex; align-items: center; gap: 0.5rem;">
+        <div style="animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;">${safeOriginalContent}</div>
+        <span style="font-size: 0.75rem; color: #9ca3af;">...</span>
+      </div>`
+    : safeTranslatedContent;
 
   return (
     <div>
@@ -142,10 +160,8 @@ export default function BlogDetail({ blog, otherBlogs = [] }: Props): JSX.Elemen
               {blog.fullContent && (
                 <article
                   className="prose max-w-none prose-lg"
-                  dangerouslySetInnerHTML={{ 
-                    __html: isTranslating 
-                      ? `<div style="display: flex; align-items: center; gap: 0.5rem;"><div style="animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;">${blog.fullContent}</div><span style="font-size: 0.75rem; color: #9ca3af;">...</span></div>` 
-                      : translatedFullContent 
+                  dangerouslySetInnerHTML={{
+                    __html: contentHtml,
                   }}
                 />
               )}
@@ -189,12 +205,34 @@ export default function BlogDetail({ blog, otherBlogs = [] }: Props): JSX.Elemen
 
               {/* Other blogs */}
               {otherBlogs.length > 0 && (
-                <div className="rounded-xl border border-gray-200 p-5 bg-white">
-                  <h3 className="text-xl font-bold mb-4">{t('relatedBlogs')}</h3>
-                  <div className="grid grid-cols-1 gap-4">
-                    {otherBlogs.slice(0, 6).map((p) => (
-                      <BlogCard key={p.id} post={p} />
-                    ))}
+                <div className="space-y-5">
+                  <div className="rounded-xl border border-gray-200 p-5 bg-white">
+                    <h3 className="text-xl font-bold mb-4">{t('relatedBlogs')}</h3>
+                    <div className="grid grid-cols-1 gap-4">
+                      {otherBlogs.slice(0, 6).map((p) => (
+                        <BlogCard key={p.id} post={p} />
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="rounded-3xl bg-[#0F8A41] px-6 py-8 text-center text-white shadow-lg">
+                    <p className="text-2xl font-bold leading-relaxed mb-6">
+                      {t('ctaChangeTogether')}
+                    </p>
+                    <div className="flex flex-col gap-4">
+                      <a
+                        href="/donation"
+                        className="inline-flex items-center justify-center rounded-xl bg-[#E9B454] px-5 py-3 text-lg font-semibold text-[#0F2F10] transition hover:brightness-110"
+                      >
+                        {t('donate')}
+                      </a>
+                      <a
+                        href="/get-involved"
+                        className="inline-flex items-center justify-center rounded-xl border-2 border-white px-5 py-3 text-lg font-semibold transition hover:bg-white hover:text-[#0F8A41]"
+                      >
+                        {t('becomeVolunteer')}
+                      </a>
+                    </div>
                   </div>
                 </div>
               )}

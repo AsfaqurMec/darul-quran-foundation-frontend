@@ -1,5 +1,5 @@
-import { Program, ProgramInput } from '@/types/program';
-import { generateSlug } from '@/lib/validations/program';
+import { Program, ProgramInput } from '../../types/program';
+import { generateSlug } from '../../lib/validations/program';
 
 // In-memory storage (replace with database in production)
 class ProgramStorage {
@@ -17,6 +17,8 @@ class ProgramStorage {
 
     const program: Program = {
       id,
+      tag: input.tag,
+      image: input.image,
       title: input.title,
       subtitle: input.subtitle,
       thumbnail: typeof input.thumbnail === 'string' ? input.thumbnail : '',

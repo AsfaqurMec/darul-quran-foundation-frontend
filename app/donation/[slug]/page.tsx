@@ -1,7 +1,7 @@
-import Container from '@/components/layout/Container';
-import { getDonationCategoryBySlug } from '@/services/donationCategories';
-import { getImageUrl } from '@/lib/imageUtils';
-import DonationDetail, { type DonationDetailData } from '@/components/donation/DonationDetail';
+import Container from '../../../components/layout/Container';
+import { getDonationCategoryBySlug } from '../../../services/donationCategories';
+import { getImageUrl } from '../../../lib/imageUtils';
+import DonationDetail, { type DonationDetailData } from '../../../components/donation/DonationDetail';
 
 export default async function DonationCategoryDetailPage({
   params,

@@ -1,20 +1,21 @@
-import { getClientToken } from "@/lib/tokenUtils";
-
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
+import { getClientToken } from "../../lib/tokenUtils";
+import { config } from '../../config';
+// const API_BASE_URL =
+//   process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
 
 export interface User {
   _id: string;
   fullName: string;
   phone: string;
   email: string;
-  companyName: string;
-  fullAddress: string;
-  images: string[];
+  companyName?: string;
+  fullAddress?: string;
+  images?: string[];
   createdAt: string;
   updatedAt: string;
   role?: string;
   totalDonate?: number;
+  id?: string;
 }
 
 export interface CreateUserRequest {
@@ -62,7 +63,7 @@ export const getAllUsers = async (): Promise<{
       return { success: false, message: "No access token found" };
     }
 
-    const response = await fetch(`${API_BASE_URL}/users/all`, {
+    const response = await fetch(`${config.api.baseUrl}/users/all`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -96,7 +97,7 @@ export const promoteRole = async (
       return { success: false, message: "No access token found" };
     }
 
-    const response = await fetch(`${API_BASE_URL}/users/userToadmin/${id}`, {
+    const response = await fetch(`${config.api.baseUrl}/users/userToadmin/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -137,10 +138,10 @@ export const createUser = async (
       return { success: false, message: "No access token found" };
     }
 
-    console.log("Making API request to:", `${API_BASE_URL}/users`);
+    console.log("Making API request to:", `${config.api.baseUrl}/users`);
     console.log("Request body:", JSON.stringify(userData));
 
-    const response = await fetch(`${API_BASE_URL}/users/create-user`, {
+    const response = await fetch(`${config.api.baseUrl}/users/create-user`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -180,7 +181,7 @@ export const createAdminUser = async (
       return { success: false, message: "No access token found" };
     }
 
-    const response = await fetch(`${API_BASE_URL}/users/create-admin`, {
+    const response = await fetch(`${config.api.baseUrl}/users/create-admin`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -240,7 +241,7 @@ export const getAllUsersPaginated = async (params?: {
     if (params?.role) queryParams.append("role", params.role);
 
     const queryString = queryParams.toString();
-    const apiUrl = `${API_BASE_URL}/users${queryString ? `?${queryString}` : ""}`;
+    const apiUrl = `${config.api.baseUrl}/users${queryString ? `?${queryString}` : ""}`;
 
     const response = await fetch(apiUrl, {
       method: "GET",
@@ -280,7 +281,7 @@ export const deleteUser = async (
       return { success: false, message: "No access token found" };
     }
 
-    const response = await fetch(`${API_BASE_URL}/users/${id}`, {
+    const response = await fetch(`${config.api.baseUrl}/users/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -318,7 +319,7 @@ export const updateUser = async (
       return { success: false, message: "No access token found" };
     }
 
-    const response = await fetch(`${API_BASE_URL}/users/${id}`, {
+    const response = await fetch(`${config.api.baseUrl}/users/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

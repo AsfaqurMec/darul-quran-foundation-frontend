@@ -1,9 +1,9 @@
 'use client';
 
-import Button from '@/components/ui/button';
-import MediaUploader from '@/components/common/MediaUploader';
+import Button from '../../components/ui/button';
+import MediaUploader from '../../components/common/MediaUploader';
 import { useState } from 'react';
-import { useI18n } from '@/components/i18n/LanguageProvider';
+import { useI18n } from '../../components/i18n/LanguageProvider';
 
 export type Column<T> = { key: keyof T; label: string };
 

@@ -1,20 +1,22 @@
-import Hero from '@/components/hero/Hero';
-import MissionTriplet from '@/components/sections/MissionTriplet';
-import ActivityCarousel from '@/components/sections/ActivityCarousel';
-import DonationCarousel from '@/components/sections/DonationCarousel';
-import JoinUs from '@/components/sections/JoinUs';
-import Gallery from '@/components/sections/Gallery';
-import BlogList from '@/components/sections/BlogList';
-import { GetAllBlog } from '@/services/blogs';
-import { getImageUrl } from '@/lib/imageUtils';
-import type { BlogPost } from '@/components/blog/BlogCard';
-import { getAllActivities, type Activity } from '@/services/activities';
-import type { ActivityItem } from '@/components/activity/ActivityCard';
-import { getAllDonationCategories, type DonationCategory } from '@/services/donationCategories';
+import Hero from '../components/hero/Hero';
+import MissionTriplet from '../components/sections/MissionTriplet';
+import ActivityCarousel from '../components/sections/ActivityCarousel';
+import DonationCarousel from '../components/sections/DonationCarousel';
+import JoinUs from '../components/sections/JoinUs';
+import Gallery from '../components/sections/Gallery';
+import BlogList from '../components/sections/BlogList';
+import { GetAllBlog } from '../services/blogs';
+import { getImageUrl } from '../lib/imageUtils';
+import type { BlogPost } from '../components/blog/BlogCard';
+import { getAllActivities, type Activity } from '../services/activities';
+import type { ActivityItem } from '../components/activity/ActivityCard';
+import { getAllDonationCategories, type DonationCategory } from '../services/donationCategories';
+import ImpactVideo from '../components/sections/ImpactVideo';
+import { getAllPrograms } from '../services/programs';
 
 export default async function HomePage(): Promise<JSX.Element> {
   const listRes = await GetAllBlog();
-  console.log(listRes);
+ // console.log(listRes);
   const items = Array.isArray(listRes?.data) ? listRes!.data : [];
   const posts: BlogPost[] = items.slice(0, 12).map((b: any) => ({
     id: String(b.id ?? b._id ?? ''),
@@ -24,10 +26,10 @@ export default async function HomePage(): Promise<JSX.Element> {
     image: getImageUrl(b.thumbnail ?? (Array.isArray(b.images) ? b.images[0] : '')),
     href: `/blog/${b.id ?? b._id}`,
   }));
-  console.log(posts);
+  //console.log(posts);
 
   // Activities for ActivityCarousel
-  const activitiesRes = await getAllActivities();
+  const activitiesRes = await getAllPrograms();
   const rawActivities: Activity[] = Array.isArray(activitiesRes?.data) ? (activitiesRes.data as Activity[]) : [];
   const activities: ActivityItem[] = rawActivities.slice(0, 12).map((a) => ({
     id: String(a.id ?? ''),
@@ -35,7 +37,7 @@ export default async function HomePage(): Promise<JSX.Element> {
     description: String(a.description ?? ''),
     tag: String(a.tag ?? ''),
     image: getImageUrl(a.image ?? a.thumbnail ?? ''),
-    href: `/activities/${a.id}`,
+    href: `/programs/${a.id}`,
   }));
 
   // Donation categories for DonationCarousel
@@ -46,6 +48,7 @@ export default async function HomePage(): Promise<JSX.Element> {
     image: getImageUrl(d.thumbnail ?? ''),
     title: String(d.title ?? ''),
     description: String(d.subtitle ?? d.description ?? ''),
+    href: `/donation/${d.slug ?? ''}`,
   }));
 
   return (
@@ -54,8 +57,9 @@ export default async function HomePage(): Promise<JSX.Element> {
       <MissionTriplet />
       <ActivityCarousel items={activities} />
       <DonationCarousel funds={funds} />
+      <ImpactVideo />
       <JoinUs />
-      <Gallery />
+      <Gallery/>
       <BlogList posts={posts} />
     </div>
   );

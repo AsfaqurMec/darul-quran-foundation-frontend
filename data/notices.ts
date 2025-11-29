@@ -1,4 +1,4 @@
-import { Notice } from '@/components/notice/NoticeCard';
+import { Notice } from '../components/notice/NoticeCard';
 
 export type NoticeDetailData = Notice & {
   fullContent?: string;

@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useI18n } from "@/components/i18n/LanguageProvider";
-import { translateText } from "@/lib/translate";
+import { useI18n } from "../../components/i18n/LanguageProvider";
+import { translateText } from "../../lib/translate";
 
 export type DonationItem = {
   id: string;
@@ -18,7 +18,7 @@ export type DonationItem = {
 export default function DonationCard({ item }: { item: DonationItem }): JSX.Element {
   const { lang, t } = useI18n();
   const [translatedTitle, setTranslatedTitle] = useState(item.title);
-  const [translatedDescription, setTranslatedDescription] = useState(item.description);
+  const [translatedDescription, setTranslatedDescription] = useState(item.description.slice(0,80));
   const [isTranslating, setIsTranslating] = useState(false);
 
   const href = item.href || `/donation/${item.id}`;
@@ -29,7 +29,7 @@ export default function DonationCard({ item }: { item: DonationItem }): JSX.Elem
       // If the item already has a locale and it matches current language, use original
       if (item.locale && item.locale === lang) {
         setTranslatedTitle(item.title);
-        setTranslatedDescription(item.description);
+        setTranslatedDescription(item.description.slice(0,80));
         return;
       }
 
@@ -38,7 +38,7 @@ export default function DonationCard({ item }: { item: DonationItem }): JSX.Elem
         // Translate title and description in parallel
         const [titleResult, descriptionResult] = await Promise.all([
           translateText(item.title, lang),
-          translateText(item.description, lang),
+          translateText(item.description.slice(0,80), lang),
         ]);
 
         setTranslatedTitle(titleResult);
@@ -47,7 +47,7 @@ export default function DonationCard({ item }: { item: DonationItem }): JSX.Elem
         console.error('Failed to translate donation content:', error);
         // Fallback to original text on error
         setTranslatedTitle(item.title);
-        setTranslatedDescription(item.description);
+        setTranslatedDescription(item.description.slice(0,80));
       } finally {
         setIsTranslating(false);
       }
@@ -69,7 +69,7 @@ export default function DonationCard({ item }: { item: DonationItem }): JSX.Elem
           </svg>
           <span>{item.tag}</span>
         </div> */}
-        <h3 className="text-xl md:text-2xl font-extrabold text-emerald-900 mb-3 leading-tight line-clamp-2 group-hover:text-emerald-700 transition-colors">
+        <h3 className="text-xl md:text-2xl font-extrabold text-emerald-900 mb-3 leading-tight line-clamp-1 group-hover:text-emerald-700 transition-colors">
           {isTranslating ? (
             <span className="inline-flex items-center gap-2">
               <span className="animate-pulse">{item.title}</span>
@@ -86,7 +86,7 @@ export default function DonationCard({ item }: { item: DonationItem }): JSX.Elem
               <span className="text-xs text-gray-400">...</span>
             </span>
           ) : (
-            translatedDescription
+            translatedDescription + "..."
           )}
         </p>
         <div className="mt-auto">

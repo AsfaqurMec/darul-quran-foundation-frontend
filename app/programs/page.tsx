@@ -1,16 +1,17 @@
-import Container from '@/components/layout/Container';
-import ActivityCard, { type ActivityItem } from '@/components/activity/ActivityCard';
-import Pagination from '@/components/ui/Pagination';
-import PageHero from '@/components/common/PageHero';
-import { getAllPrograms, type Program } from '@/services/programs';
-import { getImageUrl } from '@/lib/imageUtils';
+import Container from '../../components/layout/Container';
+import ActivityCard, { type ActivityItem } from '../../components/activity/ActivityCard';
+import Pagination from '../../components/ui/Pagination';
+import PageHero from '../../components/common/PageHero';
+import { getAllPrograms } from '../../services/programs';
+import { Program, ProgramInput } from '../../types/program';
+import { getImageUrl } from '../../lib/imageUtils';
 
 export default async function ProgramsPage({ searchParams }: { searchParams?: { page?: string } }): Promise<JSX.Element> {
   const perPage = 9;
   const current = Math.max(1, Number(searchParams?.page || '1'));
 
   const res = await getAllPrograms();
-  console.log(res);
+ // console.log(res);
  // console.log(res);
   const list: Program[] = Array.isArray(res?.data) ? (res.data as Program[]) : [];
   const all: ActivityItem[] = list.map((p) => ({
@@ -24,7 +25,7 @@ export default async function ProgramsPage({ searchParams }: { searchParams?: { 
   const totalPages = Math.max(1, Math.ceil(all.length / perPage));
   const start = (current - 1) * perPage;
   const items = all.slice(start, start + perPage);
-  console.log(items);
+ // console.log(items);
   const makeHref = (p: number) => `/programs?page=${p}`;
 
   return (

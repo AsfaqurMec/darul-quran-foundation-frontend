@@ -1,9 +1,9 @@
-import Container from '@/components/layout/Container';
-import DonationCard, { type DonationItem } from '@/components/donation/DonationCard';
-import Pagination from '@/components/ui/Pagination';
-import PageHero from '@/components/common/PageHero';
-import { getAllDonationCategories, type DonationCategory } from '@/services/donationCategories';
-import { getImageUrl } from '@/lib/imageUtils';
+import Container from '../../components/layout/Container';
+import DonationCard, { type DonationItem } from '../../components/donation/DonationCard';
+import Pagination from '../../components/ui/Pagination';
+import PageHero from '../../components/common/PageHero';
+import { getAllDonationCategories, type DonationCategory } from '../../services/donationCategories';
+import { getImageUrl } from '../../lib/imageUtils';
 
 export default async function DonationCategoriesPage({ searchParams }: { searchParams?: { page?: string } }): Promise<JSX.Element> {
   const perPage = 9;

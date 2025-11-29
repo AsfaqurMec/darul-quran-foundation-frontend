@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import * as galleryApi from '@/services/gallery';
-import { GalleryItem } from '@/services/gallery';
+import * as galleryApi from '../../services/gallery';
+import { GalleryItem } from '../../services/gallery';
 
 interface GalleryState {
   items: GalleryItem[];

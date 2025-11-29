@@ -1,5 +1,9 @@
+import { PaginationInfo } from './pagination';
+
 export interface Program {
   id?: string;
+  tag: string;
+  image: string;
   title: string;
   subtitle: string;
   thumbnail: string;
@@ -18,6 +22,8 @@ export interface Program {
 }
 
 export type ProgramInput = {
+  tag: string;
+  image: string;
   title: string;
   subtitle: string;
   thumbnail: string | File;
@@ -37,5 +43,6 @@ export interface ProgramResponse<T = Program | Program[]> {
   success: boolean;
   data?: T;
   message?: string;
+  pagination?: PaginationInfo;
 }
 

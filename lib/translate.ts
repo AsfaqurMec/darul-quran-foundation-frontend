@@ -229,7 +229,7 @@
 //   keysToDelete.forEach(key => translationCache.delete(key));
 // }
 
-import { Lang } from '@/components/i18n/LanguageProvider';
+import { Lang } from '../components/i18n/LanguageProvider';
 
 // Cache to avoid translating the same text multiple times
 const translationCache = new Map<string, string>();
