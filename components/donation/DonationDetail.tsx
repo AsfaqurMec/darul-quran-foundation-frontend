@@ -299,7 +299,7 @@ const activePresets = hasFlatPresets
       })
         .then((res) => res.json())
         .then((result) => {
-          console.log(result);
+        //  console.log(result);
           window.location.replace(result.data.url);
         })
         .catch((error) => {

@@ -129,7 +129,7 @@ export const createUser = async (
   userData: CreateUserRequest
 ): Promise<CreateUserResponse> => {
   try {
-    console.log("createUser called with data:", userData);
+   // console.log("createUser called with data:", userData);
 
     const token = getClientToken();
     console.log("Token retrieved:", token ? "Token exists" : "No token found");
@@ -138,8 +138,8 @@ export const createUser = async (
       return { success: false, message: "No access token found" };
     }
 
-    console.log("Making API request to:", `${config.api.baseUrl}/users`);
-    console.log("Request body:", JSON.stringify(userData));
+   // console.log("Making API request to:", `${config.api.baseUrl}/users`);
+   // console.log("Request body:", JSON.stringify(userData));
 
     const response = await fetch(`${config.api.baseUrl}/users/create-user`, {
       method: "POST",
@@ -151,7 +151,7 @@ export const createUser = async (
     });
 
     const data = await response.json();
-    console.log("API response:", data);
+   // console.log("API response:", data);
 
     if (!response.ok) {
       return {

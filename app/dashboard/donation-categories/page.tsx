@@ -82,7 +82,7 @@ export default function DonationCategoriesPage(): JSX.Element {
         limit: pageSize,
       });
       if (response.success && response.data) {
-        console.log("response", response);
+    //    console.log("response", response);
         const data = Array.isArray(response.data) ? response.data : [response.data];
         setCategories(data);
         if (response.pagination) {
@@ -233,16 +233,16 @@ export default function DonationCategoriesPage(): JSX.Element {
       toast.error(t('categoryIdMissing'));
       return;
     }
-    console.log("category", category);
+  //  console.log("category", category);
     try {
       // Fetch full category data
       const response = await getDonationCategoryById(category.id);
-      console.log("response", response);
+    //  console.log("response", response);
       
       // Use the fetched data if available, otherwise fall back to the category from list
       // But prefer the fetched data as it should have all fields
       const fullCategory = (response.success && response.data) ? response.data : category;
-      console.log("fullCategory", fullCategory);
+   //   console.log("fullCategory", fullCategory);
 
       // Set checkbox states based on existing data
       const hasDailyData = !!(fullCategory.daily && Array.isArray(fullCategory.daily) && fullCategory.daily.length > 0);
@@ -284,7 +284,7 @@ export default function DonationCategoriesPage(): JSX.Element {
       setFormData(newFormData);
       setEditingId(fullCategory.id ?? null);
       setShowForm(true);
-      console.log("newFormData", newFormData);
+     // console.log("newFormData", newFormData);
     } catch (error) {
       console.error('Error loading category for edit:', error);
       toast.error(t('failedToLoadCategory'));

@@ -128,7 +128,7 @@ export default function DonationForm({ purposes }: DonationFormProps): JSX.Eleme
       })
       .then((res) => res.json())
       .then((result) => {
-        console.log(result);
+       // console.log(result);
         window.location.replace(result.data.url);
       })
 

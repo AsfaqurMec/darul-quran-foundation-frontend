@@ -62,7 +62,7 @@ export default function DonationWidget(): JSX.Element {
       })
         .then((res) => res.json())
         .then((result) => {
-          console.log(result);
+         // console.log(result);
           if (result.data?.url) {
             window.location.replace(result.data.url);
           } else {

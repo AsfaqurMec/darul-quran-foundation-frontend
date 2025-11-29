@@ -216,7 +216,7 @@ export default function MemberApplication({ embedded = false }: Props): JSX.Elem
       })
         .then((res) => res.json())
         .then((result) => {
-          console.log(result);
+         // console.log(result);
           window.location.replace(result.data.url);
         })
         .catch((error) => {

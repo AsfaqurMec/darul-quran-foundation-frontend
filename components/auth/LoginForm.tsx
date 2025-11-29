@@ -65,10 +65,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ isLogin }) => {
      // console.log("Login response:", res);
      // console.log("Login response data:", res.data);
     //  console.log("Access token:", res.data?.accessToken);
-console.log(res);
+//console.log(res);
       if (res?.success) {
         if (res.data?.accessToken) {
-          console.log(res);
+        //  console.log(res);
           setClientToken(res.data.accessToken);
         } else {
           console.error("No access token in response data");
