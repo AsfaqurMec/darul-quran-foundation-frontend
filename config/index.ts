@@ -50,14 +50,14 @@ interface Config {
   export const config: Config = {
     apiUrl: process.env.NEXT_PUBLIC_BASE_API || "http://localhost:5000/api",
     api: {
-      baseUrl: process.env.NEXT_PUBLIC_BASE_API || "http://localhost:5000/api/v1",
+      baseUrl: process.env.NEXT_PUBLIC_BASE_API || "https://api.darulquranfoundation.org/api/v1",
       timeout: parseInt(process.env.NEXT_PUBLIC_API_TIMEOUT || "30000"),
     },
     app: {
       name: process.env.NEXT_PUBLIC_APP_NAME || "ResearchUstad",
       version: process.env.NEXT_PUBLIC_APP_VERSION || "1.0.0",
       environment: process.env.NODE_ENV || "development",
-      url: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+      url: process.env.NEXT_PUBLIC_APP_URL || "https://api.darulquranfoundation.org",
     },
     auth: {
       tokenKey: "accessToken",

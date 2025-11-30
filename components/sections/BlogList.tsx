@@ -23,7 +23,7 @@ export default function BlogList({ posts = [] as ReadonlyArray<BlogPost> }): JSX
   const nextRef = React.useRef<HTMLButtonElement | null>(null);
   const { t } = useI18n();
   return (
-    <section className="py-10  w-[380px]  sm:w-[420px] md:w-[1000px] lg:w-[1400px]  mx-auto">
+    <section className="py-10  w-[360px] sm:w-[420px] md:w-[1000px] lg:w-[1400px]  mx-auto">
       <Container className="w-full px-0">
 
         <div className="text-center mb-10">

@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import Container from '../layout/Container';
-import { api } from '../../config';
+import { config } from '../../config';
 import { getImageUrl } from '../../lib/imageUtils';
 import { useI18n } from '../i18n/LanguageProvider';
 import Link from 'next/link';
@@ -64,7 +64,7 @@ export default function Gallery({ items, fetchCount = 6, show=true }: { items?: 
         qs.set('page', '1');
         qs.set('limit', String(fetchCount));
         qs.set('type', 'image');
-        const resp = await fetch(`${api.baseUrl}/gallery?${qs.toString()}`, {
+        const resp = await fetch(`${config.api.baseUrl}/gallery?${qs.toString()}`, {
           method: 'GET',
           headers: { 'Content-Type': 'application/json' },
           next: { tags: ['gallery'] } as any,

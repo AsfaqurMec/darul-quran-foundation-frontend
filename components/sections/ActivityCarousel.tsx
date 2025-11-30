@@ -127,7 +127,7 @@ export default function ActivityCarousel({ items }: { items?: ReadonlyArray<Acti
   const prevRef = React.useRef<HTMLButtonElement | null>(null);
   const nextRef = React.useRef<HTMLButtonElement | null>(null);
   return (
-    <section className="py-10 w-[380px]  sm:w-[420px] md:w-[1000px] lg:w-[1400px]  mx-auto ">
+    <section className="py-10 w-[360px]  sm:w-[420px] md:w-[1000px] lg:w-[1400px]  mx-auto ">
       <Container className="w-full px-0 ">
         <div className="text-center mb-10">
           <h2 className="text-4xl sm:text-5xl font-extrabold text-emerald-900">{t('activities')}</h2>
