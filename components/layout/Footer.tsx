@@ -6,6 +6,7 @@ import logo from '../../public/img/logo-foundation.png';
 import Container from '../../components/layout/Container';
 import { useI18n } from '../../components/i18n/LanguageProvider';
 import { FaLinkedinIn } from "react-icons/fa";
+import { toast } from 'sonner';
 
 function SocialLink({ href, label, icon }: { href: string; label: string; icon: JSX.Element }): JSX.Element {
   return (
@@ -47,6 +48,7 @@ export default function Footer(): JSX.Element {
     event.preventDefault();
     if (!email.trim()) return;
     setShowSuccess(true);
+    toast.success(t('newsletterSuccess'));
     setEmail('');
     if (timerRef.current) {
       clearTimeout(timerRef.current);
@@ -87,7 +89,7 @@ export default function Footer(): JSX.Element {
                     value={email}
                     onChange={(event) => setEmail(event.target.value)}
                     placeholder={t('newsletterPlaceholder')}
-                    className="h-14 w-full rounded-full border border-white/40 bg-white px-6 pr-40 text-base text-emerald-900 placeholder:text-emerald-400 shadow-[0_18px_35px_rgba(9,67,35,0.18)] focus:border-white focus:outline-none"
+                    className=" h-14 w-full rounded-full border border-gray-300/40 bg-white px-6 pr-10 lg:pr-40 text-base text-emerald-900 placeholder:text-emerald-400 shadow-[0_18px_35px_rgba(9,67,35,0.18)] focus:border-white focus:outline-none"
                   />
                   <button
                     type="submit"
@@ -153,6 +155,9 @@ export default function Footer(): JSX.Element {
         </div>
         <div className="mt-10 border-t border-emerald-800/60 pt-4 text-center text-lg text-emerald-200">
           {t('copyright')} © {year} {t('foundationName')} - {t('allRightsReserved')}।
+        </div>
+        <div className=" pt-4 text-center text-lg text-emerald-200">
+          Developed by <a href="http://flexsoftr.com" className="hover:underline text-blue-400 text-xl pl-1" target="_blank" rel="noopener noreferrer">FlexSoftr</a>
         </div>
       </Container>
     </footer>

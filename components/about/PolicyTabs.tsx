@@ -3,6 +3,8 @@
 import Container from '../../components/layout/Container';
 import Tabs, { TabItem } from '../../components/ui/Tabs';
 import { useI18n } from '../../components/i18n/LanguageProvider';
+import { FaArrowCircleRight } from "react-icons/fa";
+import { DivideCircleIcon } from 'lucide-react';
 
 export default function PolicyTabs(): JSX.Element {
   const { t } = useI18n();
@@ -17,10 +19,11 @@ export default function PolicyTabs(): JSX.Element {
         t('policy5'),
         t('policy6'),
       ].map((text, idx) => (
-        <li key={idx} className="flex gap-3">
-          <span className="mt-1 h-5 w-5 rounded-full bg-emerald-600 text-white flex items-center justify-center">✓</span>
+        <div key={idx} className="flex items-start justify-start gap-3 pl-2">
+          {/* <span className="mt-1 h-5 w-5 rounded-full bg-emerald-600 text-white flex items-center justify-center">✓</span> */}
+          <FaArrowCircleRight className="text-emerald-600 mt-1 h-5 w-5 flex-shrink-0" />
           <span>{text}</span>
-        </li>
+        </div>
       ))}
     </ul>
   );

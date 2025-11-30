@@ -1,7 +1,7 @@
 import Container from '../../components/layout/Container';
 import DonationCard, { type DonationItem } from '../../components/donation/DonationCard';
 import Pagination from '../../components/ui/Pagination';
-import PageHero from '../../components/common/PageHero';
+import TranslatablePageHero from '../../components/common/TranslatablePageHero';
 import { getAllDonationCategories, type DonationCategory } from '../../services/donationCategories';
 import { getImageUrl } from '../../lib/imageUtils';
 
@@ -28,7 +28,7 @@ export default async function DonationCategoriesPage({ searchParams }: { searchP
 
   return (
     <div className="py-0">
-      <PageHero title="অনুদান ক্যাটাগরি" />
+      <TranslatablePageHero translationKey="donationCategory" />
       <Container>
         <div className="py-12 md:py-16">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">

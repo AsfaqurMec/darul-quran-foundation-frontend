@@ -14,11 +14,21 @@ const DICT: Dictionary = {
   home: { bn: 'হোম', en: 'Home', ar: 'الرئيسية' },
   about: { bn: 'আমাদের সম্পর্কে', en: 'About Us', ar: 'من نحن' },
   programs: { bn: 'কর্মসূচিসমূহ', en: 'Programs', ar: 'البرامج' },
+  programsArchive: { bn: 'প্রোগ্রাম আর্কাইভ', en: 'Program Archive', ar: 'أرشيف البرامج' },
+  activityDetails: { bn: 'কার্যক্রমের বিবরণ', en: 'Activity Details', ar: 'تفاصيل النشاط' },
+  galleryImages: { bn: 'ছবিসমূহ', en: 'Images', ar: 'الصور' },
+  projectGoalsObjectives: { bn: 'প্রকল্পের লক্ষ্য-উদ্দেশ্য', en: 'Project Goals-Objectives', ar: 'أهداف ومقاصد المشروع' },
+  beneficiaries: { bn: 'উপকারভোগী', en: 'Beneficiaries', ar: 'المستفيدون' },
+  expenditureCategories: { bn: 'ব্যয়ের খাত', en: 'Expenditure Categories', ar: 'فئات المصروفات' },
+  projectArea: { bn: 'প্রকল্পের এলাকা', en: 'Project Area', ar: 'منطقة المشروع' },
+  projectDuration: { bn: 'মেয়াদ', en: 'Duration', ar: 'المدة' },
   activities: { bn: 'কর্মসূচিসমূহ', en: 'Programs', ar: 'الأنشطة' },
   gallery: { bn: 'গ্যালারি', en: 'Gallery', ar: 'المعرض' },
   join: { bn: 'আমাদের সাথে যুক্ত হন', en: 'Get Involved', ar: 'انضم إلينا' },
   blog: { bn: 'কার্যক্রমসমূহ', en: 'Activities', ar: 'الأنشطة' },
+  blogArchive: { bn: 'ব্লগসমূহ', en: 'Blogs', ar: 'المدونات' },
   notice: { bn: 'নোটিশ', en: 'Notice', ar: 'الإعلانات' },
+  noticeBoard: { bn: 'নোটিশ বোর্ড', en: 'Notice Board', ar: 'لوحة الإعلانات' },
   contact: { bn: 'যোগাযোগ', en: 'Contact', ar: 'اتصل بنا' },
   
   // Foundation name
@@ -372,11 +382,36 @@ const DICT: Dictionary = {
   allRightsReserved: { bn: 'সর্বস্বত্ব সংরক্ষিত', en: 'All Rights Reserved', ar: 'جميع الحقوق محفوظة' },
   
   // Contact form
+  contactForm: { bn: 'যোগাযোগ ফর্ম', en: 'Contact Form', ar: 'نموذج الاتصال' },
+  ourAddress: { bn: 'আমাদের ঠিকানা', en: 'Our Address', ar: 'عنواننا' },
+  contactAddress: { bn: 'রোড-৭০, ব্লক-সি, আফতাবনগর, ঢাকা', en: 'Road-70, Block-C, Aftabnagar, Dhaka', ar: 'الطريق 70، بلوك ج، أفتاب ناجار، دكا' },
+  frequentlyAskedQuestions: { bn: 'সচরাচর জিজ্ঞাসিত প্রশ্ন', en: 'Frequently Asked Questions', ar: 'الأسئلة الشائعة' },
   yourEmail: { bn: 'আপনার ইমেইল', en: 'Your Email', ar: 'بريدك الإلكتروني' },
   subject: { bn: 'বিষয়', en: 'Subject', ar: 'الموضوع' },
   message: { bn: 'বার্তা', en: 'Message', ar: 'الرسالة' },
   write: { bn: 'লিখুন', en: 'Write', ar: 'اكتب' },
   send: { bn: 'পাঠান', en: 'Send', ar: 'إرسال' },
+  
+  // Contact FAQ Categories
+  shaykhAhmadullah: { bn: 'শায়খ আহমাদুল্লাহ', en: 'Shaykh Ahmadullah', ar: 'الشيخ أحمد الله' },
+  donationRelated: { bn: 'ডোনেশন সংক্রান্ত', en: 'Donation Related', ar: 'متعلق بالتبرع' },
+  volunteerRelated: { bn: 'স্বেচ্ছাসেবক', en: 'Volunteer', ar: 'متطوع' },
+  
+  // Contact FAQ - Shaykh Questions
+  shaykhQ1: { bn: 'শায়খ আহমাদুল্লাহর কাছ থেকে শরয়ী প্রশ্ন বা পরামর্শ জানতে চাই।', en: 'I want to ask a Sharia question or seek advice from Shaykh Ahmadullah.', ar: 'أريد طرح سؤال شرعي أو طلب نصيحة من الشيخ أحمد الله.' },
+  shaykhA1: { bn: 'লাইভ অনুষ্ঠান "শরয়ী সমাধান" এবং অফিসিয়াল পেইজ/ইউটিউবে প্রশ্ন করতে পারেন। ফোন: +8809610-001089 (শুক্রবার ব্যতীত)।', en: 'You can ask questions on the live program "Sharia Solution" and on the official page/YouTube. Phone: +8809610-001089 (except Friday).', ar: 'يمكنك طرح الأسئلة في البرنامج المباشر "الحل الشرعي" والصفحة الرسمية/يوتيوب. الهاتف: +8809610-001089 (ما عدا الجمعة).' },
+  shaykhQ2: { bn: 'শায়খ আহমাদুল্লাহর সাথে সাক্ষাৎ করতে চাই।', en: 'I want to meet with Shaykh Ahmadullah.', ar: 'أريد مقابلة الشيخ أحمد الله.' },
+  shaykhA2: { bn: 'সময় নির্ধারণ করে সাক্ষাৎ করতে হবে; ইমেইল বা ফোনে যোগাযোগ করুন।', en: 'You need to schedule an appointment; contact via email or phone.', ar: 'تحتاج إلى تحديد موعد؛ اتصل عبر البريد الإلكتروني أو الهاتف.' },
+  
+  // Contact FAQ - Donation Questions
+  donationQ1: { bn: 'কিভাবে দান করবো?', en: 'How can I donate?', ar: 'كيف يمكنني التبرع؟' },
+  donationA1: { bn: 'গেট ইনভলভড পেইজ থেকে দান করুন বা ব্যাংক/মোবাইল ফাইন্যান্সিং ব্যবহার করুন।', en: 'Donate from the Get Involved page or use bank/mobile financing.', ar: 'تبرع من صفحة انضم إلينا أو استخدم التمويل المصرفي/الجوال.' },
+  donationQ2: { bn: 'রসিদ কীভাবে পাব?', en: 'How will I receive the receipt?', ar: 'كيف سأحصل على الإيصال؟' },
+  donationA2: { bn: 'ইমেইলে কনফার্মেশন ও রসিদ পাঠানো হবে।', en: 'Confirmation and receipt will be sent via email.', ar: 'سيتم إرسال التأكيد والإيصال عبر البريد الإلكتروني.' },
+  
+  // Contact FAQ - Volunteer Questions
+  volunteerQ1: { bn: 'কীভাবে স্বেচ্ছাসেবক হব?', en: 'How can I become a volunteer?', ar: 'كيف يمكنني أن أصبح متطوعاً؟' },
+  volunteerA1: { bn: 'স্বেচ্ছাসেবক ফর্ম পূরণ করে জমা দিন; নির্বাচিত হলে আপনাকে জানানো হবে।', en: 'Fill out and submit the volunteer form; you will be notified if selected.', ar: 'املأ نموذج المتطوع وأرسله؛ سيتم إعلامك إذا تم اختيارك.' },
   
   // Language names
   bengali: { bn: 'বাংলা', en: 'Bengali', ar: 'البنغالية' },
@@ -394,6 +429,7 @@ const DICT: Dictionary = {
   overviewOfActivity: { bn: 'বর্তমান কার্যক্রমের ওভারভিউ', en: 'Overview of current activity', ar: 'نظرة عامة على النشاط الحالي' },
   logout: { bn: 'লগআউট', en: 'Logout', ar: 'تسجيل الخروج' },
   donationCategories: { bn: 'অনুদান বিভাগসমূহ', en: 'Donation Categories', ar: 'فئات التبرعات' },
+  donationCategory: { bn: 'অনুদান ক্যাটাগরি', en: 'Donation Category', ar: 'فئة التبرع' },
   heroImages: { bn: 'হিরো ইমেজসমূহ', en: 'Hero Images', ar: 'صور البطل' },
   volunteerApplications: { bn: 'স্বেচ্ছাসেবক আবেদন', en: 'Volunteer Applications', ar: 'طلبات المتطوعين' },
   memberApplications: { bn: 'সদস্য আবেদনসমূহ', en: 'Member Applications', ar: 'طلبات العضوية' },

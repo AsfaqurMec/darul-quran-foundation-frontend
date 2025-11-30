@@ -1,7 +1,7 @@
 import Container from '../../components/layout/Container';
 import Pagination from '../../components/ui/Pagination';
 import NoticeCard from '../../components/notice/NoticeCard';
-import PageHero from '../../components/common/PageHero';
+import TranslatablePageHero from '../../components/common/TranslatablePageHero';
 import { getAllNotices } from '../../services/notices';
 
 export default async function NoticePage({ searchParams }: { searchParams?: Promise<{ page?: string }> }): Promise<JSX.Element> {
@@ -29,7 +29,7 @@ export default async function NoticePage({ searchParams }: { searchParams?: Prom
 
   return (
     <div className="py-0">
-      <PageHero title="নোটিশ বোর্ড" />
+      <TranslatablePageHero translationKey="noticeBoard" />
       <Container>
         <div className="py-12 md:py-16">
           <div className="space-y-6  mx-auto">

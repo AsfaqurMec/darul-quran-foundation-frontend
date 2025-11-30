@@ -300,7 +300,7 @@ export default function ProgramDetail({ program }: Props): JSX.Element {
         <Container>
           {/* Page Title */}
           <div className="mb-8 md:mb-12">
-          <h2 className="text-3xl md:text-4xl font-extrabold text-emerald-900">কার্যক্রমের বিবরণ</h2>
+          <h2 className="text-3xl md:text-4xl font-extrabold text-emerald-900">{t('activityDetails')}</h2>
           </div>
 
           {/* Main Content with Sidebar */}
@@ -351,7 +351,7 @@ export default function ProgramDetail({ program }: Props): JSX.Element {
             {/* Panel 1: Project Goals-Objectives */}
             {program.goals && program.goals.length > 0 && (
               <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
-                <h2 className="text-xl font-bold text-emerald-900 mb-4">প্রকল্পের লক্ষ্য-উদ্দেশ্য</h2>
+                <h2 className="text-xl font-bold text-emerald-900 mb-4">{t('projectGoalsObjectives')}</h2>
                 <ul className="space-y-3">
                   {(isTranslating ? program.goals || [] : translatedGoals).map((goal, idx) => (
                     <li key={idx} className="flex items-start gap-3">
@@ -376,7 +376,7 @@ export default function ProgramDetail({ program }: Props): JSX.Element {
                       <path d="M16 11c1.657 0 3-1.79 3-4s-1.343-4-3-4-3 1.79-3 4 1.343 4 3 4zm-8 0c1.657 0 3-1.79 3-4S9.657 3 8 3 5 4.79 5 7s1.343 4 3 4zm0 2c-2.761 0-8 1.382-8 4.125V20h16v-2.875C16 14.382 10.761 13 8 13zm8 0c-.507 0-1.074.035-1.68.1 1.568.862 2.68 2.075 2.68 3.9V20h7v-2.875C24 14.382 18.761 13 16 13z"/>
                     </svg>
                   </span>
-                  <span>উপকারভোগী</span>
+                  <span>{t('beneficiaries')}</span>
                 </h2>
                 <p className="text-gray-700 leading-7">
                   {isTranslating ? (
@@ -394,7 +394,7 @@ export default function ProgramDetail({ program }: Props): JSX.Element {
             {/* Panel 3: Expenditure Categories */}
             {program.expenditureCategories && program.expenditureCategories.length > 0 && (
               <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
-                <h2 className="text-xl font-bold text-emerald-900 mb-4">ব্যয়ের খাত</h2>
+                <h2 className="text-xl font-bold text-emerald-900 mb-4">{t('expenditureCategories')}</h2>
                 <ul className="space-y-3">
                   {(isTranslating ? program.expenditureCategories || [] : translatedCategories).map((category, idx) => (
                     <li key={idx} className="flex items-start gap-3">
@@ -413,7 +413,7 @@ export default function ProgramDetail({ program }: Props): JSX.Element {
             {/* Panel 4: Project Area */}
             {program.projectArea && (
               <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
-                <h2 className="text-xl font-bold text-emerald-900 mb-4">প্রকল্পের এলাকা</h2>
+                <h2 className="text-xl font-bold text-emerald-900 mb-4">{t('projectArea')}</h2>
                 <div className="flex items-start gap-3">
                   <span className="mt-1 inline-flex h-7 w-7 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
@@ -437,7 +437,7 @@ export default function ProgramDetail({ program }: Props): JSX.Element {
             {/* Panel 5: Duration */}
             {program.duration && (
               <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
-                <h2 className="text-xl font-bold text-emerald-900 mb-4">মেয়াদ</h2>
+                <h2 className="text-xl font-bold text-emerald-900 mb-4">{t('projectDuration')}</h2>
                 <div className="flex items-start gap-3">
                   <span className="mt-1 inline-flex h-7 w-7 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
@@ -486,7 +486,7 @@ export default function ProgramDetail({ program }: Props): JSX.Element {
 
               {/* Right Side - CTA Button */}
               <a
-                href={program.ctaButtonLink || `/donate/${program.slug}`}
+                href={program.ctaButtonLink || `/donation/${program.slug}`}
                 className="bg-secondary hover:brightness-110 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 whitespace-nowrap inline-block"
               >
                 {program.ctaButtonText

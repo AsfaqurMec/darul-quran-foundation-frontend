@@ -3,7 +3,7 @@ import Pagination from '../../components/ui/Pagination';
 import Gallery from '../../components/sections/Gallery';
 import type { Route } from 'next';
 import Link from 'next/link';
-import PageHero from '../../components/common/PageHero';
+import TranslatablePageHero from '../../components/common/TranslatablePageHero';
 import { GetGallery } from '../../services/gallery';
 
 const CATEGORY_OPTIONS = ['Flood', 'Food Distribution', 'Self Reliance', 'Qurbani', 'Winter Relief'] as const;
@@ -69,7 +69,7 @@ export default async function GalleryPage({ searchParams }: { searchParams?: Pro
 
   return (
     <div className="py-0">
-      <PageHero title="ছবিসমূহ" />
+     <TranslatablePageHero translationKey="galleryImages" />
       <Container>
         <div className="py-12 md:py-16">
           {/* Type Tabs */}
@@ -114,7 +114,7 @@ export default async function GalleryPage({ searchParams }: { searchParams?: Pro
             </aside>
 
             {/* Right content */}
-            <div className="space-y-8">
+            <div className="space-y-8 bg-white z-20 pt-10 md:pt-0">
               {/* Year tabs */}
               <div className="relative overflow-x-auto pb-2">
                 <div className="flex items-center gap-3 min-w-max">

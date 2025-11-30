@@ -1,7 +1,7 @@
 import Container from '../../components/layout/Container';
 import ActivityCard, { type ActivityItem } from '../../components/activity/ActivityCard';
 import Pagination from '../../components/ui/Pagination';
-import PageHero from '../../components/common/PageHero';
+import TranslatablePageHero from '../../components/common/TranslatablePageHero';
 import { getAllPrograms } from '../../services/programs';
 import { Program, ProgramInput } from '../../types/program';
 import { getImageUrl } from '../../lib/imageUtils';
@@ -31,7 +31,7 @@ export default async function ProgramsPage({ searchParams }: { searchParams?: Pr
 
   return (
     <div className="py-0">
-      <PageHero title="প্রোগ্রাম আর্কাইভ" />
+      <TranslatablePageHero translationKey="programsArchive" />
       <Container>
         <div className="py-12 md:py-16">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">

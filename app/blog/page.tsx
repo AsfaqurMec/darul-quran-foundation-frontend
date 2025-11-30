@@ -3,7 +3,7 @@
 import Container from '../../components/layout/Container';
 import Pagination from '../../components/ui/Pagination';
 import BlogCard, { BlogPost } from '../../components/blog/BlogCard';
-import PageHero from '../../components/common/PageHero';
+import TranslatablePageHero from '../../components/common/TranslatablePageHero';
 import { GetAllBlog } from '../../services/blogs';
 import { getImageUrl } from '../../lib/imageUtils';
 
@@ -30,7 +30,7 @@ export default async function BlogArchive({ searchParams }: { searchParams: Prom
 
   return (
     <div className="py-0">
-      <PageHero title="ব্লগসমূহ" />
+      <TranslatablePageHero translationKey="blogArchive" />
       <Container className="py-20">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {items.map((post) => (
