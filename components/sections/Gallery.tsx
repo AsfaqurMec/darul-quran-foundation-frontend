@@ -121,8 +121,9 @@ export default function Gallery({ items, fetchCount = 6, show=true }: { items?: 
      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-6 md:gap-8">
         {displayItems.map((it, i) => {
           const isVideo = isVideoItem(it);
-          const previewSrc = isVideo ? getYoutubeThumbnail(it.src) ?? it.src : it.src;
+          const previewSrc = isVideo ? getYoutubeThumbnail(it.src) ?? '' : it.src ?? '';
           return (
+            console.log("previewSrc", previewSrc),
             <button
               key={it.id}
               onClick={() => onOpen(i)}
@@ -130,7 +131,7 @@ export default function Gallery({ items, fetchCount = 6, show=true }: { items?: 
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={previewSrc}
+                src={previewSrc ?? ''}
                 alt={it.alt || ''}
                 className="h-48 sm:h-56 md:h-60 w-full object-cover transition-transform group-hover:scale-[1.02]"
               />

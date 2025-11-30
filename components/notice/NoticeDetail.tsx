@@ -37,9 +37,9 @@ export default function NoticeDetail({ notice }: Props): JSX.Element {
             {/* Date Badge */}
             <div className="flex items-center gap-4 mb-6">
               <div className="flex items-center gap-3 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 border border-white/30">
-                <div className="text-center">
+                <div className="text-center flex items-center gap-2">
                   <div className="text-xs text-white/80">{weekday}</div>
-                  <div className="text-2xl font-extrabold text-white">{day}</div>
+                  <div className="text-lg font-extrabold text-white">{day}</div>
                   <div className="text-xs text-white/80">{month} {year}</div>
                 </div>
               </div>
@@ -48,11 +48,11 @@ export default function NoticeDetail({ notice }: Props): JSX.Element {
                   {notice.tag}
                 </span>
               )}
-              {notice.category && (
+              {/* {notice.category && (
                 <span className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full border border-white/30 text-white text-sm font-medium">
                   {notice.category}
                 </span>
-              )}
+              )} */}
             </div>
 
             {/* Title */}

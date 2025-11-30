@@ -1,5 +1,5 @@
-import { getCurrentUser } from "../../services/AuthService/server";
-import { getClientToken } from "../../lib/tokenUtils";
+import { getCurrentUser } from "@/services/AuthService/server";
+import { getClientToken } from "@/lib/tokenUtils";
 
 export interface Company {
   _id: string;
@@ -25,9 +25,13 @@ export const searchCompanies = async (
     }
 
     const token = getClientToken();
+    console.log("Retrieved token from localStorage:", token);
+    console.log("Token type:", typeof token);
+    console.log("Token length:", token?.length);
 
     if (!token) {
-      console.error("No token found in cookies");
+      console.error("No token found in localStorage");
+      console.log("localStorage contents:", Object.keys(localStorage));
       // Don't throw error, just return empty result
       return { success: false, message: "No access token found" };
     }

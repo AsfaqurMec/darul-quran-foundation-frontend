@@ -13,9 +13,9 @@ cd /var/www/darulquran-frontend
 echo "📥 Pulling latest changes from repository..."
 git pull origin main || git pull origin master
 
-# Install dependencies
+# Install dependencies (including devDependencies for TypeScript types)
 echo "📦 Installing dependencies..."
-npm install --production
+npm install
 
 # Build application
 echo "🔨 Building Next.js application..."

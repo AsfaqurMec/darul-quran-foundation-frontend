@@ -12,6 +12,7 @@ import { toast } from 'sonner';
 import { getImageUrl } from '../../../lib/imageUtils';
 import { useI18n } from '../../../components/i18n/LanguageProvider';
 import { useConfirmDialog } from '../../../components/common/ConfirmDialogProvider';
+import { config } from '../../../config';
 
 interface PaginationInfo {
 	currentPage: number;
@@ -258,7 +259,7 @@ export default function VolunteersPage(): JSX.Element {
 											/>
 										</div>
 										<a
-											href={`${process.env.API_BASE_URL}${application.profileImage}`}
+											href={`${config.api.baseUrl}${application.profileImage}`}
 											target="_blank"
 											rel="noreferrer"
 											className="text-sm font-medium text-emerald-600 hover:underline"
