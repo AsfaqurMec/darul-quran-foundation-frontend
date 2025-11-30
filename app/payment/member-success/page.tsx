@@ -1,10 +1,11 @@
 'use client';
 
 import * as React from 'react';
+import { Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { submitMemberAfterPayment } from '../../../services/memberApplication';
 
-export default function MemberPaymentSuccessPage(): JSX.Element {
+function MemberPaymentSuccessContent(): JSX.Element {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [status, setStatus] = React.useState<'loading' | 'success' | 'error'>('loading');
@@ -167,6 +168,26 @@ export default function MemberPaymentSuccessPage(): JSX.Element {
         )}
       </div>
     </div>
+  );
+}
+
+export default function MemberPaymentSuccessPage(): JSX.Element {
+  return (
+    <Suspense fallback={
+      <div className="min-h-[60vh] flex items-center justify-center px-4">
+        <div className="max-w-xl w-full rounded-2xl border border-emerald-200 bg-white p-8 text-center shadow">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto mb-4"></div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-emerald-700 mb-2">
+            প্রক্রিয়াকরণ হচ্ছে...
+          </h1>
+          <p className="text-gray-600">
+            আপনার পেমেন্ট প্রক্রিয়াকরণ করা হচ্ছে। অনুগ্রহ করে অপেক্ষা করুন।
+          </p>
+        </div>
+      </div>
+    }>
+      <MemberPaymentSuccessContent />
+    </Suspense>
   );
 }
 

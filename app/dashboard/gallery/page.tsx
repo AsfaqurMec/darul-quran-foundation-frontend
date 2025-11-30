@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Button from '../../../components/ui/button';
 import MediaUploader from '../../../components/common/MediaUploader';
@@ -43,7 +43,7 @@ const normalizeSingle = (value: MediaValue | MediaValue[] | '' | undefined): Med
   return (value ?? '') as MediaValue;
 };
 
-export default function GalleryPage(): JSX.Element {
+function GalleryPageContent(): JSX.Element {
   const { t } = useI18n();
   const searchParams = useSearchParams();
   const confirmDialog = useConfirmDialog();
@@ -359,5 +359,28 @@ export default function GalleryPage(): JSX.Element {
         pageSizeOptions={[6, 12, 24, 36]}
       />
     </div>
+  );
+}
+
+export default function GalleryPage(): JSX.Element {
+  return (
+    <Suspense fallback={
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-semibold">Gallery</h1>
+            <p className="text-gray-600">Loading gallery...</p>
+          </div>
+        </div>
+        <div className="rounded-2xl border bg-white p-4 shadow-sm">
+          <div className="py-8 text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-600 mx-auto mb-4"></div>
+            <p className="text-gray-500">Loading...</p>
+          </div>
+        </div>
+      </div>
+    }>
+      <GalleryPageContent />
+    </Suspense>
   );
 }

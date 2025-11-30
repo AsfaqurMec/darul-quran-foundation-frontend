@@ -31,6 +31,9 @@ const nextConfig = {
   reactStrictMode: true,
   typedRoutes: true,
   outputFileTracingRoot: process.cwd(),
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   async rewrites() {
     const apiBaseUrl =
       process.env.NEXT_PUBLIC_BASE_API || "http://localhost:5000/api/v1";

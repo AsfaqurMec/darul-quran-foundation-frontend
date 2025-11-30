@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
   clearDonationPayload,
@@ -13,7 +14,7 @@ import { useI18n } from '../../../components/i18n/LanguageProvider';
 
 type PageState = 'loading' | 'success' | 'error';
 
-export default function PaymentSuccessPage(): JSX.Element {
+function PaymentSuccessContent(): JSX.Element {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { t } = useI18n();
@@ -179,6 +180,22 @@ export default function PaymentSuccessPage(): JSX.Element {
         {renderContent()}
       </div>
     </div>
+  );
+}
+
+export default function PaymentSuccessPage(): JSX.Element {
+  return (
+    <Suspense fallback={
+      <div className="min-h-[60vh] flex items-center justify-center px-4">
+        <div className="max-w-xl w-full rounded-2xl border border-emerald-200 bg-white/95 backdrop-blur p-8 text-center shadow-lg">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto mb-4"></div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-emerald-700 mb-2">Loading...</h1>
+          <p className="text-gray-600">Processing payment information...</p>
+        </div>
+      </div>
+    }>
+      <PaymentSuccessContent />
+    </Suspense>
   );
 }
 

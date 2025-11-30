@@ -12,6 +12,8 @@ const publicRoutes = [
   "/courses",
   "/test-auth",
   "/api",
+  "/payment",
+  "/donation",
 ];
 
 // Protected routes that require authentication
@@ -26,8 +28,14 @@ const protectedRoutes = [
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Allow public routes
-  if (publicRoutes.includes(pathname)) {
+  // Allow public routes (exact match or starts with the route followed by /)
+  const isPublicRoute = publicRoutes.some(route => {
+    if (pathname === route) return true;
+    if (route === '/') return false; // Handle root separately
+    return pathname.startsWith(`${route}/`);
+  });
+  
+  if (isPublicRoute) {
     return NextResponse.next();
   }
 

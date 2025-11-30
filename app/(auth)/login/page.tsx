@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import LoginForm from '../../../components/auth/LoginForm';
 import Image from 'next/image';
 import loginIllustration from '../../../public/img/login.png';
@@ -8,7 +9,14 @@ export default function LoginPage(): JSX.Element {
       <div className="w-full max-w-5xl bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col lg:flex-row">
         {/* Left Section - Login Form (2/3 width) */}
         <div className="w-full lg:w-[55%] p-8 md:p-12 lg:p-16 flex flex-col justify-center">
-          <LoginForm isLogin />
+          <Suspense fallback={
+            <div className="flex items-center justify-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-600"></div>
+              <span className="ml-3 text-gray-600">Loading...</span>
+            </div>
+          }>
+            <LoginForm isLogin />
+          </Suspense>
         </div>
 
         {/* Right Section - Illustration (1/3 width) */}

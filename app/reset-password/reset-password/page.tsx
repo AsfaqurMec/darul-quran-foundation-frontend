@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import Container from '../../../components/layout/Container';
 import { api } from '../../../config';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Eye, EyeOff } from 'lucide-react';
 
-export default function ResetPasswordPage(): JSX.Element {
+function ResetPasswordContent(): JSX.Element {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const token = searchParams.get('token') || '';
@@ -115,6 +115,26 @@ export default function ResetPasswordPage(): JSX.Element {
 				</form>
 			</Container>
 		</div>
+	);
+}
+
+export default function ResetPasswordPage(): JSX.Element {
+	return (
+		<Suspense fallback={
+			<div className="py-10">
+				<Container>
+					<h1 className="text-2xl font-semibold mb-6">Reset Password</h1>
+					<div className="max-w-lg rounded-xl border border-gray-200 bg-white p-6 space-y-4">
+						<div className="flex items-center justify-center py-8">
+							<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-600"></div>
+							<span className="ml-3 text-gray-600">Loading...</span>
+						</div>
+					</div>
+				</Container>
+			</div>
+		}>
+			<ResetPasswordContent />
+		</Suspense>
 	);
 }
 

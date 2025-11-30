@@ -1,9 +1,10 @@
 'use client';
 
+import { Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useI18n } from '../../../components/i18n/LanguageProvider';
 
-export default function PaymentFailPage(): JSX.Element {
+function PaymentFailContent(): JSX.Element {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { t } = useI18n();
@@ -82,6 +83,23 @@ export default function PaymentFailPage(): JSX.Element {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function PaymentFailPage(): JSX.Element {
+  return (
+    <Suspense fallback={
+      <div className="min-h-[60vh] flex items-center justify-center px-4 py-8">
+        <div className="max-w-xl w-full rounded-2xl border border-gray-200 bg-white p-8 shadow-lg">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading...</p>
+          </div>
+        </div>
+      </div>
+    }>
+      <PaymentFailContent />
+    </Suspense>
   );
 }
 

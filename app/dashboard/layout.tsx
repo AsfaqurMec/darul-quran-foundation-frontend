@@ -4,6 +4,9 @@ import ConfirmDialogProvider from '../../components/common/ConfirmDialogProvider
 import { getCurrentUser } from '../../services/AuthService/server';
 import { redirect } from 'next/navigation';
 
+// Force dynamic rendering since we use cookies for authentication
+export const dynamic = 'force-dynamic';
+
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const user = await getCurrentUser();
 
