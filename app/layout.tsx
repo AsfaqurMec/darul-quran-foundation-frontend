@@ -7,7 +7,15 @@ import { AppToaster } from '../components/ui/toaster';
 
 export const metadata: Metadata = {
   title: 'DarulQuran Foundation',
-  description: 'Next.js app with auth, dashboard, and Tailwind CSS',
+  description: 'DarulQuran Foundation is a non-profit organization that provides education and training to children and adults in the Islamic faith.',
+  keywords: ['DarulQuran Foundation', 'DarulQuran', 'Foundation', 'Islam', 'Education', 'Training', 'Children', 'Adults', 'Quran', 'Hadith', 'Islamic', 'Islamic Education', 'Islamic Training', 'Islamic Children', 'Islamic Adults', 'Islamic Quran', 'Islamic Hadith'],
+  authors: [{ name: 'DarulQuran Foundation', url: 'https://darulquranfoundation.org' }],
+  creator: 'DarulQuran Foundation',
+  publisher: 'DarulQuran Foundation',
+  openGraph: {
+    title: 'DarulQuran Foundation',
+    description: 'DarulQuran Foundation is a non-profit organization that provides education and training to children and adults in the Islamic faith.',
+  },
 };
 
 export default function RootLayout({

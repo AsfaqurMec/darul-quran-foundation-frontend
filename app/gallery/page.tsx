@@ -114,7 +114,7 @@ export default async function GalleryPage({ searchParams }: { searchParams?: Pro
             </aside>
 
             {/* Right content */}
-            <div className="space-y-8 bg-white z-20 pt-10 md:pt-0">
+            <div className="space-y-8 bg-white z-20 py-10 md:py-0">
               {/* Year tabs */}
               <div className="relative overflow-x-auto pb-2">
                 <div className="flex items-center gap-3 min-w-max">

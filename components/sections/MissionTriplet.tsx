@@ -6,6 +6,7 @@ import { useI18n } from '../../components/i18n/LanguageProvider';
 import { IoSchool } from "react-icons/io5";
 import { FaHandshake } from "react-icons/fa";
 import { FaBookQuran } from "react-icons/fa6";
+import Link from 'next/link';
 
 type Feature = {
   titleKey: keyof ReturnType<typeof useI18n>['t'];
@@ -66,7 +67,9 @@ export default function MissionTriplet(): JSX.Element {
           ))}
         </div>
         <div className="mt-10 flex justify-center">
-          <Button className="px-6 py-3 text-base">{t('learnMore')}</Button>
+          <Link href="/about">
+            <Button className="px-6 py-3 text-base">{t('learnMore')}</Button>
+          </Link>
         </div>
       </Container>
     </section>

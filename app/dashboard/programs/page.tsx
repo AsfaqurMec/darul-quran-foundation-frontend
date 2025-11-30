@@ -315,9 +315,9 @@ export default function ProgramsPage(): JSX.Element {
                     className="flex-1 rounded-lg border px-3 py-2"
                     disabled={submitting}
                   />
-                  <Button type="button" onClick={handleSlugGenerate} variant="secondary" disabled={submitting}>
+                  {/* <Button type="button" onClick={handleSlugGenerate} variant="secondary" disabled={submitting}>
                     {t('generate')}
-                  </Button>
+                  </Button> */}
                 </div>
               </div>
 
