@@ -54,6 +54,12 @@ export default function VolunteerTab(): JSX.Element {
 	const [previousBatch, setPreviousBatch] = React.useState('');
 	const [previousBeneficiariesCount, setPreviousBeneficiariesCount] = React.useState('');
 
+	// Validation errors
+	const [emailError, setEmailError] = React.useState<string | null>(null);
+	const [mobileNumberError, setMobileNumberError] = React.useState<string | null>(null);
+	const [whatsappNumberError, setWhatsappNumberError] = React.useState<string | null>(null);
+	const [telegramNumberError, setTelegramNumberError] = React.useState<string | null>(null);
+
 	const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
 		if (!file) return;
@@ -92,9 +98,124 @@ export default function VolunteerTab(): JSX.Element {
 		fileInputRef.current?.click();
 	};
 
+	// Validation functions
+	const validateEmail = (emailValue: string): boolean => {
+		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+		if (!emailValue) {
+			setEmailError(t('fillThisField'));
+			return false;
+		}
+		if (!emailRegex.test(emailValue)) {
+			setEmailError(t('invalidEmail'));
+			return false;
+		}
+		setEmailError(null);
+		return true;
+	};
+
+	const validatePhoneNumber = (phoneValue: string, isRequired: boolean = false): boolean => {
+		if (!phoneValue) {
+			if (isRequired) {
+				return false;
+			}
+			return true; // Optional fields are valid if empty
+		}
+		// Remove any non-digit characters
+		const digitsOnly = phoneValue.replace(/\D/g, '');
+		if (digitsOnly.length !== 11) {
+			return false;
+		}
+		return true;
+	};
+
+	const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const value = e.target.value;
+		setEmail(value);
+		if (submitted || value) {
+			validateEmail(value);
+		}
+	};
+
+	const handleMobileNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const value = e.target.value.replace(/\D/g, ''); // Only allow digits
+		setMobileNumber(value);
+		if (submitted || value) {
+			if (!validatePhoneNumber(value, true)) {
+				if (!value) {
+					setMobileNumberError(t('fillThisField'));
+				} else {
+					setMobileNumberError(t('mobileBangladeshInvalid'));
+				}
+			} else {
+				setMobileNumberError(null);
+			}
+		}
+	};
+
+	const handleWhatsappNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const value = e.target.value.replace(/\D/g, ''); // Only allow digits
+		setWhatsappNumber(value);
+		if (value) {
+			if (!validatePhoneNumber(value, false)) {
+				setWhatsappNumberError(t('mobileBangladeshInvalid'));
+			} else {
+				setWhatsappNumberError(null);
+			}
+		} else {
+			setWhatsappNumberError(null);
+		}
+	};
+
+	const handleTelegramNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const value = e.target.value.replace(/\D/g, ''); // Only allow digits
+		setTelegramNumber(value);
+		if (value) {
+			if (!validatePhoneNumber(value, false)) {
+				setTelegramNumberError(t('mobileBangladeshInvalid'));
+			} else {
+				setTelegramNumberError(null);
+			}
+		} else {
+			setTelegramNumberError(null);
+		}
+	};
+
 	const onSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		setSubmitted(true);
+
+		// Validate all fields
+		const isEmailValid = validateEmail(email);
+		const isMobileValid = validatePhoneNumber(mobileNumber, true);
+		const isWhatsappValid = !whatsappNumber || validatePhoneNumber(whatsappNumber, false);
+		const isTelegramValid = !telegramNumber || validatePhoneNumber(telegramNumber, false);
+
+		if (!isEmailValid) {
+			if (!email) {
+				setEmailError(t('fillThisField'));
+			} else {
+				setEmailError(t('invalidEmail'));
+			}
+		}
+		if (!isMobileValid) {
+			if (!mobileNumber) {
+				setMobileNumberError(t('fillThisField'));
+			} else {
+				setMobileNumberError(t('mobileBangladeshInvalid'));
+			}
+		}
+		if (whatsappNumber && !isWhatsappValid) {
+			setWhatsappNumberError(t('mobileBangladeshInvalid'));
+		}
+		if (telegramNumber && !isTelegramValid) {
+			setTelegramNumberError(t('mobileBangladeshInvalid'));
+		}
+
+		// Don't submit if validation fails
+		if (!isEmailValid || !isMobileValid || !isWhatsappValid || !isTelegramValid) {
+			return;
+		}
+
 		setLoading(true);
 
 		try {
@@ -287,12 +408,36 @@ export default function VolunteerTab(): JSX.Element {
 									<select className="rounded-lg border px-3 py-2" value={mobileCountryCode} onChange={(e) => setMobileCountryCode(e.target.value)}>
 										<option value="+880">🇧🇩 +880</option>
 									</select>
-									<input className="flex-1 rounded-lg border px-3 py-2" placeholder="01XXXXXXXXX" value={mobileNumber} onChange={(e) => setMobileNumber(e.target.value)} required />
+									<div className="flex-1">
+										<input 
+											className={`flex-1 w-full rounded-lg border px-3 py-2 ${mobileNumberError ? 'border-red-500' : ''}`} 
+											placeholder="01XXXXXXXXX" 
+											value={mobileNumber} 
+											onChange={handleMobileNumberChange} 
+											maxLength={11}
+											required 
+										/>
+										{mobileNumberError && (
+											<p className="text-xs text-red-600 mt-1">{mobileNumberError}</p>
+										)}
+									</div>
 								</div>
 							</div>
 							<div>
 								<label className="block text-sm font-medium mb-1">{t('email')} <span className="text-red-600">*</span></label>
-								<input type="email" className="w-full rounded-lg border px-3 py-2" placeholder={t('emailPlaceholder')} value={email} onChange={(e) => setEmail(e.target.value)} required/>
+								<div>
+									<input 
+										type="email" 
+										className={`w-full rounded-lg border px-3 py-2 ${emailError ? 'border-red-500' : ''}`} 
+										placeholder={t('emailPlaceholder')} 
+										value={email} 
+										onChange={handleEmailChange} 
+										required
+									/>
+									{emailError && (
+										<p className="text-xs text-red-600 mt-1">{emailError}</p>
+									)}
+								</div>
 							</div>
 						</div>
 					</section>
@@ -429,8 +574,19 @@ export default function VolunteerTab(): JSX.Element {
 									<select className="rounded-lg border px-3 py-2" value={whatsappCountryCode} onChange={(e) => setWhatsappCountryCode(e.target.value)}>
 										<option value="+880">🇧🇩 +880</option>
 									</select>
-									<input className="flex-1 rounded-lg border px-3 py-2" placeholder="01XXXXXXXXX" value={whatsappNumber} onChange={(e) => setWhatsappNumber(e.target.value)} />
-							</div>
+									<div className="flex-1">
+										<input 
+											className={`flex-1 w-full rounded-lg border px-3 py-2 ${whatsappNumberError ? 'border-red-500' : ''}`} 
+											placeholder="01XXXXXXXXX" 
+											value={whatsappNumber} 
+											onChange={handleWhatsappNumberChange}
+											maxLength={11}
+										/>
+										{whatsappNumberError && (
+											<p className="text-xs text-red-600 mt-1">{whatsappNumberError}</p>
+										)}
+									</div>
+								</div>
 							</div>
 							<div>
 								<label className="block text-sm font-medium mb-1">{t('telegram')}</label>
@@ -438,7 +594,18 @@ export default function VolunteerTab(): JSX.Element {
 									<select className="rounded-lg border px-3 py-2" value={telegramCountryCode} onChange={(e) => setTelegramCountryCode(e.target.value)}>
 										<option value="+880">🇧🇩 +880</option>
 									</select>
-									<input className="flex-1 rounded-lg border px-3 py-2" placeholder="01XXXXXXXXX" value={telegramNumber} onChange={(e) => setTelegramNumber(e.target.value)} />
+									<div className="flex-1">
+										<input 
+											className={`flex-1 w-full rounded-lg border px-3 py-2 ${telegramNumberError ? 'border-red-500' : ''}`} 
+											placeholder="01XXXXXXXXX" 
+											value={telegramNumber} 
+											onChange={handleTelegramNumberChange}
+											maxLength={11}
+										/>
+										{telegramNumberError && (
+											<p className="text-xs text-red-600 mt-1">{telegramNumberError}</p>
+										)}
+									</div>
 								</div>
 							</div>
 						</div>

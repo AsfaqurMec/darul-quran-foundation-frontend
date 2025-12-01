@@ -89,6 +89,35 @@ export default function DonationForm({ purposes }: DonationFormProps): JSX.Eleme
 
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
+  // Validate contact field: either 7-14 digits or valid email
+  const validateContact = React.useCallback((contactValue: string): string | null => {
+    if (!contactValue) {
+      return t('contactError');
+    }
+
+    const trimmedContact = contactValue.trim();
+    
+    // Check if all characters are digits
+    const isAllDigits = /^\d+$/.test(trimmedContact);
+    
+    if (isAllDigits) {
+      // If all digits, check length (7-14)
+      if (trimmedContact.length >= 7 && trimmedContact.length <= 14) {
+        return null; // Valid phone number
+      } else {
+        return t('contactNumberLengthError');
+      }
+    } else {
+      // If not all digits, validate as email
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (emailRegex.test(trimmedContact)) {
+        return null; // Valid email
+      } else {
+        return t('contactInvalidFormatError');
+      }
+    }
+  }, [t]);
+
   const buildGatewayUrl = React.useCallback(
     (amountNumber: number, purposeValue: string) => {
       const paymentUrl = new URL(SSL_COMMERZ_REDIRECT_URL);
@@ -106,6 +135,12 @@ export default function DonationForm({ purposes }: DonationFormProps): JSX.Eleme
     setSubmitted(true);
     if (!purpose || !contact || !amount) return;
 
+    // Validate contact field
+    const contactValidationError = validateContact(contact);
+    if (contactValidationError) {
+      return;
+    }
+
     const amountNumber = parseFloat(amount.replace(/,/g, ''));
     if (isNaN(amountNumber) || amountNumber <= 0) {
       return;
@@ -115,7 +150,7 @@ export default function DonationForm({ purposes }: DonationFormProps): JSX.Eleme
     try {
       const payload: DonationCachePayload = {
         purpose,
-        contact,
+        contact: contact.trim(),
         amount: amountNumber,
         purposeLabel: selectedLabel,
       };
@@ -141,7 +176,7 @@ export default function DonationForm({ purposes }: DonationFormProps): JSX.Eleme
   };
 
   const purposeError = submitted && !purpose ? t('selectFundError') : null;
-  const contactError = submitted && !contact ? t('contactError') : null;
+  const contactError = submitted ? validateContact(contact) : null;
   const amountError = submitted && !amount ? t('amountError') : null;
 
   return (
@@ -220,7 +255,7 @@ export default function DonationForm({ purposes }: DonationFormProps): JSX.Eleme
               </div>
             )}
           </div>
-          {purposeError && <p className="mt-1 text-xs text-red-300 drop-shadow-md">{purposeError}</p>}
+          {purposeError && <p className="mt-1 text-lg text-red-300 drop-shadow-md">{purposeError}</p>}
         </div>
         
         {/* <div className="flex flex-col sm:flex-row gap-4"> */}
@@ -236,7 +271,7 @@ export default function DonationForm({ purposes }: DonationFormProps): JSX.Eleme
               onChange={(e) => setContact(e.target.value)}
               className="w-full rounded-lg border border-white/30 bg-white/20 backdrop-blur-md px-4 py-3 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-white/40 transition-all"
             />
-            {contactError && <p className="mt-1 text-xs text-red-300 drop-shadow-md">{contactError}</p>}
+            {contactError && <p className="mt-1 text-lg text-red-300 drop-shadow-md">{contactError}</p>}
           </div>
           
           <div className="flex-1">
@@ -245,14 +280,15 @@ export default function DonationForm({ purposes }: DonationFormProps): JSX.Eleme
             </label>
             <input
               id="amount"
-              type="text"
+              type="number"
               inputMode="numeric"
+              pattern="[0-9]*"
               placeholder={t('amountPlaceholder')}
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              className="w-full rounded-lg border border-white/30 bg-white/20 backdrop-blur-md px-4 py-3 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-white/40 transition-all"
+              className="w-full rounded-lg border border-white/30 bg-white/20 backdrop-blur-md px-4 py-3 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-white/40 transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
             />
-            {amountError && <p className="mt-1 text-xs text-red-300 drop-shadow-md">{amountError}</p>}
+            {amountError && <p className="mt-1 text-lg text-red-300 drop-shadow-md">{amountError}</p>}
           </div>
         {/* </div> */}
         

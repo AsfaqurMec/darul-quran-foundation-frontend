@@ -256,8 +256,37 @@ const activePresets = hasFlatPresets
     return parseAmount(customAmount);
   };
 
+  // Validate contact field: either 7-14 digits or valid email
+  const validateContact = React.useCallback((contactValue: string): string | null => {
+    if (!contactValue) {
+      return t('contactError');
+    }
+
+    const trimmedContact = contactValue.trim();
+    
+    // Check if all characters are digits
+    const isAllDigits = /^\d+$/.test(trimmedContact);
+    
+    if (isAllDigits) {
+      // If all digits, check length (7-14)
+      if (trimmedContact.length >= 7 && trimmedContact.length <= 14) {
+        return null; // Valid phone number
+      } else {
+        return t('contactNumberLengthError');
+      }
+    } else {
+      // If not all digits, validate as email
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (emailRegex.test(trimmedContact)) {
+        return null; // Valid email
+      } else {
+        return t('contactInvalidFormatError');
+      }
+    }
+  }, [t]);
+
   // Form validation errors
-  const contactError = submitted && !contact ? t('contactError') : null;
+  const contactError = submitted ? validateContact(contact) : null;
   const amountError = submitted && getCurrentAmount() <= 0 ? t('amountError') : null;
 
   // Form submission handler
@@ -272,6 +301,12 @@ const activePresets = hasFlatPresets
       return;
     }
 
+    // Validate contact field
+    const contactValidationError = validateContact(contact);
+    if (contactValidationError) {
+      return;
+    }
+
     // Only proceed if payment method is online (other methods may need different handling)
     if (paymentMethod !== 'online') {
       // For now, only handle online payments
@@ -282,7 +317,7 @@ const activePresets = hasFlatPresets
     try {
       const payload: DonationCachePayload = {
         purpose: data.slug,
-        contact,
+        contact: contact.trim(),
         amount: currentAmount,
         purposeLabel: translatedTitle || data.title,
         behalf: behalf || '',
@@ -626,7 +661,7 @@ const activePresets = hasFlatPresets
                         className="w-full rounded-lg border border-gray-300 px-4 py-3"
                         placeholder={t('contactPlaceholder')}
                       />
-                      {contactError && <p className="mt-1 text-xs text-red-500">{contactError}</p>}
+                      {contactError && <p className="mt-1 text-lg text-red-500">{contactError}</p>}
                     </div>
                     <div className="space-y-1">
                       <label className="text-sm font-semibold text-gray-700">{t('donateOnBehalf')}</label>

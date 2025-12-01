@@ -76,6 +76,41 @@ export default function MemberApplication({ embedded = false }: Props): JSX.Elem
     });
   }, [setFieldErrors]);
 
+  const validateMobile = React.useCallback((mobileValue: string, isOverseasValue: boolean): string => {
+    const digitsOnly = mobileValue.replace(/\D/g, '');
+    
+    if (!digitsOnly) {
+      return t('fillThisField');
+    }
+    
+    if (isOverseasValue) {
+      // Overseas: 7 to 14 digits
+      if (digitsOnly.length < 7 || digitsOnly.length > 14) {
+        return t('mobileOverseasInvalid');
+      }
+    } else {
+      // Bangladesh: exactly 11 digits
+      if (digitsOnly.length !== 11) {
+        return t('mobileBangladeshInvalid');
+      }
+    }
+    
+    return '';
+  }, [t]);
+
+  const validateEmail = React.useCallback((emailValue: string): string => {
+    if (!emailValue.trim()) {
+      return '';
+    }
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(emailValue.trim())) {
+      return t('invalidEmail');
+    }
+    
+    return '';
+  }, [t]);
+
   const handleOverseasPhoneChange = React.useCallback(
     (value: string, data: CountryData | {}) => {
       const countryData = data as CountryData;
@@ -87,9 +122,16 @@ export default function MemberApplication({ embedded = false }: Props): JSX.Elem
       setMobileDialCode(dialCode);
       setMobileCountryIso(iso);
       setMobile(nationalNumber);
-      clearFieldError('mobile');
+      
+      // Validate mobile
+      const mobileError = validateMobile(nationalNumber, true);
+      if (mobileError) {
+        setFieldErrors((prev) => ({ ...prev, mobile: mobileError }));
+      } else {
+        clearFieldError('mobile');
+      }
     },
-    [clearFieldError, mobileCountryIso, mobileDialCode]
+    [clearFieldError, mobileCountryIso, mobileDialCode, validateMobile]
   );
 
   const onSubmit = (e: React.FormEvent) => {
@@ -126,6 +168,13 @@ export default function MemberApplication({ embedded = false }: Props): JSX.Elem
     if (!mobile.trim()) {
       errors.mobile = requiredMessage;
       hasError = true;
+    } else {
+      // Validate mobile format
+      const mobileValidationError = validateMobile(mobile, isOverseas);
+      if (mobileValidationError) {
+        errors.mobile = mobileValidationError;
+        hasError = true;
+      }
     }
 
     if (!occupation.trim()) {
@@ -138,9 +187,17 @@ export default function MemberApplication({ embedded = false }: Props): JSX.Elem
       hasError = true;
     }
     
+    // Email validation
     if (isOverseas && !email.trim()) {
       setEmailError(t('emailRequiredForOverseas'));
       hasError = true;
+    } else if (email.trim()) {
+      // Validate email format if provided
+      const emailValidationError = validateEmail(email);
+      if (emailValidationError) {
+        setEmailError(emailValidationError);
+        hasError = true;
+      }
     }
     
     if (paymentMethod === 'bank_transfer') {
@@ -452,8 +509,16 @@ export default function MemberApplication({ embedded = false }: Props): JSX.Elem
               <input
                 value={mobile}
                 onChange={(e) => {
-                  setMobile(e.target.value);
-                  clearFieldError('mobile');
+                  const value = e.target.value;
+                  setMobile(value);
+                  
+                  // Validate mobile
+                  const mobileError = validateMobile(value, false);
+                  if (mobileError) {
+                    setFieldErrors((prev) => ({ ...prev, mobile: mobileError }));
+                  } else {
+                    clearFieldError('mobile');
+                  }
                 }}
                 className={`flex-1 rounded-lg border px-3 py-2 ${fieldErrors.mobile ? 'border-red-400' : 'border-gray-300'}`}
                 placeholder="01XXXXXXXXX"
@@ -474,8 +539,12 @@ export default function MemberApplication({ embedded = false }: Props): JSX.Elem
           <input
             value={email}
             onChange={(e) => {
-              setEmail(e.target.value);
-              setEmailError('');
+              const value = e.target.value;
+              setEmail(value);
+              
+              // Validate email format
+              const emailValidationError = validateEmail(value);
+              setEmailError(emailValidationError);
             }}
             className={`w-full rounded-lg border px-3 py-2 ${emailError ? 'border-red-400' : 'border-gray-300'}`}
             placeholder={t('emailPlaceholder')}

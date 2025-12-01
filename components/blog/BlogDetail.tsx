@@ -103,15 +103,15 @@ export default function BlogDetail({ blog, otherBlogs = [] }: Props): JSX.Elemen
   return (
     <div>
       {/* Header with background */}
-      <section className="relative min-h-[320px] md:min-h-[420px] flex items-end overflow-hidden">
+      <section className="relative min-h-[320px] md:min-h-[420px] flex items-center overflow-hidden ">
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: `url('${blog.thumbnail || topImages[0] || ''}')` }}
         >
-          <div className="absolute inset-0 bg-black/50"></div>
+          <div className="absolute inset-0 bg-black/70"></div>
         </div>
         <Container className="relative z-10 py-14 md:py-20 text-center">
-          <h1 className="text-3xl md:text-5xl font-extrabold text-white leading-tight mb-3 md:mb-4 line-clamp-3">
+          <h1 className="text-3xl md:text-4xl font-bold text-white leading-tight mb-3 md:mb-4 line-clamp-3">
             {isTranslating ? (
               <span className="inline-flex items-center gap-2">
                 <span className="animate-pulse">{blog.title}</span>

@@ -94,9 +94,9 @@ function PaymentSuccessContent(): JSX.Element {
     if (state === 'loading') {
       return (
         <>
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto mb-4"></div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-emerald-700 mb-2">{t('loginProcessing')}</h1>
-          <p className="text-gray-600">{message}</p>
+          <div className="animate-spin rounded-full h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 border-b-2 border-emerald-600 mx-auto mb-4 sm:mb-6"></div>
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-emerald-700 mb-2 sm:mb-3">{t('loginProcessing')}</h1>
+          <p className="text-sm sm:text-base text-gray-600 px-2">{message}</p>
         </>
       );
     }
@@ -104,41 +104,43 @@ function PaymentSuccessContent(): JSX.Element {
     if (state === 'success') {
       return (
         <>
-          <div className="h-16 w-16 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-4">
-            <svg className="h-8 w-8 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-4 sm:mb-6">
+            <svg className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-emerald-700 mb-2">{t('paymentSuccessTitle')}</h1>
-          <p className="text-xl font-semibold mb-2">{t('paymentSuccessSubtitle')}</p>
-          <p className="text-gray-600 mb-4">{message}</p>
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-emerald-700 mb-2 sm:mb-3">{t('paymentSuccessTitle')}</h1>
+          <p className="text-lg sm:text-xl md:text-2xl font-semibold mb-2 sm:mb-3">{t('paymentSuccessSubtitle')}</p>
+          <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6 px-2">{message}</p>
           {transactionId && (
-            <p className="text-sm font-mono bg-emerald-50 text-emerald-700 px-3 py-2 rounded-lg inline-flex items-center gap-2 mb-4">
-              <span className="uppercase tracking-[0.2em] text-xs text-emerald-500">{t('transactionId').toUpperCase()}</span>
-              {transactionId}
-            </p>
+            <div className="w-full mb-4 sm:mb-6">
+              <p className="text-xs sm:text-sm font-mono bg-emerald-50 text-emerald-700 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg inline-flex flex-col sm:flex-row items-center gap-1 sm:gap-2 break-all sm:break-normal">
+                <span className="uppercase tracking-[0.2em] text-[10px] sm:text-xs text-emerald-500 whitespace-nowrap">{t('transactionId').toUpperCase()}</span>
+                <span className="break-all text-center sm:text-left">{transactionId}</span>
+              </p>
+            </div>
           )}
           {/* {donation && (
-            <div className="w-full border border-emerald-100 rounded-xl bg-emerald-50/60 p-4 text-left mb-4">
-              <p className="text-sm text-emerald-700 font-semibold">{t('paymentSuccessDonationDetails')}</p>
-              <p className="text-lg font-bold text-emerald-900">
+            <div className="w-full border border-emerald-100 rounded-xl bg-emerald-50/60 p-3 sm:p-4 text-left mb-4 sm:mb-6">
+              <p className="text-xs sm:text-sm text-emerald-700 font-semibold mb-1">{t('paymentSuccessDonationDetails')}</p>
+              <p className="text-base sm:text-lg font-bold text-emerald-900">
                 ৳ {donation.amount.toLocaleString('bn-BD', { maximumFractionDigits: 2 })}
               </p>
               {donation.purposeLabel && (
-                <p className="text-sm text-emerald-800">{t('paymentSuccessPurpose')} {donation.purposeLabel}</p>
+                <p className="text-xs sm:text-sm text-emerald-800 mt-1">{t('paymentSuccessPurpose')} {donation.purposeLabel}</p>
               )}
             </div>
           )} */}
-          <div className="flex flex-col sm:flex-row gap-3 justify-center w-full">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-center w-full">
             <button
               onClick={() => router.push('/')}
-              className="flex-1 inline-flex items-center justify-center rounded-lg bg-emerald-600 px-5 py-3 font-semibold text-white hover:bg-emerald-700"
+              className="w-full sm:flex-1 inline-flex items-center justify-center rounded-lg bg-emerald-600 px-4 sm:px-5 py-2.5 sm:py-3 text-sm sm:text-base font-semibold text-white hover:bg-emerald-700 transition-colors active:bg-emerald-800"
             >
               {t('paymentSuccessGoHome')}
             </button>
             <button
               onClick={() => router.push('/donation')}
-              className="flex-1 inline-flex items-center justify-center rounded-lg border border-emerald-600 px-5 py-3 font-semibold text-emerald-600 hover:bg-emerald-50"
+              className="w-full sm:flex-1 inline-flex items-center justify-center rounded-lg border border-emerald-600 px-4 sm:px-5 py-2.5 sm:py-3 text-sm sm:text-base font-semibold text-emerald-600 hover:bg-emerald-50 transition-colors active:bg-emerald-100"
             >
               {t('paymentSuccessDonateAgain')}
             </button>
@@ -149,23 +151,23 @@ function PaymentSuccessContent(): JSX.Element {
 
     return (
       <>
-        <div className="h-16 w-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
-          <svg className="h-8 w-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4 sm:mb-6">
+          <svg className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </div>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-red-700 mb-2">{t('paymentFailCancelled')}</h1>
-        <p className="text-gray-600 mb-4">{message}</p>
-        <div className="flex flex-col sm:flex-row gap-3 justify-center w-full">
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-red-700 mb-2 sm:mb-3">{t('paymentFailCancelled')}</h1>
+        <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6 px-2">{message}</p>
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-center w-full">
           <button
             onClick={() => router.push('/donation')}
-            className="flex-1 inline-flex items-center justify-center rounded-lg bg-emerald-600 px-5 py-3 font-semibold text-white hover:bg-emerald-700"
+            className="w-full sm:flex-1 inline-flex items-center justify-center rounded-lg bg-emerald-600 px-4 sm:px-5 py-2.5 sm:py-3 text-sm sm:text-base font-semibold text-white hover:bg-emerald-700 transition-colors active:bg-emerald-800"
           >
             {t('tryAgain')}
           </button>
           <button
             onClick={() => router.push('/contact')}
-            className="flex-1 inline-flex items-center justify-center rounded-lg border border-gray-300 px-5 py-3 font-semibold text-gray-700 hover:bg-gray-50"
+            className="w-full sm:flex-1 inline-flex items-center justify-center rounded-lg border border-gray-300 px-4 sm:px-5 py-2.5 sm:py-3 text-sm sm:text-base font-semibold text-gray-700 hover:bg-gray-50 transition-colors active:bg-gray-100"
           >
             {t('getHelp')}
           </button>
@@ -175,8 +177,8 @@ function PaymentSuccessContent(): JSX.Element {
   };
 
   return (
-    <div className="min-h-[60vh] flex items-center justify-center px-4">
-      <div className="max-w-xl w-full rounded-2xl border border-emerald-200 bg-white/95 backdrop-blur p-8 text-center shadow-lg">
+    <div className="min-h-[60vh] sm:min-h-[70vh] flex items-center justify-center px-3 sm:px-4 py-6 sm:py-8">
+      <div className="max-w-xl w-full rounded-xl sm:rounded-2xl border border-emerald-200 bg-white/95 backdrop-blur p-4 sm:p-6 md:p-8 text-center shadow-lg">
         {renderContent()}
       </div>
     </div>
@@ -186,11 +188,11 @@ function PaymentSuccessContent(): JSX.Element {
 export default function PaymentSuccessPage(): JSX.Element {
   return (
     <Suspense fallback={
-      <div className="min-h-[60vh] flex items-center justify-center px-4">
-        <div className="max-w-xl w-full rounded-2xl border border-emerald-200 bg-white/95 backdrop-blur p-8 text-center shadow-lg">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto mb-4"></div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-emerald-700 mb-2">Loading...</h1>
-          <p className="text-gray-600">Processing payment information...</p>
+      <div className="min-h-[60vh] sm:min-h-[70vh] flex items-center justify-center px-3 sm:px-4 py-6 sm:py-8">
+        <div className="max-w-xl w-full rounded-xl sm:rounded-2xl border border-emerald-200 bg-white/95 backdrop-blur p-4 sm:p-6 md:p-8 text-center shadow-lg">
+          <div className="animate-spin rounded-full h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 border-b-2 border-emerald-600 mx-auto mb-4 sm:mb-6"></div>
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-emerald-700 mb-2 sm:mb-3">Loading...</h1>
+          <p className="text-sm sm:text-base text-gray-600 px-2">Processing payment information...</p>
         </div>
       </div>
     }>

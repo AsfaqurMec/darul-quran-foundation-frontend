@@ -21,16 +21,54 @@ export default function DonationWidget(): JSX.Element {
   const [method, setMethod] = React.useState<'bkash' | 'nagad' | 'card'>('bkash');
   const [submitted, setSubmitted] = React.useState(false);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [isAmountEditable, setIsAmountEditable] = React.useState(false);
 
   const dailyPresetsTop = ['10', '20', '30'];
   const dailyPresetsBottom = ['50', '100'];
   const monthlyPresetsTop = ['300', '500', '1000'];
   const monthlyPresetsBottom = ['2000', '5000'];
 
+  // Validate contact field: either 7-14 digits or valid email
+  const validateContact = React.useCallback((contactValue: string): string | null => {
+    if (!contactValue) {
+      return t('contactError');
+    }
+
+    const trimmedContact = contactValue.trim();
+    
+    // Check if all characters are digits
+    const isAllDigits = /^\d+$/.test(trimmedContact);
+    
+    if (isAllDigits) {
+      // If all digits, check length (7-14)
+      if (trimmedContact.length >= 7 && trimmedContact.length <= 14) {
+        return null; // Valid phone number
+      } else {
+        return t('contactNumberLengthError');
+      }
+    } else {
+      // If not all digits, validate as email
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (emailRegex.test(trimmedContact)) {
+        return null; // Valid email
+      } else {
+        return t('contactInvalidFormatError');
+      }
+    }
+  }, [t]);
+
+  const contactError = submitted ? validateContact(contact) : null;
+
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitted(true);
     if (!contact || !amount) return;
+
+    // Validate contact field
+    const contactValidationError = validateContact(contact);
+    if (contactValidationError) {
+      return;
+    }
 
     const amountNumber = parseFloat(amount.replace(/,/g, ''));
     if (isNaN(amountNumber) || amountNumber <= 0) {
@@ -45,7 +83,7 @@ export default function DonationWidget(): JSX.Element {
 
       const payload: DonationCachePayload = {
         purpose: purposeLabel, 
-        contact,
+        contact: contact.trim(),
         amount: amountNumber,
         purposeLabel,
         name: name || undefined,
@@ -90,6 +128,7 @@ export default function DonationWidget(): JSX.Element {
     } else {
       setAmount('300');
     }
+    setIsAmountEditable(false); // Disable amount field when period changes
   }, [period]);
 
   return (
@@ -132,7 +171,10 @@ export default function DonationWidget(): JSX.Element {
                   key={v}
                   type="button"
                   className={`rounded-lg border py-2 font-semibold ${amount === v ? 'bg-emerald-600 border-emerald-600 text-white' : 'bg-white border-emerald-200'}`}
-                  onClick={() => setAmount(v)}
+                  onClick={() => {
+                    setAmount(v);
+                    setIsAmountEditable(false);
+                  }}
                 >
                   ৳ {v}
                 </button>
@@ -144,7 +186,10 @@ export default function DonationWidget(): JSX.Element {
                   key={v}
                   type="button"
                   className={`rounded-lg border py-2 font-semibold ${amount === v ? 'bg-emerald-600 border-emerald-600 text-white' : 'bg-white border-emerald-200'}`}
-                  onClick={() => setAmount(v)}
+                  onClick={() => {
+                    setAmount(v);
+                    setIsAmountEditable(false);
+                  }}
                 >
                   ৳ {v}
                 </button>
@@ -152,7 +197,10 @@ export default function DonationWidget(): JSX.Element {
               <button
                 type="button"
                 className={`rounded-lg border py-2 font-semibold ${!dailyPresetsTop.concat(dailyPresetsBottom).includes(amount) ? 'bg-emerald-600 border-emerald-600 text-white' : 'bg-white border-emerald-200'}`}
-                onClick={() => setAmount('')}
+                onClick={() => {
+                  setAmount('');
+                  setIsAmountEditable(true);
+                }}
               >
                 {t('anyAmount')}
               </button>
@@ -162,14 +210,23 @@ export default function DonationWidget(): JSX.Element {
           <>
             <div className="grid grid-cols-3 gap-3">
               {monthlyPresetsTop.map((v) => (
-                <button key={v} type="button" className={`rounded-lg border py-2 font-semibold ${amount === v ? 'bg-emerald-100 border-emerald-400 text-emerald-700' : 'bg-white'}`} onClick={() => setAmount(v)}>৳ {v}</button>
+                <button key={v} type="button" className={`rounded-lg border py-2 font-semibold ${amount === v ? 'bg-emerald-100 border-emerald-400 text-emerald-700' : 'bg-white'}`} onClick={() => {
+                  setAmount(v);
+                  setIsAmountEditable(false);
+                }}>৳ {v}</button>
               ))}
             </div>
             <div className="grid grid-cols-3 gap-3">
               {monthlyPresetsBottom.map((v) => (
-                <button key={v} type="button" className={`rounded-lg border py-2 font-semibold ${amount === v ? 'bg-emerald-100 border-emerald-400 text-emerald-700' : 'bg-white'}`} onClick={() => setAmount(v)}>৳ {v}</button>
+                <button key={v} type="button" className={`rounded-lg border py-2 font-semibold ${amount === v ? 'bg-emerald-100 border-emerald-400 text-emerald-700' : 'bg-white'}`} onClick={() => {
+                  setAmount(v);
+                  setIsAmountEditable(false);
+                }}>৳ {v}</button>
               ))}
-              <button type="button" className={`rounded-lg border py-2 font-semibold ${!monthlyPresetsTop.concat(monthlyPresetsBottom).includes(amount) ? 'bg-emerald-100 border-emerald-400 text-emerald-700' : 'bg-white'}`} onClick={() => setAmount('')}>{t('anyAmount')}</button>
+              <button type="button" className={`rounded-lg border py-2 font-semibold ${!monthlyPresetsTop.concat(monthlyPresetsBottom).includes(amount) ? 'bg-emerald-100 border-emerald-400 text-emerald-700' : 'bg-white'}`} onClick={() => {
+                setAmount('');
+                setIsAmountEditable(true);
+              }}>{t('anyAmount')}</button>
             </div>
           </>
         )}
@@ -178,7 +235,7 @@ export default function DonationWidget(): JSX.Element {
         <div className="space-y-3">
           <div>
             <label className="block text-sm font-medium mb-1">{t('donationAmount')} *</label>
-            <input value={amount} onChange={(e) => setAmount(e.target.value)} inputMode="numeric" className={`w-full rounded-lg border px-3 py-2 ${submitted && !amount ? 'border-red-400' : 'border-gray-300'}`} placeholder="৳ 300" />
+            <input value={amount} onChange={(e) => setAmount(e.target.value)} inputMode="numeric" disabled={!isAmountEditable} className={`w-full rounded-lg border px-3 py-2 ${submitted && !amount ? 'border-red-400' : 'border-gray-300'} ${!isAmountEditable ? 'bg-gray-100 cursor-not-allowed' : ''}`} placeholder="৳ 300" />
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">{t('yourName')}</label>
@@ -186,7 +243,8 @@ export default function DonationWidget(): JSX.Element {
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">{t('mobileOrEmail')} *</label>
-            <input value={contact} onChange={(e) => setContact(e.target.value)} className={`w-full rounded-lg border px-3 py-2 ${submitted && !contact ? 'border-red-400' : 'border-gray-300'}`} placeholder={t('write')} />
+            <input value={contact} onChange={(e) => setContact(e.target.value)} className={`w-full rounded-lg border px-3 py-2 ${contactError ? 'border-red-400' : 'border-gray-300'}`} placeholder={t('contactPlaceholder')} />
+            {contactError && <p className="mt-1 text-lg text-red-500">{contactError}</p>}
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">{t('donateOnBehalf')}</label>

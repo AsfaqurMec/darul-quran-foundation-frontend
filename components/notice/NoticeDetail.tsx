@@ -56,13 +56,13 @@ export default function NoticeDetail({ notice }: Props): JSX.Element {
             </div>
 
             {/* Title */}
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white leading-tight mb-4">
+            <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-white leading-tight mb-4">
               {notice.title}
             </h1>
 
             {/* Excerpt */}
             {notice.excerpt && (
-              <p className="text-xl md:text-2xl text-white/90 leading-relaxed">
+              <p className="text-md md:text-lg text-white/90 leading-relaxed">
                 {notice.excerpt}
               </p>
             )}

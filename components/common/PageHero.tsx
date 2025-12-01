@@ -14,8 +14,8 @@ export default function PageHero({ title, imageSrc = '/img/hero.png', overlayCla
         style={{ backgroundImage: `url('${imageSrc}')` }}
       >
         <div className={`h-full w-full ${overlayClassName ?? 'bg-black/50'}`}>
-          <Container className="h-full flex items-center">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white">{title}</h1>
+          <Container className="h-full flex items-center justify-center">
+            <h1 className="text-3xl sm:text-4xl md:text-4xl font-bold text-white text-center">{title}</h1>
           </Container>
         </div>
       </div>

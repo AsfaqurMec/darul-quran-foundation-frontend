@@ -181,7 +181,7 @@ export default function ProgramDetail({ program }: Props): JSX.Element {
               </div>
 
               {/* Title */}
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight">
+              <h1 className="text-2xl md:text-3xl lg:text-5xl font-bold text-white leading-tight">
                 {isTranslating ? (
                   <span className="inline-flex items-center gap-2">
                     <span className="animate-pulse">{program.title}</span>
@@ -194,7 +194,7 @@ export default function ProgramDetail({ program }: Props): JSX.Element {
 
               {/* Subtitle */}
               {program.subtitle && (
-                <p className="text-xl md:text-2xl text-white/90 leading-relaxed max-w-2xl">
+                <p className="text-lg md:text-xl text-white/90 leading-relaxed max-w-2xl">
                   {isTranslating ? (
                     <span className="inline-flex items-center gap-2">
                       <span className="animate-pulse">{program.subtitle}</span>
@@ -213,25 +213,40 @@ export default function ProgramDetail({ program }: Props): JSX.Element {
 
             {/* Right Side - Rounded Images */}
             {program.galleryImages && program.galleryImages.length > 0 && (
-              <div className="relative hidden lg:block w-[820px] h-[700px] ml-auto">
+              <div className={`relative hidden lg:block w-[820px] h-[700px] ${lang === 'ar' ? 'mr-auto' : 'ml-auto'}`}>
                 {/* Large right-edge dashed arcs (matching sweep in reference) */}
-                
-                <div className="absolute -bottom-[25%] -right-[30%] w-[800px] h-[800px] rounded-full border-2 border-dashed border-white/70 pointer-events-none"></div>
+                {lang === 'ar' ? (
+                  <div className="absolute -bottom-[22%] -left-[25%] w-[800px] h-[800px] rounded-full border-4 border-dashed border-white/70 pointer-events-none"></div>
+                ) : (
+                  <div className="absolute -bottom-[22%] -right-[25%] w-[800px] h-[800px] rounded-full border-4 border-dashed border-white/70 pointer-events-none"></div>
+                )}
 
                 {/* Central large image circle */}
-                <div className="absolute left-[85%] -bottom-[70%] -translate-x-1/2 -translate-y-1/2 rounded-full overflow-hidden border-4 border-white shadow-2xl w-[700px] h-[700px] z-20">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={program.galleryImages[0]}
-                    alt="Gallery image 1"
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/20"></div>
-                </div>
+                {lang === 'ar' ? (
+                  <div className="absolute right-[75%] -bottom-[65%] translate-x-1/2 -translate-y-1/2 rounded-full overflow-hidden border-4 border-white shadow-2xl w-[700px] h-[700px] z-20">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={program.galleryImages[0]}
+                      alt="Gallery image 1"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/20"></div>
+                  </div>
+                ) : (
+                  <div className="absolute left-[75%] -bottom-[65%] -translate-x-1/2 -translate-y-1/2 rounded-full overflow-hidden border-4 border-white shadow-2xl w-[700px] h-[700px] z-20">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={program.galleryImages[0]}
+                      alt="Gallery image 1"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/20"></div>
+                  </div>
+                )}
 
                 {/* Top small image circle (slightly left of main's right edge) */}
                 {program.galleryImages[1] && (
-                  <div className="absolute right-[42%] top-[10%] rounded-full overflow-hidden border-4 border-white shadow-2xl w-[170px] h-[170px] z-30">
+                  <div className={`absolute ${lang === 'ar' ? 'left-[48%]' : 'right-[48%]'} top-[4%] rounded-full overflow-hidden border-4 border-white shadow-2xl w-[160px] h-[160px] z-30`}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={program.galleryImages[1]}
@@ -243,7 +258,7 @@ export default function ProgramDetail({ program }: Props): JSX.Element {
                 )}
 
                 {program.galleryImages[2] && (
-                  <div className="absolute right-[58%] top-[35%] rounded-full overflow-hidden border-4 border-white shadow-2xl w-[250px] h-[250px] z-30">
+                  <div className={`absolute ${lang === 'ar' ? 'left-[65%]' : 'right-[65%]'} top-[25%] rounded-full overflow-hidden border-4 border-white shadow-2xl w-[220px] h-[220px] z-30`}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={program.galleryImages[2]}
@@ -256,7 +271,7 @@ export default function ProgramDetail({ program }: Props): JSX.Element {
 
                 {/* Bottom-right small image circle */}
                 {program.galleryImages[3] && (
-                  <div className="absolute right-[60%] bottom-[-5%] rounded-full overflow-hidden border-4 border-white shadow-2xl w-[190px] h-[190px] z-30">
+                  <div className={`absolute ${lang === 'ar' ? 'left-[68%]' : 'right-[68%]'} bottom-[17%] rounded-full overflow-hidden border-4 border-white shadow-2xl w-[130px] h-[130px] z-30`}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={program.galleryImages[3]}
@@ -268,8 +283,17 @@ export default function ProgramDetail({ program }: Props): JSX.Element {
                 )}
 
                 {/* Subtle glow blobs */}
-                <div className="absolute -top-12 -right-10 w-40 h-40 bg-secondary/30 rounded-full blur-3xl"></div>
-                <div className="absolute -bottom-16 left-6 w-48 h-48 bg-brand/40 rounded-full blur-3xl"></div>
+                {lang === 'ar' ? (
+                  <>
+                    <div className="absolute -top-12 -left-10 w-40 h-40 bg-secondary/30 rounded-full blur-3xl"></div>
+                    <div className="absolute -bottom-16 right-6 w-48 h-48 bg-brand/40 rounded-full blur-3xl"></div>
+                  </>
+                ) : (
+                  <>
+                    <div className="absolute -top-12 -right-10 w-40 h-40 bg-secondary/30 rounded-full blur-3xl"></div>
+                    <div className="absolute -bottom-16 left-6 w-48 h-48 bg-brand/40 rounded-full blur-3xl"></div>
+                  </>
+                )}
               </div>
             )}
 
@@ -300,7 +324,7 @@ export default function ProgramDetail({ program }: Props): JSX.Element {
         <Container>
           {/* Page Title */}
           <div className="mb-8 md:mb-12">
-          <h2 className="text-3xl md:text-4xl font-extrabold text-emerald-900">{t('activityDetails')}</h2>
+          <h2 className="text-3xl md:text-4xl font-extrabold text-emerald-900">কার্যক্রমের বিবরণ</h2>
           </div>
 
           {/* Main Content with Sidebar */}
@@ -351,7 +375,7 @@ export default function ProgramDetail({ program }: Props): JSX.Element {
             {/* Panel 1: Project Goals-Objectives */}
             {program.goals && program.goals.length > 0 && (
               <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
-                <h2 className="text-xl font-bold text-emerald-900 mb-4">{t('projectGoalsObjectives')}</h2>
+                <h2 className="text-xl font-bold text-emerald-900 mb-4">প্রকল্পের লক্ষ্য-উদ্দেশ্য</h2>
                 <ul className="space-y-3">
                   {(isTranslating ? program.goals || [] : translatedGoals).map((goal, idx) => (
                     <li key={idx} className="flex items-start gap-3">
@@ -376,7 +400,7 @@ export default function ProgramDetail({ program }: Props): JSX.Element {
                       <path d="M16 11c1.657 0 3-1.79 3-4s-1.343-4-3-4-3 1.79-3 4 1.343 4 3 4zm-8 0c1.657 0 3-1.79 3-4S9.657 3 8 3 5 4.79 5 7s1.343 4 3 4zm0 2c-2.761 0-8 1.382-8 4.125V20h16v-2.875C16 14.382 10.761 13 8 13zm8 0c-.507 0-1.074.035-1.68.1 1.568.862 2.68 2.075 2.68 3.9V20h7v-2.875C24 14.382 18.761 13 16 13z"/>
                     </svg>
                   </span>
-                  <span>{t('beneficiaries')}</span>
+                  <span>উপকারভোগী</span>
                 </h2>
                 <p className="text-gray-700 leading-7">
                   {isTranslating ? (
@@ -394,7 +418,7 @@ export default function ProgramDetail({ program }: Props): JSX.Element {
             {/* Panel 3: Expenditure Categories */}
             {program.expenditureCategories && program.expenditureCategories.length > 0 && (
               <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
-                <h2 className="text-xl font-bold text-emerald-900 mb-4">{t('expenditureCategories')}</h2>
+                <h2 className="text-xl font-bold text-emerald-900 mb-4">ব্যয়ের খাত</h2>
                 <ul className="space-y-3">
                   {(isTranslating ? program.expenditureCategories || [] : translatedCategories).map((category, idx) => (
                     <li key={idx} className="flex items-start gap-3">
@@ -413,7 +437,7 @@ export default function ProgramDetail({ program }: Props): JSX.Element {
             {/* Panel 4: Project Area */}
             {program.projectArea && (
               <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
-                <h2 className="text-xl font-bold text-emerald-900 mb-4">{t('projectArea')}</h2>
+                <h2 className="text-xl font-bold text-emerald-900 mb-4">প্রকল্পের এলাকা</h2>
                 <div className="flex items-start gap-3">
                   <span className="mt-1 inline-flex h-7 w-7 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
@@ -437,7 +461,7 @@ export default function ProgramDetail({ program }: Props): JSX.Element {
             {/* Panel 5: Duration */}
             {program.duration && (
               <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
-                <h2 className="text-xl font-bold text-emerald-900 mb-4">{t('projectDuration')}</h2>
+                <h2 className="text-xl font-bold text-emerald-900 mb-4">মেয়াদ</h2>
                 <div className="flex items-start gap-3">
                   <span className="mt-1 inline-flex h-7 w-7 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
@@ -486,7 +510,7 @@ export default function ProgramDetail({ program }: Props): JSX.Element {
 
               {/* Right Side - CTA Button */}
               <a
-                href={program.ctaButtonLink || `/donation/${program.slug}`}
+                href={program.ctaButtonLink || `/donate/${program.slug}`}
                 className="bg-secondary hover:brightness-110 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 whitespace-nowrap inline-block"
               >
                 {program.ctaButtonText
