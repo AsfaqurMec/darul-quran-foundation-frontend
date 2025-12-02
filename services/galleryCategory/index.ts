@@ -3,6 +3,7 @@ import { PaginationInfo } from '@/types/pagination';
 
 export interface GalleryCategory {
   id?: string;
+  _id?: string;
   title: string;
   createdAt?: string;
   updatedAt?: string;
