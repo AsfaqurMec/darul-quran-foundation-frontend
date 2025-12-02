@@ -39,8 +39,8 @@ const deriveYearsFromItems = (items: { year?: number; createdAt?: string }[]) =>
   return Array.from(yearSet).sort((a, b) => b - a);
 };
 
-export default async function GalleryPage({ searchParams }: { searchParams?: Promise<{ page?: string; year?: string; category?: string; type?: string }> }) {
-  const params = await searchParams;
+export default async function GalleryPage({ searchParams }: { searchParams?: { page?: string; year?: string; category?: string; type?: string } }) {
+  const params =  searchParams;
   const current = Math.max(1, Number(params?.page || '1'));
   const selectedYear = params?.year ? Number(params.year) : undefined;
   const type = params?.type === 'video' ? 'video' : 'image';
