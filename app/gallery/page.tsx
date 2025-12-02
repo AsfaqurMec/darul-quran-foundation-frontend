@@ -7,7 +7,7 @@ import Link from 'next/link';
 import TranslatablePageHero from '../../components/common/TranslatablePageHero';
 //import { useI18n } from '../../components/i18n/LanguageProvider';
 import { GetGallery } from '../../services/gallery';
-//import { getAllGalleryCategories } from '../../services/galleryCategory';
+import { getAllGalleryCategories } from '../../services/galleryCategory';
 import config from '../../config';
 import GalleryTypeTabs from '../../components/gallery/GalleryTypeTabs';
 
@@ -47,19 +47,19 @@ export default async function GalleryPage({ searchParams }: { searchParams?: Pro
   const perPage = 12;
   //const { t } = useI18n();
   // Fetch categories dynamically
-  // const categories = await getAllGalleryCategories();
-  const categories = await fetch(`${config.api.baseUrl}/gallery-category`, {
-    method: 'GET',
-    headers: { 'Content-Type': 'application/json' },
-    // next: { tags: ['gallery'] } as any,
-  });
-  //console.log(categories);
-  if (!categories.ok) {
-    throw new Error('Failed to fetch categories');
-  }
-  const categoriesData = await categories.json();
+   const categories = await getAllGalleryCategories();
+  // const categories = await fetch(`${config.api.baseUrl}/gallery-category`, {
+  //   method: 'GET',
+  //   headers: { 'Content-Type': 'application/json' },
+  //   // next: { tags: ['gallery'] } as any,
+  // });
+  // //console.log(categories);
+  // if (!categories.ok) {
+  //   throw new Error('Failed to fetch categories');
+  // }
+  // const categoriesData = await categories.json();
   //console.log(categoriesData);
-  const categoryOptions = categoriesData.data?.map((cat: any) => cat.title).filter((title: any): title is string => Boolean(title)) ?? [];
+  const categoryOptions = categories.data?.map((cat: any) => cat.title).filter((title: any): title is string => Boolean(title)) ?? [];
   const normalizedCategory = getValidCategory(params?.category, categoryOptions);
 
   const data = await GetGallery({
@@ -97,12 +97,12 @@ export default async function GalleryPage({ searchParams }: { searchParams?: Pro
       <Container>
         <div className="py-12 md:py-16">
           {/* Type Tabs */}
-          {/* <GalleryTypeTabs
+          <GalleryTypeTabs
   currentType={type}
   imageHref={makeHref(1, { type: "image" })}
   videoHref={makeHref(1, { type: "video" })}
-/> */}
-          <div className="flex items-center justify-center gap-4 mb-8 md:mb-12">
+/>
+          {/* <div className="flex items-center justify-center gap-4 mb-8 md:mb-12">
             {['image', 'video'].map((a) => (
               <Link
                 key={a}
@@ -116,7 +116,7 @@ export default async function GalleryPage({ searchParams }: { searchParams?: Pro
                   {a === 'image' ? 'Image' : 'Video'}
               </Link>
             ))}
-          </div>
+          </div> */}
 
           <div className="grid grid-cols-1 lg:grid-cols-[240px_1fr] gap-8 lg:gap-12">
             {/* Left category filter */}
