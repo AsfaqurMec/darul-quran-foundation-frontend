@@ -117,13 +117,18 @@ export default function Gallery({ items, fetchCount = 6, show=true }: { items?: 
     <>
 
      <Container>
-    <h2 className="text-4xl sm:text-5xl font-extrabold text-emerald-900 my-20 text-center">{t('gallery')}</h2>
+      {isActiveVideo ? (
+        <h2 className="text-4xl sm:text-5xl font-extrabold text-emerald-900 my-20 text-center">{t('gallery')}</h2>
+      ) : (
+        <h2 className="text-4xl sm:text-5xl font-extrabold text-emerald-900 my-20 text-center">{t('gallery')}</h2>
+      )}
+    {/* <h2 className="text-4xl sm:text-5xl font-extrabold text-emerald-900 my-20 text-center">{t('gallery')}</h2> */}
      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-6 md:gap-8">
         {displayItems.map((it, i) => {
           const isVideo = isVideoItem(it);
           const previewSrc = isVideo ? getYoutubeThumbnail(it.src) ?? '' : it.src ?? '';
           return (
-            console.log("previewSrc", previewSrc),
+           // console.log("previewSrc", previewSrc),
             <button
               key={it.id}
               onClick={() => onOpen(i)}
@@ -191,7 +196,7 @@ export default function Gallery({ items, fetchCount = 6, show=true }: { items?: 
                   </div>
                 ) : (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={activeItem.src} alt={activeItem.alt || ''} className="w-full max-h-[80vh] object-contain rounded-lg shadow-lg" />
+                  <img src={activeItem.src} alt={activeItem.alt || ''} className="w-full max-h-[70vh] object-contain rounded-lg shadow-lg" />
                 )}
                 <button aria-label="Close" onClick={onClose} className="absolute -top-3 -right-3 h-10 w-10 rounded-full bg-white text-gray-700 shadow">✕</button>
                 <button aria-label="Prev" onClick={prev} className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 h-10 w-10 rounded-full bg-white text-gray-700 shadow">‹</button>

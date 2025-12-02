@@ -13,6 +13,14 @@ import {
   getAllGalleryItems,
   updateGalleryItem,
 } from '../../../services/gallery';
+import {
+  GalleryCategory,
+  GalleryCategoryInput,
+  getAllGalleryCategories,
+  createGalleryCategory,
+  updateGalleryCategory,
+  deleteGalleryCategory,
+} from '../../../services/galleryCategory';
 import { toast } from 'sonner';
 import { getImageUrl } from '../../../lib/imageUtils';
 import { useI18n } from '../../../components/i18n/LanguageProvider';
@@ -28,14 +36,6 @@ const initialForm: GalleryInput = {
   type: 'image',
 };
 
-const categoryOptions = [
-  'Flood',
-  'Food Distribution',
-  'Self Reliance',
-  'Qurbani',
-  'Winter Relief',
-];
-
 const normalizeSingle = (value: MediaValue | MediaValue[] | '' | undefined): MediaValue => {
   if (Array.isArray(value)) {
     return (value[0] ?? '') as MediaValue;
@@ -49,11 +49,16 @@ function GalleryPageContent(): JSX.Element {
   const confirmDialog = useConfirmDialog();
   const filtersKey = searchParams.toString();
   const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([]);
+  const [categories, setCategories] = useState<GalleryCategory[]>([]);
   const [formData, setFormData] = useState<GalleryInput>(initialForm);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const [categoryFormData, setCategoryFormData] = useState<GalleryCategoryInput>({ title: '' });
+  const [editingCategoryId, setEditingCategoryId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [loadingCategories, setLoadingCategories] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [pagination, setPagination] = useState<PaginationInfo>({
     currentPage: 1,
@@ -108,9 +113,28 @@ function GalleryPageContent(): JSX.Element {
     }
   }, [filtersKey, currentPage, pageSize, t]);
 
+  const loadCategories = useCallback(async () => {
+    setLoadingCategories(true);
+    try {
+      const response = await getAllGalleryCategories();
+      if (response.success && response.data) {
+        const data = Array.isArray(response.data) ? response.data : [response.data];
+        setCategories(data);
+      } else {
+        toast.error(response.message ?? t('operationFailed'));
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : t('operationFailed');
+      toast.error(message);
+    } finally {
+      setLoadingCategories(false);
+    }
+  }, [t]);
+
   useEffect(() => {
     void loadGalleryItems();
-  }, [loadGalleryItems]);
+    void loadCategories();
+  }, [loadGalleryItems, loadCategories]);
 
   const resetForm = () => {
     setFormData(initialForm);
@@ -187,6 +211,67 @@ function GalleryPageContent(): JSX.Element {
 
   const getMediaAccept = () => (formData.type === 'video' ? 'video/*' : 'image/*');
 
+  const handleCategorySubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!categoryFormData.title.trim()) {
+      toast.error(t('title') + ' ' + t('isRequired'));
+      return;
+    }
+    setSubmitting(true);
+    try {
+      if (editingCategoryId) {
+        await updateGalleryCategory(editingCategoryId, categoryFormData);
+        toast.success(t('categoryUpdated') || 'Category updated successfully');
+      } else {
+        await createGalleryCategory(categoryFormData);
+        toast.success(t('categoryCreated') || 'Category created successfully');
+      }
+      setCategoryFormData({ title: '' });
+      setEditingCategoryId(null);
+      setShowCategoryModal(false);
+      await loadCategories();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : t('operationFailed');
+      toast.error(message);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleCategoryCancel = () => {
+    setCategoryFormData({ title: '' });
+    setEditingCategoryId(null);
+    setShowCategoryModal(false);
+  };
+
+  const handleCategoryEdit = (category: GalleryCategory) => {
+    setCategoryFormData({ title: category.title });
+    setEditingCategoryId(category.id ?? null);
+    setShowCategoryModal(true);
+  };
+
+  const handleCategoryDelete = async (id: string) => {
+    const confirmed = await confirmDialog({
+      title: t('delete'),
+      description: t('deleteCategoryConfirm') || 'Are you sure you want to delete this category?',
+      confirmText: t('delete'),
+      cancelText: t('cancel'),
+      confirmVariant: 'danger',
+    });
+    if (!confirmed) return;
+    setSubmitting(true);
+    try {
+      await deleteGalleryCategory(id);
+      toast.success(t('categoryDeleted') || 'Category deleted successfully');
+      await loadCategories();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : t('deleteFailed');
+      toast.error(message);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -194,9 +279,21 @@ function GalleryPageContent(): JSX.Element {
           <h1 className="text-2xl font-semibold">{t('gallery')}</h1>
           <p className="text-gray-600">{t('manageGalleryItems')}</p>
         </div>
-        <Button onClick={() => { setShowForm(true); resetForm(); }}>
-          {t('addItem')}
-        </Button>
+        <div className="flex gap-2">
+          <Button 
+            variant="secondary" 
+            onClick={() => { 
+              setCategoryFormData({ title: '' }); 
+              setEditingCategoryId(null); 
+              setShowCategoryModal(true); 
+            }}
+          >
+            {t('createCategory') || 'Create Category'}
+          </Button>
+          <Button onClick={() => { setShowForm(true); resetForm(); }}>
+            {t('addItem')}
+          </Button>
+        </div>
       </div>
 
       {showForm && (
@@ -223,14 +320,14 @@ function GalleryPageContent(): JSX.Element {
                   value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                   className="w-full rounded-lg border px-3 py-2"
-                  disabled={submitting}
+                  disabled={submitting || loadingCategories}
                 >
                   <option value="" disabled>
                     {t('selectCategory')}
                   </option>
-                  {categoryOptions.map((option) => (
-                    <option key={option} value={option}>
-                      {option}
+                  {categories.map((category) => (
+                    <option key={category.id} value={category.title}>
+                      {category.title}
                     </option>
                   ))}
                 </select>
@@ -358,6 +455,40 @@ function GalleryPageContent(): JSX.Element {
         }}
         pageSizeOptions={[6, 12, 24, 36]}
       />
+
+      {/* Category Modal */}
+      {showCategoryModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-lg">
+            <h2 className="text-xl font-semibold mb-4">
+              {editingCategoryId ? t('edit') : t('create')} {t('category')}
+            </h2>
+            <form onSubmit={handleCategorySubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">{t('title')}</label>
+                <input
+                  type="text"
+                  required
+                  value={categoryFormData.title}
+                  onChange={(e) => setCategoryFormData({ title: e.target.value })}
+                  className="w-full rounded-lg border px-3 py-2"
+                  placeholder={t('categoryTitle') || 'Category title'}
+                  disabled={submitting}
+                />
+              </div>
+
+              <div className="flex gap-2">
+                <Button type="submit" disabled={submitting}>
+                  {editingCategoryId ? t('update') : t('save')}
+                </Button>
+                <Button type="button" variant="secondary" onClick={handleCategoryCancel} disabled={submitting}>
+                  {t('cancel')}
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
