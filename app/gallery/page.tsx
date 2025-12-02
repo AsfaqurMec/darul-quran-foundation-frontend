@@ -39,8 +39,8 @@ const deriveYearsFromItems = (items: { year?: number; createdAt?: string }[]) =>
   return Array.from(yearSet).sort((a, b) => b - a);
 };
 
-export default async function GalleryPage({ searchParams }: { searchParams?: { page?: string; year?: string; category?: string; type?: string } }) {
-  const params =  searchParams;
+export default async function GalleryPage({ searchParams }: { searchParams?: Promise<{ page?: string; year?: string; category?: string; type?: string }> }) {
+  const params = await searchParams;
   const current = Math.max(1, Number(params?.page || '1'));
   const selectedYear = params?.year ? Number(params.year) : undefined;
   const type = params?.type === 'video' ? 'video' : 'image';
@@ -97,12 +97,12 @@ export default async function GalleryPage({ searchParams }: { searchParams?: { p
       <Container>
         <div className="py-12 md:py-16">
           {/* Type Tabs */}
-          <GalleryTypeTabs
+          {/* <GalleryTypeTabs
   currentType={type}
   imageHref={makeHref(1, { type: "image" })}
   videoHref={makeHref(1, { type: "video" })}
-/>
-          {/* <div className="flex items-center justify-center gap-4 mb-8 md:mb-12">
+/> */}
+          <div className="flex items-center justify-center gap-4 mb-8 md:mb-12">
             {['image', 'video'].map((a) => (
               <Link
                 key={a}
@@ -113,10 +113,10 @@ export default async function GalleryPage({ searchParams }: { searchParams?: { p
                     : 'bg-white hover:bg-gray-50 border-gray-300 text-gray-700'
                 }`}
                 >
-                  {a === 'image' ? t('image') : t('video')}
+                  {a === 'image' ? 'Image' : 'Video'}
               </Link>
             ))}
-          </div> */}
+          </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-[240px_1fr] gap-8 lg:gap-12">
             {/* Left category filter */}
