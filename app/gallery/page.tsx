@@ -10,7 +10,7 @@ import { GetGallery } from '../../services/gallery';
 import { getAllGalleryCategories } from '../../services/galleryCategory';
 import config from '../../config';
 import GalleryTypeTabs from '../../components/gallery/GalleryTypeTabs';
-
+import GalleryCategorySidebar from '../../components/gallery/GalleryCategorySidebar';
 // const categoryOptions = ['Flood', 'Food Distribution', 'Self Reliance', 'Qurbani', 'Winter Relief'] as const;
 const ALL_CATEGORY = 'All';
 
@@ -120,7 +120,7 @@ export default async function GalleryPage({ searchParams }: { searchParams?: Pro
 
           <div className="grid grid-cols-1 lg:grid-cols-[240px_1fr] gap-8 lg:gap-12">
             {/* Left category filter */}
-            <aside className="rounded-2xl border border-emerald-200 bg-emerald-50 p-6 h-max sticky top-8">
+            {/* <aside className="rounded-2xl border border-emerald-200 bg-emerald-50 p-6 h-max sticky top-8">
               <h3 className="text-lg font-bold text-emerald-900 mb-4">Categories</h3>
               <div className="space-y-2">
                 {[ALL_CATEGORY, ...categoryOptions].map((c) => {
@@ -140,7 +140,14 @@ export default async function GalleryPage({ searchParams }: { searchParams?: Pro
                   );
                 })}
               </div>
-            </aside>
+            </aside> */}
+            <GalleryCategorySidebar
+                categoryOptions={categoryOptions}
+                normalizedCategory={normalizedCategory}
+                selectedYear={selectedYear}
+                type={type}
+                allCategory={ALL_CATEGORY}
+              />
 
             {/* Right content */}
             <div className="space-y-8 bg-white z-20 py-10 md:py-0">

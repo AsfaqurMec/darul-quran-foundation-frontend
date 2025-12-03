@@ -288,7 +288,7 @@ function GalleryPageContent(): JSX.Element {
               setShowCategoryModal(true); 
             }}
           >
-            {t('createCategory') || 'Create Category'}
+            {t('createCategory')}
           </Button>
           <Button onClick={() => { setShowForm(true); resetForm(); }}>
             {t('addItem')}

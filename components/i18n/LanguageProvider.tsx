@@ -24,6 +24,15 @@ const DICT: Dictionary = {
   projectDuration: { bn: 'মেয়াদ', en: 'Duration', ar: 'المدة' },
   activities: { bn: 'কর্মসূচিসমূহ', en: 'Programs', ar: 'الأنشطة' },
   gallery: { bn: 'গ্যালারি', en: 'Gallery', ar: 'المعرض' },
+  galleryCategories: { bn: 'বিভাগসমূহ', en: 'Categories', ar: 'الفئات' },
+  all: { bn: 'সব', en: 'All', ar: 'الكل' },
+  // Gallery Categories
+  categoryIftar: { bn: 'ইফতার', en: 'Iftar', ar: 'إفطار' },
+  categoryFoodDistribution: { bn: 'খাদ্য বিতরণ', en: 'Food Distribution', ar: 'توزيع الطعام' },
+  categoryQurbani: { bn: 'কুরবানি', en: 'Qurbani', ar: 'الأضحية' },
+  categorySelfReliance: { bn: 'স্বাবলম্বিতা', en: 'Self Reliance', ar: 'الاكتفاء الذاتي' },
+  categoryFlood: { bn: 'বন্যা', en: 'Flood', ar: 'فيضان' },
+  categoryWinterRelief: { bn: 'শীত ত্রাণ', en: 'Winter Relief', ar: 'إغاثة الشتاء' },
   join: { bn: 'আমাদের সাথে যুক্ত হন', en: 'Get Involved', ar: 'انضم إلينا' },
   blog: { bn: 'কার্যক্রমসমূহ', en: 'Activities', ar: 'الأنشطة' },
   blogArchive: { bn: 'ব্লগসমূহ', en: 'Blogs', ar: 'المدونات' },
@@ -728,7 +737,7 @@ const DICT: Dictionary = {
   video: { bn: 'ভিডিও', en: 'Video', ar: 'فيديو' },
   viewVideo: { bn: 'ভিডিও দেখুন', en: 'View video', ar: 'عرض الفيديو' },
   pleaseProvideVideoUrl: { bn: 'একটি ভিডিও URL প্রদান করুন', en: 'Please provide a video URL', ar: 'يرجى توفير رابط فيديو' },
-  
+  createCategory: { bn: 'গ্যালারি বিভাগ যোগ করুন', en: 'Create Gallery Category', ar: 'إنشاء فئة المعرض' },
   // Hero
   manageHeroImages: { bn: 'হিরো সেকশনের ব্যাকগ্রাউন্ড ছবি পরিচালনা', en: 'Manage hero section background images', ar: 'إدارة صور خلفية قسم البطل' },
   addImage: { bn: 'ছবি যোগ করুন', en: 'Add Image', ar: 'إضافة صورة' },

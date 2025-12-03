@@ -21,9 +21,10 @@ import { useI18n } from '../i18n/LanguageProvider';
 export default function BlogList({ posts = [] as ReadonlyArray<BlogPost> }): JSX.Element {
   const prevRef = React.useRef<HTMLButtonElement | null>(null);
   const nextRef = React.useRef<HTMLButtonElement | null>(null);
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
+  const carouselDir = lang === 'ar' ? 'rtl' : 'ltr';
   return (
-    <section className="py-10  w-[360px] sm:w-[420px] md:w-[1000px] lg:w-[1400px]  mx-auto">
+    <section className="py-10  w-[360px] sm:w-[420px] md:w-[1000px] lg:w-[1400px]  mx-auto" dir={carouselDir}>
       <Container className="w-full px-0">
 
         <div className="text-center mb-10">
@@ -51,9 +52,11 @@ export default function BlogList({ posts = [] as ReadonlyArray<BlogPost> }): JSX
           </button>
 
           <Swiper
+            key={carouselDir}
             modules={[Navigation, Autoplay]}
             spaceBetween={20}
             loop={true}
+            dir={carouselDir}
             onSwiper={(swiper: SwiperType) => {
               swiper.params.navigation = {
                 ...(swiper.params.navigation as object),

@@ -130,13 +130,13 @@ const sampleFunds: ReadonlyArray<Fund> = [
 ];
 
 export default function DonationCarousel({ funds }: { funds: ReadonlyArray<Fund> }): JSX.Element {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const prevRef = React.useRef<HTMLButtonElement | null>(null);
   const nextRef = React.useRef<HTMLButtonElement | null>(null);
-
+  const carouselDir = lang === 'ar' ? 'rtl' : 'ltr';
 
   return (
-    <section className="py-10  w-[360px]  sm:w-[420px] md:w-[1000px] lg:w-[1400px]  mx-auto ">
+    <section className="py-10  w-[360px]  sm:w-[420px] md:w-[1000px] lg:w-[1400px]  mx-auto " dir={carouselDir}>
       <Container className="w-full px-0">
         <div className="text-center mb-10">
           <h2 className="text-4xl sm:text-5xl font-extrabold text-emerald-900">{t('donationCategories')}</h2>
@@ -163,9 +163,11 @@ export default function DonationCarousel({ funds }: { funds: ReadonlyArray<Fund>
           </button>
 
           <Swiper
+            key={carouselDir}
             modules={[Navigation, Autoplay]}
             spaceBetween={20}
             loop={true}
+            dir={carouselDir}
             onSwiper={(swiper: SwiperType) => {
               swiper.params.navigation = {
                 ...(swiper.params.navigation as object),
