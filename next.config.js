@@ -7,10 +7,10 @@ const SECURITY_HEADERS = [
       "default-src 'self'",
       "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.youtube.com https://www.google.com https://www.gstatic.com",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-      "img-src 'self' data: blob: https://images.unsplash.com https://*.googleusercontent.com http://localhost:5000 https://i.ytimg.com https://img.youtube.com https://www.google.com",
+      "img-src 'self' data: blob: https://images.unsplash.com https://*.googleusercontent.com http://localhost:5000 https://i.ytimg.com https://img.youtube.com",
       "font-src 'self' https://fonts.gstatic.com data:",
-      "connect-src 'self' http://localhost:5000 https://*.sslcommerz.com https://translate.googleapis.com https://api.allorigins.win https://corsproxy.io https://api.codetabs.com https://youtu.be https://www.youtube.com https://*.googleapis.com https://api.darulquranfoundation.org https://img.youtube.com https://www.google.com",
-      "frame-src 'self' https://www.youtube.com https://youtube.com https://*.youtube.com https://img.youtube.com https://www.google.com",
+      "connect-src 'self' http://localhost:5000 https://*.sslcommerz.com https://translate.googleapis.com https://api.allorigins.win https://corsproxy.io https://api.codetabs.com https://youtu.be https://www.youtube.com https://*.googleapis.com https://api.darulquranfoundation.org https://img.youtube.com",
+      "frame-src 'self' https://www.youtube.com https://youtube.com https://*.youtube.com https://img.youtube.com",
       "frame-ancestors 'none'",
       "object-src 'none'",
       "base-uri 'self'",
@@ -31,9 +31,6 @@ const nextConfig = {
   reactStrictMode: true,
   typedRoutes: true,
   outputFileTracingRoot: process.cwd(),
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   async rewrites() {
     const apiBaseUrl =
       process.env.NEXT_PUBLIC_BASE_API || "http://localhost:5000/api/v1";

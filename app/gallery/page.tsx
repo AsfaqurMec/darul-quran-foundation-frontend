@@ -1,26 +1,17 @@
-
 import Container from '../../components/layout/Container';
 import Pagination from '../../components/ui/Pagination';
 import Gallery from '../../components/sections/Gallery';
 import type { Route } from 'next';
 import Link from 'next/link';
-import TranslatablePageHero from '../../components/common/TranslatablePageHero';
-//import { useI18n } from '../../components/i18n/LanguageProvider';
+import PageHero from '../../components/common/PageHero';
 import { GetGallery } from '../../services/gallery';
-import { getAllGalleryCategories } from '../../services/galleryCategory';
-import config from '../../config';
-import GalleryTypeTabs from '../../components/gallery/GalleryTypeTabs';
-import GalleryCategorySidebar from '../../components/gallery/GalleryCategorySidebar';
-// const categoryOptions = ['Flood', 'Food Distribution', 'Self Reliance', 'Qurbani', 'Winter Relief'] as const;
+
+const CATEGORY_OPTIONS = ['Flood', 'Food Distribution', 'Self Reliance', 'Qurbani', 'Winter Relief'] as const;
 const ALL_CATEGORY = 'All';
 
-// const getValidCategory = (value?: string | null): string => {
-//   if (!value) return ALL_CATEGORY;
-//   return categoryOptions.includes(value as (typeof categoryOptions)[number]) ? value : ALL_CATEGORY;
-// };
-const getValidCategory = (value: string | null | undefined, availableCategories: string[]): string => {
+const getValidCategory = (value?: string | null): string => {
   if (!value) return ALL_CATEGORY;
-  return availableCategories.includes(value) ? value : ALL_CATEGORY;
+  return CATEGORY_OPTIONS.includes(value as (typeof CATEGORY_OPTIONS)[number]) ? value : ALL_CATEGORY;
 };
 
 const deriveYearsFromItems = (items: { year?: number; createdAt?: string }[]) => {
@@ -39,28 +30,12 @@ const deriveYearsFromItems = (items: { year?: number; createdAt?: string }[]) =>
   return Array.from(yearSet).sort((a, b) => b - a);
 };
 
-export default async function GalleryPage({ searchParams }: { searchParams?: Promise<{ page?: string; year?: string; category?: string; type?: string }> }) {
-  const params = await searchParams;
-  const current = Math.max(1, Number(params?.page || '1'));
-  const selectedYear = params?.year ? Number(params.year) : undefined;
-  const type = params?.type === 'video' ? 'video' : 'image';
+export default async function GalleryPage({ searchParams }: { searchParams?: { page?: string; year?: string; category?: string; type?: string } }) {
+  const current = Math.max(1, Number(searchParams?.page || '1'));
+  const selectedYear = searchParams?.year ? Number(searchParams.year) : undefined;
+  const normalizedCategory = getValidCategory(searchParams?.category);
+  const type = searchParams?.type === 'video' ? 'video' : 'image';
   const perPage = 12;
-  //const { t } = useI18n();
-  // Fetch categories dynamically
-   const categories = await getAllGalleryCategories();
-  // const categories = await fetch(`${config.api.baseUrl}/gallery-category`, {
-  //   method: 'GET',
-  //   headers: { 'Content-Type': 'application/json' },
-  //   // next: { tags: ['gallery'] } as any,
-  // });
-  // //console.log(categories);
-  // if (!categories.ok) {
-  //   throw new Error('Failed to fetch categories');
-  // }
-  // const categoriesData = await categories.json();
-  //console.log(categoriesData);
-  const categoryOptions = categories.data?.map((cat: any) => cat.title).filter((title: any): title is string => Boolean(title)) ?? [];
-  const normalizedCategory = getValidCategory(params?.category, categoryOptions);
 
   const data = await GetGallery({
     page: current,
@@ -93,37 +68,32 @@ export default async function GalleryPage({ searchParams }: { searchParams?: Pro
 
   return (
     <div className="py-0">
-     <TranslatablePageHero translationKey="galleryImages" />
+      <PageHero title="ছবিসমূহ" />
       <Container>
         <div className="py-12 md:py-16">
           {/* Type Tabs */}
-          <GalleryTypeTabs
-  currentType={type}
-  imageHref={makeHref(1, { type: "image" })}
-  videoHref={makeHref(1, { type: "video" })}
-/>
-          {/* <div className="flex items-center justify-center gap-4 mb-8 md:mb-12">
-            {['image', 'video'].map((a) => (
+          <div className="flex items-center justify-center gap-4 mb-8 md:mb-12">
+            {['image', 'video'].map((t) => (
               <Link
-                key={a}
-                href={makeHref(1, { type: a })}
+                key={t}
+                href={makeHref(1, { type: t })}
                 className={`px-6 py-3 rounded-full border font-semibold transition-all ${
-                  type === a
+                  type === t
                     ? 'bg-brand text-white border-brand shadow-md'
                     : 'bg-white hover:bg-gray-50 border-gray-300 text-gray-700'
                 }`}
-                >
-                  {a === 'image' ? 'Image' : 'Video'}
+              >
+                {t === 'image' ? 'ছবি' : 'ভিডিও'}
               </Link>
             ))}
-          </div> */}
+          </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-[240px_1fr] gap-8 lg:gap-12">
             {/* Left category filter */}
-            {/* <aside className="rounded-2xl border border-emerald-200 bg-emerald-50 p-6 h-max sticky top-8">
+            <aside className="rounded-2xl border border-emerald-200 bg-emerald-50 p-6 h-max sticky top-8">
               <h3 className="text-lg font-bold text-emerald-900 mb-4">Categories</h3>
               <div className="space-y-2">
-                {[ALL_CATEGORY, ...categoryOptions].map((c) => {
+                {[ALL_CATEGORY, ...CATEGORY_OPTIONS].map((c) => {
                   const selected = normalizedCategory === c;
                   return (
                     <Link
@@ -140,17 +110,10 @@ export default async function GalleryPage({ searchParams }: { searchParams?: Pro
                   );
                 })}
               </div>
-            </aside> */}
-            <GalleryCategorySidebar
-                categoryOptions={categoryOptions}
-                normalizedCategory={normalizedCategory}
-                selectedYear={selectedYear}
-                type={type}
-                allCategory={ALL_CATEGORY}
-              />
+            </aside>
 
             {/* Right content */}
-            <div className="space-y-8 bg-white z-20 py-10 md:py-0">
+            <div className="space-y-8">
               {/* Year tabs */}
               <div className="relative overflow-x-auto pb-2">
                 <div className="flex items-center gap-3 min-w-max">

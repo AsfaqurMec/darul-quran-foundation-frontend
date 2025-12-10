@@ -459,3 +459,8 @@ When implementing, consider the relationship between Gallery Categories and Gall
 4. Do we need category descriptions or other additional fields?
 5. Should we implement category ordering/priority for display purposes?
 
+
+
+
+
+

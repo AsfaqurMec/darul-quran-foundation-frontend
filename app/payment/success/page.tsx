@@ -14,7 +14,7 @@ import { useI18n } from '../../../components/i18n/LanguageProvider';
 
 type PageState = 'loading' | 'success' | 'error';
 
-function PaymentSuccessContent(): JSX.Element {
+function PaymentSuccessContent(): React.JSX.Element {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { t } = useI18n();
@@ -185,7 +185,7 @@ function PaymentSuccessContent(): JSX.Element {
   );
 }
 
-export default function PaymentSuccessPage(): JSX.Element {
+export default function PaymentSuccessPage(): React.JSX.Element {
   return (
     <Suspense fallback={
       <div className="min-h-[60vh] sm:min-h-[70vh] flex items-center justify-center px-3 sm:px-4 py-6 sm:py-8">
