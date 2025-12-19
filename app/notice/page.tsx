@@ -4,7 +4,7 @@ import NoticeCard from '../../components/notice/NoticeCard';
 import TranslatablePageHero from '../../components/common/TranslatablePageHero';
 import { getAllNotices } from '../../services/notices';
 
-export default async function NoticePage({ searchParams }: { searchParams?: Promise<{ page?: string }> }): Promise<JSX.Element> {
+export default async function NoticePage({ searchParams }: { searchParams?: Promise<{ page?: string }> }): Promise<React.JSX.Element> {
   const perPage = 10;
   const params = await searchParams;
   const current = Math.max(1, Number(params?.page || '1'));

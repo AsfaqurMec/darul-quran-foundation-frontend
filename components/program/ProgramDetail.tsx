@@ -46,7 +46,7 @@ function getYouTubeVideoId(url?: string): string | null {
   return match && match[2].length === 11 ? match[2] : null;
 }
 
-export default function ProgramDetail({ program }: Props): JSX.Element {
+export default function ProgramDetail({ program }: Props): React.JSX.Element {
   const { lang, t } = useI18n();
   const [translatedTitle, setTranslatedTitle] = useState(program.title);
   const [translatedSubtitle, setTranslatedSubtitle] = useState(program.subtitle || '');
@@ -324,7 +324,7 @@ export default function ProgramDetail({ program }: Props): JSX.Element {
         <Container>
           {/* Page Title */}
           <div className="mb-8 md:mb-12">
-          <h2 className="text-3xl md:text-4xl font-extrabold text-emerald-900">কার্যক্রমের বিবরণ</h2>
+          <h2 className="text-3xl md:text-4xl font-extrabold text-emerald-900">{t('programDescription')}</h2>
           </div>
 
           {/* Main Content with Sidebar */}
@@ -375,7 +375,7 @@ export default function ProgramDetail({ program }: Props): JSX.Element {
             {/* Panel 1: Project Goals-Objectives */}
             {program.goals && program.goals.length > 0 && (
               <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
-                <h2 className="text-xl font-bold text-emerald-900 mb-4">প্রকল্পের লক্ষ্য-উদ্দেশ্য</h2>
+                <h2 className="text-xl font-bold text-emerald-900 mb-4">{t('projectGoalsObjectives')}</h2>
                 <ul className="space-y-3">
                   {(isTranslating ? program.goals || [] : translatedGoals).map((goal, idx) => (
                     <li key={idx} className="flex items-start gap-3">
@@ -418,7 +418,7 @@ export default function ProgramDetail({ program }: Props): JSX.Element {
             {/* Panel 3: Expenditure Categories */}
             {program.expenditureCategories && program.expenditureCategories.length > 0 && (
               <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
-                <h2 className="text-xl font-bold text-emerald-900 mb-4">ব্যয়ের খাত</h2>
+                <h2 className="text-xl font-bold text-emerald-900 mb-4">{t('expenditureCategories')}</h2>
                 <ul className="space-y-3">
                   {(isTranslating ? program.expenditureCategories || [] : translatedCategories).map((category, idx) => (
                     <li key={idx} className="flex items-start gap-3">
@@ -437,7 +437,7 @@ export default function ProgramDetail({ program }: Props): JSX.Element {
             {/* Panel 4: Project Area */}
             {program.projectArea && (
               <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
-                <h2 className="text-xl font-bold text-emerald-900 mb-4">প্রকল্পের এলাকা</h2>
+                <h2 className="text-xl font-bold text-emerald-900 mb-4">{t('projectArea')}</h2>
                 <div className="flex items-start gap-3">
                   <span className="mt-1 inline-flex h-7 w-7 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
@@ -461,7 +461,7 @@ export default function ProgramDetail({ program }: Props): JSX.Element {
             {/* Panel 5: Duration */}
             {program.duration && (
               <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
-                <h2 className="text-xl font-bold text-emerald-900 mb-4">মেয়াদ</h2>
+                <h2 className="text-xl font-bold text-emerald-900 mb-4">{t('duration')}</h2>
                 <div className="flex items-start gap-3">
                   <span className="mt-1 inline-flex h-7 w-7 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
@@ -510,7 +510,7 @@ export default function ProgramDetail({ program }: Props): JSX.Element {
 
               {/* Right Side - CTA Button */}
               <a
-                href={program.ctaButtonLink || `/donate/${program.slug}`}
+                href={program.ctaButtonLink || `/donation/${program.slug}`}
                 className="bg-secondary hover:brightness-110 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-200 whitespace-nowrap inline-block"
               >
                 {program.ctaButtonText

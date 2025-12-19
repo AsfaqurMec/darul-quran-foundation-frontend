@@ -6,13 +6,13 @@ import { getAllPrograms } from '../../services/programs';
 import { Program, ProgramInput } from '../../types/program';
 import { getImageUrl } from '../../lib/imageUtils';
 
-export default async function ProgramsPage({ searchParams }: { searchParams?: Promise<{ page?: string }> }): Promise<JSX.Element> {
+export default async function ProgramsPage({ searchParams }: { searchParams?: Promise<{ page?: string }> }): Promise<React.JSX.Element> {
   const perPage = 9;
   const params = await searchParams;
   const current = Math.max(1, Number(params?.page || '1'));
 
   const res = await getAllPrograms();
- // console.log(res);
+  //console.log(res);
  // console.log(res);
   const list: Program[] = Array.isArray(res?.data) ? (res.data as Program[]) : [];
   const all: ActivityItem[] = list.map((p) => ({

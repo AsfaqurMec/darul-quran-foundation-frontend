@@ -7,7 +7,7 @@ import TranslatablePageHero from '../../components/common/TranslatablePageHero';
 import { GetAllBlog } from '../../services/blogs';
 import { getImageUrl } from '../../lib/imageUtils';
 
-export default async function BlogArchive({ searchParams }: { searchParams: Promise<{ page?: string }> }): Promise<JSX.Element> {
+export default async function BlogArchive({ searchParams }: { searchParams: Promise<{ page?: string }> }): Promise<React.JSX.Element> {
   const perPage = 12;
   const params = await searchParams;
   const current = Math.max(1, Number(params?.page || '1'));

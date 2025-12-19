@@ -3,7 +3,7 @@
 //import { BlogPostForm } from "@/components/module/users/CreateBlog/CreateBlog";
 import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
-import { api } from "../../config";
+import { api, app } from "../../config";
 
 // --------------------------
 // Public read fallbacks
@@ -15,11 +15,17 @@ const HARDCODED_BEARER = ""; // not needed for public endpoint
 export const GetAllBlog = async () => {
   try {
     const lang = (await cookies()).get('lang')?.value;
+    
+    // Server-side requests need Origin/Referer headers
+    const origin = process.env.NEXT_PUBLIC_APP_URL || app.url || 'http://localhost:3000';
+    
     const response = await fetch(`${api.baseUrl}/blogs`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
         ...(lang ? { "Accept-Language": lang } : {}),
+        "Origin": origin,
+        "Referer": `${origin}/`,
       },
       next: {
         tags: ["blogs"],
@@ -27,11 +33,58 @@ export const GetAllBlog = async () => {
     });
 
     if (!response.ok) {
+      // Handle 403 Forbidden (likely origin validation issue)
+      if (response.status === 403) {
+        let errorText = '';
+        let errorMessage = 'Access denied: Origin not allowed';
+        
+        try {
+          const clonedRes = response.clone();
+          errorText = await clonedRes.text();
+          
+          if (errorText) {
+            try {
+              const errorJson = JSON.parse(errorText);
+              errorMessage = errorJson.message || errorJson.error || errorMessage;
+            } catch {
+              errorMessage = errorText || errorMessage;
+            }
+          }
+        } catch (parseError) {
+          console.warn('Could not parse error response:', parseError);
+        }
+        
+        console.error('❌ Origin validation failed (GetAllBlog)');
+        console.error('Status:', response.status);
+        console.error('Error Message:', errorMessage);
+        console.error('Origin:', origin);
+        console.error('API URL:', `${api.baseUrl}/blogs`);
+        
+        return { success: false, data: [], message: errorMessage };
+      }
+      
       // If endpoint unavailable, serve fallback static data
       if (response.status === 404) {
         return { success: true, data: [] };
       }
-      throw new Error(`Request failed with status: ${response.status}`);
+      
+      let errorMessage = `Request failed with status: ${response.status}`;
+      try {
+        const clonedRes = response.clone();
+        const errorText = await clonedRes.text();
+        if (errorText) {
+          try {
+            const errorJson = JSON.parse(errorText);
+            errorMessage = errorJson.message || errorJson.error || errorMessage;
+          } catch {
+            errorMessage = errorText || errorMessage;
+          }
+        }
+      } catch {
+        // Ignore parsing errors
+      }
+      
+      throw new Error(errorMessage);
     }
 
     return await response.json();
@@ -43,11 +96,17 @@ export const GetAllBlog = async () => {
 export const GetAllPersonalBlog = async () => {
   try {
     const lang = (await cookies()).get('lang')?.value;
+    
+    // Server-side requests need Origin/Referer headers
+    const origin = process.env.NEXT_PUBLIC_APP_URL || app.url || 'http://localhost:3000';
+    
     const response = await fetch(`${api.baseUrl}/blog/author`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
         ...(lang ? { "Accept-Language": lang } : {}),
+        "Origin": origin,
+        "Referer": `${origin}/`,
         // Authorization: token || "",
       },
       next: {
@@ -56,7 +115,53 @@ export const GetAllPersonalBlog = async () => {
     });
 
     if (!response.ok) {
-      throw new Error(`Request failed with status: ${response.status}`);
+      // Handle 403 Forbidden (likely origin validation issue)
+      if (response.status === 403) {
+        let errorText = '';
+        let errorMessage = 'Access denied: Origin not allowed';
+        
+        try {
+          const clonedRes = response.clone();
+          errorText = await clonedRes.text();
+          
+          if (errorText) {
+            try {
+              const errorJson = JSON.parse(errorText);
+              errorMessage = errorJson.message || errorJson.error || errorMessage;
+            } catch {
+              errorMessage = errorText || errorMessage;
+            }
+          }
+        } catch (parseError) {
+          console.warn('Could not parse error response:', parseError);
+        }
+        
+        console.error('❌ Origin validation failed (GetAllPersonalBlog)');
+        console.error('Status:', response.status);
+        console.error('Error Message:', errorMessage);
+        console.error('Origin:', origin);
+        console.error('API URL:', `${api.baseUrl}/blog/author`);
+        
+        return { success: false, data: null, message: errorMessage };
+      }
+      
+      let errorMessage = `Request failed with status: ${response.status}`;
+      try {
+        const clonedRes = response.clone();
+        const errorText = await clonedRes.text();
+        if (errorText) {
+          try {
+            const errorJson = JSON.parse(errorText);
+            errorMessage = errorJson.message || errorJson.error || errorMessage;
+          } catch {
+            errorMessage = errorText || errorMessage;
+          }
+        }
+      } catch {
+        // Ignore parsing errors
+      }
+      
+      throw new Error(errorMessage);
     }
 
     return await response.json();
@@ -69,17 +174,70 @@ export const GetAllPersonalBlog = async () => {
 export const SingleBlog = async (id: string) => {
   try {
     const lang = (await cookies()).get('lang')?.value;
+    
+    // Server-side requests need Origin/Referer headers
+    const origin = process.env.NEXT_PUBLIC_APP_URL || app.url || 'http://localhost:3000';
+    const commonHeaders = {
+      "Content-Type": "application/json",
+      ...(lang ? { "Accept-Language": lang } : {}),
+      "Origin": origin,
+      "Referer": `${origin}/`,
+    };
+    
     // Try detail endpoint first (if implemented)
     let response = await fetch(`${api.baseUrl}/blogs/${id}`, {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        ...(lang ? { "Accept-Language": lang } : {}),
-      },
+      headers: commonHeaders,
     });
 
     if (!response.ok && response.status !== 404) {
-      throw new Error(`Request failed with status: ${response.status}`);
+      // Handle 403 Forbidden (likely origin validation issue)
+      if (response.status === 403) {
+        let errorText = '';
+        let errorMessage = 'Access denied: Origin not allowed';
+        
+        try {
+          const clonedRes = response.clone();
+          errorText = await clonedRes.text();
+          
+          if (errorText) {
+            try {
+              const errorJson = JSON.parse(errorText);
+              errorMessage = errorJson.message || errorJson.error || errorMessage;
+            } catch {
+              errorMessage = errorText || errorMessage;
+            }
+          }
+        } catch (parseError) {
+          console.warn('Could not parse error response:', parseError);
+        }
+        
+        console.error('❌ Origin validation failed (SingleBlog)');
+        console.error('Status:', response.status);
+        console.error('Error Message:', errorMessage);
+        console.error('Origin:', origin);
+        console.error('API URL:', `${api.baseUrl}/blogs/${id}`);
+        
+        return { success: false, message: errorMessage };
+      }
+      
+      let errorMessage = `Request failed with status: ${response.status}`;
+      try {
+        const clonedRes = response.clone();
+        const errorText = await clonedRes.text();
+        if (errorText) {
+          try {
+            const errorJson = JSON.parse(errorText);
+            errorMessage = errorJson.message || errorJson.error || errorMessage;
+          } catch {
+            errorMessage = errorText || errorMessage;
+          }
+        }
+      } catch {
+        // Ignore parsing errors
+      }
+      
+      throw new Error(errorMessage);
     }
 
     if (response.ok) {
@@ -89,7 +247,7 @@ export const SingleBlog = async (id: string) => {
     // If /api/blogs/:id not available, fetch list and find
     const listRes = await fetch(`${api.baseUrl}/blogs`, {
       method: "GET",
-      headers: { "Content-Type": "application/json", ...(lang ? { "Accept-Language": lang } : {}) },
+      headers: commonHeaders,
     });
     if (listRes.ok) {
       const json = await listRes.json();
@@ -160,6 +318,7 @@ export const DeleteBlog = async (id: string) => {
         Authorization: token,
       },
     });
+    // @ts-expect-error - revalidateTag signature may vary by Next.js version
     revalidateTag("blogs");
     return await response.json();
   } catch (error) {

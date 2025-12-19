@@ -7,7 +7,7 @@ export default async function ProgramDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>;
-}): Promise<JSX.Element> {
+}): Promise<React.JSX.Element> {
   const { id } = await params;
 
   const res = await getProgramById(id);
