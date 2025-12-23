@@ -24,7 +24,7 @@ type Fund = {
   locale?: "en" | "bn" | "ar";
 };
 
-function FundCard({ fund }: { fund: Fund }): JSX.Element {
+function FundCard({ fund }: { fund: Fund }): React.ReactElement {
   const { lang, t } = useI18n();
   const [translatedTitle, setTranslatedTitle] = useState(fund.title);
   const [translatedDescription, setTranslatedDescription] = useState(fund.description.slice(0,80));
@@ -129,7 +129,7 @@ const sampleFunds: ReadonlyArray<Fund> = [
   },
 ];
 
-export default function DonationCarousel({ funds }: { funds: ReadonlyArray<Fund> }): JSX.Element {
+export default function DonationCarousel({ funds }: { funds: ReadonlyArray<Fund> }): React.ReactElement {
   const { t, lang } = useI18n();
   const prevRef = React.useRef<HTMLButtonElement | null>(null);
   const nextRef = React.useRef<HTMLButtonElement | null>(null);

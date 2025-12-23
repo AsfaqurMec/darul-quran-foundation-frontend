@@ -20,7 +20,7 @@ const disclosureList: TranslationKey[] = [
   'privacyLegalItem3',
 ];
 
-export default function PrivacyPolicyPage(): JSX.Element {
+export default function PrivacyPolicyPage(): React.ReactElement {
   const { t } = useI18n();
 
   return (

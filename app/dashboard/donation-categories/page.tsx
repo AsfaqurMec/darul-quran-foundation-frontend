@@ -46,7 +46,7 @@ function generateSlug(title: string): string {
     .replace(/^-+|-+$/g, '');
 }
 
-export default function DonationCategoriesPage(): JSX.Element {
+export default function DonationCategoriesPage(): React.ReactElement {
   const { t } = useI18n();
   const confirmDialog = useConfirmDialog();
   const [categories, setCategories] = useState<DonationCategory[]>([]);

@@ -1,12 +1,13 @@
 'use client';
 
+import React from 'react';
 import Button from '../../../../components/ui/button';
 import { createAdminUser } from '../../../../services/Users';
 import { toast } from 'sonner';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-export default function AdminUsersNew(): JSX.Element {
+export default function AdminUsersNew(): React.ReactElement {
   const router = useRouter();
   const [formData, setFormData] = useState({
     name: '',

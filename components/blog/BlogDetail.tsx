@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Container from '../../components/layout/Container';
 import BlogCard, { BlogPost } from './BlogCard';
 import { useI18n, Lang } from '../../components/i18n/LanguageProvider';
@@ -23,7 +23,7 @@ type Props = {
   otherBlogs?: BlogPost[];
 };
 
-export default function BlogDetail({ blog, otherBlogs = [] }: Props): JSX.Element {
+export default function BlogDetail({ blog, otherBlogs = [] }: Props): React.ReactElement {
   const { lang, t } = useI18n();
   const [translatedTitle, setTranslatedTitle] = useState(blog.title);
   const [translatedExcerpt, setTranslatedExcerpt] = useState(blog.excerpt);

@@ -46,7 +46,7 @@ const isVideoItem = (item?: GalleryItem): boolean => {
   return Boolean(getYoutubeVideoId(item.src));
 };
 
-export default function Gallery({ items, fetchCount = 6, show=true }: { items?: ReadonlyArray<GalleryItem>; fetchCount?: number; show?: boolean }): JSX.Element {
+export default function Gallery({ items, fetchCount = 6, show=true }: { items?: ReadonlyArray<GalleryItem>; fetchCount?: number; show?: boolean }): React.ReactElement {
   const { t } = useI18n();
   const [open, setOpen] = React.useState<boolean>(false);
   const [index, setIndex] = React.useState<number>(0);

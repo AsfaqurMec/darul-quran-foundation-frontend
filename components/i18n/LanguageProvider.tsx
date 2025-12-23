@@ -949,7 +949,7 @@ function setCookie(name: string, value: string) {
   document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
 }
 
-export default function LanguageProvider({ children }: { children: React.ReactNode }): JSX.Element {
+export default function LanguageProvider({ children }: { children: React.ReactNode }): React.ReactElement {
   const [lang, setLangState] = React.useState<Lang>('bn');
 
   React.useEffect(() => {

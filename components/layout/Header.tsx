@@ -40,7 +40,7 @@ const getRoleFromToken = (token: string | null): string | null => {
   }
 };
 
-export default function Header(): JSX.Element {
+export default function Header(): React.ReactElement {
   const [open, setOpen] = React.useState(false);
   const { lang, setLang, t } = useI18n();
   const [langOpen, setLangOpen] = React.useState(false);

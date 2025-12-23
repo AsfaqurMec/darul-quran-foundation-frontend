@@ -36,7 +36,7 @@ export type DonationFormProps = {
 //   'shelterless_housing': 'shelterlessHousing',
 // };
 
-export default function DonationForm({ purposes }: DonationFormProps): JSX.Element {
+export default function DonationForm({ purposes }: DonationFormProps): React.ReactElement {
   const { t } = useI18n();
   
   const defaultPurposes: ReadonlyArray<SelectOption> = [

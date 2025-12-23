@@ -1,7 +1,7 @@
 'use client';
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useI18n } from "../../components/i18n/LanguageProvider";
 import { translateText } from "../../lib/translate";
 
@@ -15,7 +15,7 @@ export type DonationItem = {
   locale?: "en" | "bn" | "ar";
 };
 
-export default function DonationCard({ item }: { item: DonationItem }): JSX.Element {
+export default function DonationCard({ item }: { item: DonationItem }): React.ReactElement {
   const { lang, t } = useI18n();
   const [translatedTitle, setTranslatedTitle] = useState(item.title);
   const [translatedDescription, setTranslatedDescription] = useState(item.description.slice(0,80));

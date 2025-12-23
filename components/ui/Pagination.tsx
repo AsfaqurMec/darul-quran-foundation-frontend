@@ -1,3 +1,4 @@
+import React from 'react';
 import Link from 'next/link';
 
 export type PaginationProps = {
@@ -11,7 +12,7 @@ function range(start: number, end: number): number[] {
   return Array.from({ length: end - start + 1 }, (_, i) => start + i);
 }
 
-export default function Pagination({ currentPage, totalPages, makeHref, className }: PaginationProps): JSX.Element {
+export default function Pagination({ currentPage, totalPages, makeHref, className }: PaginationProps): React.ReactElement {
   // Determine which page numbers to show with ellipsis
   const pages: (number | '…')[] = [];
   const siblings = 1;

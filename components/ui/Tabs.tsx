@@ -15,7 +15,7 @@ type TabsProps = {
   className?: string;
 };
 
-export default function Tabs({ items, initialId, className }: TabsProps): JSX.Element {
+export default function Tabs({ items, initialId, className }: TabsProps): React.ReactElement {
   const [active, setActive] = React.useState<string>(initialId || items[0]?.id);
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {

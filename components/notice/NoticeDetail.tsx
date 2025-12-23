@@ -1,3 +1,4 @@
+import React from 'react';
 import Container from '../../components/layout/Container';
 
 export type NoticeDetailData = {
@@ -25,7 +26,7 @@ function formatDateParts(iso: string) {
   return { day, weekday, month, year };
 }
 
-export default function NoticeDetail({ notice }: Props): JSX.Element {
+export default function NoticeDetail({ notice }: Props): React.ReactElement {
   const { day, weekday, month, year } = formatDateParts(notice.date);
 
   return (

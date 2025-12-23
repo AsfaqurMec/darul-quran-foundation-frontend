@@ -5,9 +5,10 @@ import MemberApplication from '../../components/get-involved/MemberApplication';
 import RegularDonorTab from '../../components/get-involved/RegularDonorTab';
 import LifetimeMemberTab from '../../components/get-involved/LifetimeMemberTab';
 import VolunteerTab from '../../components/get-involved/VolunteerTab';
+import React from 'react';
 import { useI18n } from '../../components/i18n/LanguageProvider';
 
-export default function JoinTabs(): JSX.Element {
+export default function JoinTabs(): React.ReactElement {
   const { t } = useI18n();
 
   return (

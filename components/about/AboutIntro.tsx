@@ -3,7 +3,7 @@
 import Container from '../../components/layout/Container';
 import { useI18n } from '../../components/i18n/LanguageProvider';
 
-export default function AboutIntro(): JSX.Element {
+export default function AboutIntro() {
   const { t } = useI18n();
   return (
     <section className="py-10">

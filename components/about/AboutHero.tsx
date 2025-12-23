@@ -1,6 +1,6 @@
 import Container from '../../components/layout/Container';
 
-export default function AboutHero(): JSX.Element {
+export default function AboutHero() {
   return (
     <section className="relative overflow-hidden">
       <div

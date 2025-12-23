@@ -44,7 +44,7 @@ const normalizeMultiple = (val: MediaValue | MediaValue[] | '' | undefined): Med
   return [val];
 };
 
-export default function ProgramsPage(): JSX.Element {
+export default function ProgramsPage(): React.ReactElement {
   const { t } = useI18n();
   const confirmDialog = useConfirmDialog();
   const [programs, setPrograms] = useState<any[]>([]);

@@ -16,7 +16,7 @@ import Button from '../../components/ui/button';
 
 type TabKey = 'info' | 'donations' | 'password';
 
-export default function ProfilePage(): JSX.Element {
+export default function ProfilePage(): React.ReactElement {
 	const { t } = useI18n();
 	const [active, setActive] = useState<TabKey>('info');
 	const [user, setUser] = useState<User | null>(null);

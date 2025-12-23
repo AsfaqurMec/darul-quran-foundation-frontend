@@ -6,7 +6,7 @@ import { createVolunteerApplication } from '../../services/volunteers';
 import { toast } from 'sonner';
 import { useI18n } from '../../components/i18n/LanguageProvider';
 
-export default function VolunteerTab(): JSX.Element {
+export default function VolunteerTab(): React.ReactElement {
 	const { t } = useI18n();
 	const [submitted, setSubmitted] = React.useState(false);
 	const [loading, setLoading] = React.useState(false);

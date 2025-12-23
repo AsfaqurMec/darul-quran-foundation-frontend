@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Container from '../../components/layout/Container';
 import { app, api } from '../../config';
 
-export default function ForgotPasswordPage(): JSX.Element {
+export default function ForgotPasswordPage(): React.ReactElement {
 	const [email, setEmail] = useState('');
 	const [loading, setLoading] = useState(false);
 	const [message, setMessage] = useState<string | null>(null);

@@ -25,7 +25,7 @@ type Props = {
   embedded?: boolean;
 };
 
-export default function MemberApplication({ embedded = false }: Props): JSX.Element {
+export default function MemberApplication({ embedded = false }: Props): React.ReactElement {
   const { t } = useI18n();
   const [type, setType] = React.useState<'lifetime' | 'donor'>('lifetime');
   const [amount, setAmount] = React.useState('100000');

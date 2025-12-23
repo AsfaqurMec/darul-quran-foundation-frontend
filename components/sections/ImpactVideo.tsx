@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Play, X } from 'lucide-react';
 
@@ -9,7 +9,7 @@ import { useI18n } from '../../components/i18n/LanguageProvider';
 
 const VIDEO_ID = '6iaWYbQ4Isg';
 
-export default function ImpactVideo(): JSX.Element {
+export default function ImpactVideo(): React.ReactElement {
   const [open, setOpen] = useState(false);
   const { t } = useI18n();
   const videoTitle = t('impactVideoTitle');

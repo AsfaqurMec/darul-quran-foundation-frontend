@@ -76,7 +76,7 @@ import { getAllActiveHeroImages, HeroImage } from '../../services/hero';
 import { getImageUrl } from '../../lib/imageUtils';
 import heroimage from '../../public/img/hero.png';
 
-export default function Hero(): JSX.Element {
+export default function Hero(): React.ReactElement {
   const { t } = useI18n();
   const [heroImages, setHeroImages] = React.useState<HeroImage[]>([]);
   const [currentIndex, setCurrentIndex] = React.useState(0);

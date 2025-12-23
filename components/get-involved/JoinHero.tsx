@@ -1,6 +1,7 @@
+import React from 'react';
 import Container from '../../components/layout/Container';
 
-export default function JoinHero(): JSX.Element {
+export default function JoinHero(): React.ReactElement {
   return (
     <section className="relative overflow-hidden">
       <div className="h-52 sm:h-64 bg-center bg-cover" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1496302662116-35cc4f36df92?q=80&w=1600&auto=format&fit=crop')" }}>

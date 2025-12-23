@@ -6,7 +6,7 @@ import { useI18n } from '../../components/i18n/LanguageProvider';
 import { FaArrowCircleRight } from "react-icons/fa";
 import { DivideCircleIcon } from 'lucide-react';
 
-export default function PolicyTabs(): JSX.Element {
+export default function PolicyTabs() {
   const { t } = useI18n();
 
   const policies = (

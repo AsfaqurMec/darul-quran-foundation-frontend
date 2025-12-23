@@ -35,7 +35,7 @@ const normalizeMultiple = (val: MediaValue | MediaValue[] | '' | undefined): Med
   return [val];
 };
 
-export default function BlogsPage(): JSX.Element {
+export default function BlogsPage(): React.ReactElement {
   const { t } = useI18n();
   const confirmDialog = useConfirmDialog();
   const [blogs, setBlogs] = useState<Blog[]>([]);

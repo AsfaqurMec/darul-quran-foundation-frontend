@@ -28,7 +28,7 @@ const normalizeSingle = (value: MediaValue | MediaValue[] | '' | undefined): Med
   return (value ?? '') as MediaValue;
 };
 
-export default function HeroPage(): JSX.Element {
+export default function HeroPage(): React.ReactElement {
   const { t } = useI18n();
   const confirmDialog = useConfirmDialog();
   const [heroImages, setHeroImages] = useState<HeroImage[]>([]);

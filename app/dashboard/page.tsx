@@ -37,7 +37,7 @@ interface RecentItem {
   date?: string;
 }
 
-export default function DashboardPage(): JSX.Element {
+export default function DashboardPage(): React.ReactElement {
   const { t, lang } = useI18n();
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<DashboardStats>({

@@ -20,7 +20,7 @@ export default function ConfirmUpdateModal({
 	newValue,
 	onConfirm,
 	onCancel,
-}: ConfirmUpdateModalProps): JSX.Element | null {
+}: ConfirmUpdateModalProps): React.ReactElement | null {
 	const { t } = useI18n();
 
 	if (!isOpen) return null;

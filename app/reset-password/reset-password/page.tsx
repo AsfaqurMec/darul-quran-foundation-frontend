@@ -6,7 +6,7 @@ import { api } from '../../../config';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Eye, EyeOff } from 'lucide-react';
 
-function ResetPasswordContent(): JSX.Element {
+function ResetPasswordContent(): React.ReactElement {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const token = searchParams.get('token') || '';
@@ -118,7 +118,7 @@ function ResetPasswordContent(): JSX.Element {
 	);
 }
 
-export default function ResetPasswordPage(): JSX.Element {
+export default function ResetPasswordPage(): React.ReactElement {
 	return (
 		<Suspense fallback={
 			<div className="py-10">

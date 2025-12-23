@@ -4,7 +4,7 @@ import { Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useI18n } from '../../../components/i18n/LanguageProvider';
 
-function PaymentUnsuccessfulContent(): JSX.Element {
+function PaymentUnsuccessfulContent(): React.ReactElement {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { t } = useI18n();
@@ -86,7 +86,7 @@ function PaymentUnsuccessfulContent(): JSX.Element {
   );
 }
 
-export default function PaymentUnsuccessfulPage(): JSX.Element {
+export default function PaymentUnsuccessfulPage(): React.ReactElement {
   return (
     <Suspense fallback={
       <div className="min-h-[60vh] flex items-center justify-center px-4 py-8">

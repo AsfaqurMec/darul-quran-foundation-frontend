@@ -1,6 +1,8 @@
+import React from 'react';
+
 type Props = { title: string; value: string | number; subtitle?: string };
 
-export default function StatCard({ title, value, subtitle }: Props): JSX.Element {
+export default function StatCard({ title, value, subtitle }: Props): React.ReactElement {
   return (
     <div className="rounded-2xl border bg-white p-4 shadow-sm">
       <div className="text-sm text-gray-500">{title}</div>

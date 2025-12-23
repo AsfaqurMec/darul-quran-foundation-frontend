@@ -14,7 +14,7 @@ interface PaginationInfo {
   itemsPerPage: number;
 }
 
-export default function UsersPage(): JSX.Element {
+export default function UsersPage(): React.ReactElement {
   const { t, lang } = useI18n();
   const confirmDialog = useConfirmDialog();
   const locale = lang === 'bn' ? 'bn-BD' : lang === 'ar' ? 'ar-SA' : 'en-US';

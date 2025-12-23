@@ -1,6 +1,7 @@
+import React from 'react';
 import CardBox from '../../components/CardBox';
 
-export default function StatCard({ title, value, hint }: { title: string; value: number | string; hint?: string }): JSX.Element {
+export default function StatCard({ title, value, hint }: { title: string; value: number | string; hint?: string }): React.ReactElement {
   return (
     <CardBox title={title}>
       <div className="text-3xl font-bold">{value}</div>

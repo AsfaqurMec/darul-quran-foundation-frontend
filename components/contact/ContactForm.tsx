@@ -1,9 +1,10 @@
 'use client';
 
+import React from 'react';
 import Button from '../../components/ui/button';
 import { useI18n } from '../../components/i18n/LanguageProvider';
 
-export default function ContactForm(): JSX.Element {
+export default function ContactForm(): React.ReactElement {
   const { t } = useI18n();
   return (
     <form className="space-y-4">

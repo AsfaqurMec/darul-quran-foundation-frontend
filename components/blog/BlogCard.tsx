@@ -1,7 +1,7 @@
 'use client';
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useI18n, Lang } from "../../components/i18n/LanguageProvider";
 import { translateText } from "../../lib/translate";
 
@@ -15,7 +15,7 @@ export type BlogPost = {
   locale?: "en" | "bn";
 };
 
-export default function BlogCard({ post }: { post: BlogPost }): JSX.Element {
+export default function BlogCard({ post }: { post: BlogPost }): React.ReactElement {
   const { lang } = useI18n();
   const [translatedTitle, setTranslatedTitle] = useState(post.title);
   const [translatedExcerpt, setTranslatedExcerpt] = useState(post.excerpt.slice(0,80));

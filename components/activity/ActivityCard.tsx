@@ -15,7 +15,7 @@ export type ActivityItem = {
   locale?: "en" | "bn" | "ar";
 };
 
-export default function ActivityCard({ item }: { item: ActivityItem }): JSX.Element {
+export default function ActivityCard({ item }: { item: ActivityItem }): React.ReactElement {
   const { lang, t } = useI18n();
   const [translatedTitle, setTranslatedTitle] = useState(item.title);
   const [translatedDescription, setTranslatedDescription] = useState(item.description.slice(0,80));

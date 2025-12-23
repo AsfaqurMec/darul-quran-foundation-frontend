@@ -42,7 +42,7 @@ function getYouTubeVideoId(url?: string): string | null {
   return match && match[2].length === 11 ? match[2] : null;
 }
 
-export default function DonationDetail({ data }: Props): JSX.Element {
+export default function DonationDetail({ data }: Props): React.ReactElement {
   const { lang, t } = useI18n();
   const [translatedTitle, setTranslatedTitle] = useState(data.title);
   const [translatedSubtitle, setTranslatedSubtitle] = useState(data.subtitle || '');

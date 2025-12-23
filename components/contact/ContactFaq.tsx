@@ -4,7 +4,7 @@ import * as React from 'react';
 import Accordion, { AccordionItem } from '../../components/ui/Accordion';
 import { useI18n } from '../../components/i18n/LanguageProvider';
 
-export default function ContactFaq(): JSX.Element {
+export default function ContactFaq(): React.ReactElement {
   const { t } = useI18n();
   const [active, setActive] = React.useState<string>('shaykh');
 

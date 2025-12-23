@@ -10,16 +10,16 @@ type Props = { collapsed?: boolean; onToggle?: () => void };
 type NavItem = {
   href: Route;
   label: string;
-  icon: JSX.Element;
+  icon: React.ReactElement;
 };
 
-const buildIcon = (path: string): JSX.Element => (
+const buildIcon = (path: string) => (
   <svg className="h-5 w-5 text-emerald-700" viewBox="0 0 24 24" fill="currentColor">
     <path d={path} />
   </svg>
 );
 
-export default function Sidebar({ collapsed = false, onToggle }: Props): JSX.Element {
+export default function Sidebar({ collapsed = false, onToggle }: Props) {
   const { t } = useI18n();
   const [isCollapsed, setIsCollapsed] = useState(collapsed);
 

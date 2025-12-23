@@ -6,7 +6,7 @@ import { useI18n } from '../../components/i18n/LanguageProvider';
 type JoinItem = {
   href: string;
   titleKey: keyof ReturnType<typeof useI18n>['t'];
-  icon?: JSX.Element;
+  icon?: React.ReactElement;
   gradient: string; // tailwind gradient classes
 };
 
@@ -29,7 +29,7 @@ const items: ReadonlyArray<JoinItem> = [
 
 ];
 
-function JoinCard({ href, titleKey, gradient }: JoinItem): JSX.Element {
+function JoinCard({ href, titleKey, gradient }: JoinItem) {
   const { t } = useI18n();
   return (
     <a href={href} className="group block">
@@ -44,7 +44,7 @@ function JoinCard({ href, titleKey, gradient }: JoinItem): JSX.Element {
   );
 }
 
-export default function JoinUs(): JSX.Element {
+export default function JoinUs() {
   const { t } = useI18n();
   return (
     <section className="py-10 sm:py-14">

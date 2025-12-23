@@ -1,3 +1,4 @@
+import React from 'react';
 import Hero from '../components/hero/Hero';
 import MissionTriplet from '../components/sections/MissionTriplet';
 import ActivityCarousel from '../components/sections/ActivityCarousel';
@@ -14,7 +15,7 @@ import { getAllDonationCategories, type DonationCategory } from '../services/don
 import ImpactVideo from '../components/sections/ImpactVideo';
 import { getAllPrograms } from '../services/programs';
 
-export default async function HomePage(): Promise<JSX.Element> {
+export default async function HomePage(): Promise<React.ReactElement> {
   const listRes = await GetAllBlog();
  // console.log(listRes);
   const items = Array.isArray(listRes?.data) ? listRes!.data : [];

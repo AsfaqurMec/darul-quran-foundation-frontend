@@ -1,4 +1,4 @@
-import { SelectHTMLAttributes } from 'react';
+import React, { SelectHTMLAttributes } from 'react';
 
 export type SelectOption = { value: string; label: string };
 
@@ -9,7 +9,7 @@ type SelectProps = SelectHTMLAttributes<HTMLSelectElement> & {
   options: ReadonlyArray<SelectOption>;
 };
 
-export default function Select({ label, hint, error, id, className, options, ...props }: SelectProps): JSX.Element {
+export default function Select({ label, hint, error, id, className, options, ...props }: SelectProps): React.ReactElement {
   return (
     <div>
       {label ? (

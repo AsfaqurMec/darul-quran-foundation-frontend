@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import Button from '../../components/ui/button';
 import MediaUploader from '../../components/common/MediaUploader';
 import { useState } from 'react';
@@ -14,7 +15,7 @@ type Props<T> = {
   onChange?: (rows: T[]) => void;
 };
 
-export default function CrudTable<T extends { id: string }>({ title, columns, initialRows, onChange }: Props<T>): JSX.Element {
+export default function CrudTable<T extends { id: string }>({ title, columns, initialRows, onChange }: Props<T>): React.ReactElement {
   const { t } = useI18n();
   const [rows, setRows] = useState<T[]>(initialRows);
   const [modalOpen, setModalOpen] = useState(false);

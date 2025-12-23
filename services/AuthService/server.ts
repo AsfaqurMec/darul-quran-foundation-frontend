@@ -40,6 +40,7 @@ export async function loginUser(data: FieldValues) {
 
     if (res.success) {
       (await cookies()).set("accessToken", res.data.accessToken);
+      // @ts-expect-error - revalidateTag type definition issue in Next.js 16
       revalidateTag("loginuser");
       return {
         success: true,
@@ -89,6 +90,7 @@ export const getCurrentUser = async () => {
 
 export const logout = async () => {
   (await cookies()).delete("accessToken");
+  // @ts-expect-error - revalidateTag type definition issue in Next.js 16
   revalidateTag("loginuser");
 };
 

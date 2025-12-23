@@ -8,7 +8,7 @@ export type AccordionItem = {
   answer: React.ReactNode;
 };
 
-export default function Accordion({ items }: { items: ReadonlyArray<AccordionItem> }): JSX.Element {
+export default function Accordion({ items }: { items: ReadonlyArray<AccordionItem> }): React.ReactElement {
   const [openId, setOpenId] = React.useState<string | null>(items[0]?.id ?? null);
   return (
     <div className="space-y-3">

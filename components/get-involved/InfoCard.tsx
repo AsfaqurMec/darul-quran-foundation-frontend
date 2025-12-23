@@ -1,9 +1,11 @@
+import React from 'react';
+
 type Props = {
   title: string;
   children: React.ReactNode;
 };
 
-export default function InfoCard({ title, children }: Props): JSX.Element {
+export default function InfoCard({ title, children }: Props): React.ReactElement {
   return (
     <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
       <h3 className="text-lg font-semibold mb-2">{title}</h3>

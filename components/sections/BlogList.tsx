@@ -18,7 +18,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import { useI18n } from '../i18n/LanguageProvider';
 
-export default function BlogList({ posts = [] as ReadonlyArray<BlogPost> }): JSX.Element {
+export default function BlogList({ posts = [] as ReadonlyArray<BlogPost> }): React.ReactElement {
   const prevRef = React.useRef<HTMLButtonElement | null>(null);
   const nextRef = React.useRef<HTMLButtonElement | null>(null);
   const { t, lang } = useI18n();

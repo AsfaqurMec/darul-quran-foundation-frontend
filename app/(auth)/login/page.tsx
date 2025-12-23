@@ -3,7 +3,7 @@ import LoginForm from '../../../components/auth/LoginForm';
 import Image from 'next/image';
 import loginIllustration from '../../../public/img/login.png';
 
-export default function LoginPage(): JSX.Element {
+export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-8 px-4">
       <div className="w-full max-w-5xl bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col lg:flex-row">

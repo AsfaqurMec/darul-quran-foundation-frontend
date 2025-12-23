@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import PageHero from './PageHero';
 import { useI18n } from '../../components/i18n/LanguageProvider';
 
@@ -9,7 +10,7 @@ type Props = {
   overlayClassName?: string;
 };
 
-export default function TranslatablePageHero({ translationKey, imageSrc, overlayClassName }: Props): JSX.Element {
+export default function TranslatablePageHero({ translationKey, imageSrc, overlayClassName }: Props): React.ReactElement {
   const { t } = useI18n();
   return <PageHero title={t(translationKey)} imageSrc={imageSrc} overlayClassName={overlayClassName} />;
 }

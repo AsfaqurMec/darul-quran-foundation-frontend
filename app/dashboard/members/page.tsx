@@ -32,7 +32,7 @@ interface DetailSection {
 	fields: DetailField[];
 }
 
-export default function MembersPage(): JSX.Element {
+export default function MembersPage(): React.ReactElement {
 	const { t, lang } = useI18n();
 	const confirmDialog = useConfirmDialog();
 	const translateEnum = useTranslateEnum();

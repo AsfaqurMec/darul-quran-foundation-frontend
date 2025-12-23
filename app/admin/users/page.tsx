@@ -1,6 +1,6 @@
 import Button from '../../../components/ui/button';
 
-export default function AdminUsersNew(): JSX.Element {
+export default function AdminUsersNew() {
   return (
     <div className="rounded-2xl border bg-white p-4 shadow-sm max-w-2xl">
       <h2 className="text-xl font-semibold mb-3">Create Admin User</h2>

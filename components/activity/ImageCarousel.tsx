@@ -15,7 +15,7 @@ type ImageCarouselProps = {
   title?: string;
 };
 
-export default function ImageCarousel({ images, title }: ImageCarouselProps): JSX.Element {
+export default function ImageCarousel({ images, title }: ImageCarouselProps): React.ReactElement {
   const [api, setApi] = React.useState<CarouselApi>();
   const [current, setCurrent] = React.useState(0);
   const [count, setCount] = React.useState(0);

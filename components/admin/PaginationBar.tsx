@@ -34,7 +34,7 @@ export default function PaginationBar({
   onPageChange,
   onPageSizeChange,
   pageSizeOptions = DEFAULT_PAGE_SIZES,
-}: PaginationBarProps): JSX.Element | null {
+}: PaginationBarProps): React.ReactElement | null {
   const safeTotalPages = Math.max(1, pagination.totalPages || 1);
   const hasMultiplePages = safeTotalPages > 1;
   const allowPageSizeChange = Boolean(onPageSizeChange);

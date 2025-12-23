@@ -1,12 +1,13 @@
 'use client';
 
+import React from 'react';
 import TranslatablePageHero from '../../components/common/TranslatablePageHero';
 import Container from '../../components/layout/Container';
 import JoinTabs from '../../components/get-involved/JoinTabs';
 import InfoCard from '../../components/get-involved/InfoCard';
 import { useI18n } from '../../components/i18n/LanguageProvider';
 
-export default function GetInvolvedPage(): JSX.Element {
+export default function GetInvolvedPage(): React.ReactElement {
   const { t } = useI18n();
 
   return (

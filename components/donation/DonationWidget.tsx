@@ -11,7 +11,7 @@ import config from '../../config';
 
 type Period = 'daily' | 'monthly';
 
-export default function DonationWidget(): JSX.Element {
+export default function DonationWidget() {
   const { t } = useI18n();
   const [period, setPeriod] = React.useState<Period>('daily');
   const [amount, setAmount] = React.useState<string>('20');

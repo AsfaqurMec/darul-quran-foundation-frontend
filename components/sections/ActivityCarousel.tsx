@@ -19,7 +19,7 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import { getAllPrograms } from '../../services/programs';
 
-function Card({ item }: { item: ActivityItem }): JSX.Element {
+function Card({ item }: { item: ActivityItem }): React.ReactElement {
   const { lang, t } = useI18n();
   const [translatedTitle, setTranslatedTitle] = useState(item.title);
   const [translatedDescription, setTranslatedDescription] = useState(item.description.slice(0,50));
@@ -120,7 +120,7 @@ function Card({ item }: { item: ActivityItem }): JSX.Element {
   );
 }
 
-export default function ActivityCarousel({ items }: { items?: ReadonlyArray<ActivityItem> }): JSX.Element {
+export default function ActivityCarousel({ items }: { items?: ReadonlyArray<ActivityItem> }): React.ReactElement {
   const { t, lang } = useI18n();
   // Use provided items or get latest 3 activities from shared data
   const activities = items ? [...items] : getAllPrograms();

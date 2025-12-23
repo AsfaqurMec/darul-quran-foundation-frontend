@@ -35,7 +35,9 @@ function getYouTubeVideoId(url?: string): string | null {
   return match && match[2].length === 11 ? match[2] : null;
 }
 
-export default function ActivityDetail({ activity }: Props): JSX.Element {
+import React from 'react';
+
+export default function ActivityDetail({ activity }: Props): React.ReactElement {
   const videoId = activity.videoId || getYouTubeVideoId(activity.videoUrl);
 
   return (

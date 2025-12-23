@@ -1,3 +1,4 @@
+import React from 'react';
 import Container from '../../../components/layout/Container';
 import { getDonationCategoryBySlug } from '../../../services/donationCategories';
 import { getImageUrl } from '../../../lib/imageUtils';
@@ -7,7 +8,7 @@ export default async function DonationCategoryDetailPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
-}): Promise<JSX.Element> {
+}): Promise<React.ReactElement> {
   const { slug } = await params;
 
   const res = await getDonationCategoryBySlug(slug);

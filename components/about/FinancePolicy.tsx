@@ -4,7 +4,7 @@ import Container from '../../components/layout/Container';
 import Tabs, { TabItem } from '../../components/ui/Tabs';
 import { useI18n } from '../../components/i18n/LanguageProvider';
 import { FaArrowCircleRight } from "react-icons/fa";
-function List({ items }: { items: ReadonlyArray<string> }): JSX.Element {
+function List({ items }: { items: ReadonlyArray<string> }) {
   return (
     <ul className="space-y-4">
       {items.map((t, i) => (
@@ -18,7 +18,7 @@ function List({ items }: { items: ReadonlyArray<string> }): JSX.Element {
   );
 }
 
-export default function FinancePolicy(): JSX.Element {
+export default function FinancePolicy() {
   const { t } = useI18n();
 
   const income: ReadonlyArray<string> = [

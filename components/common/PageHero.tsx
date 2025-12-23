@@ -1,3 +1,4 @@
+import React from 'react';
 import Container from '../../components/layout/Container';
 
 type Props = {
@@ -6,7 +7,7 @@ type Props = {
   overlayClassName?: string;
 };
 
-export default function PageHero({ title, imageSrc = '/img/hero.png', overlayClassName }: Props): JSX.Element {
+export default function PageHero({ title, imageSrc = '/img/hero.png', overlayClassName }: Props): React.ReactElement {
   return (
     <section className="relative overflow-hidden">
       <div

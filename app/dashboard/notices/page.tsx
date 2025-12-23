@@ -17,7 +17,7 @@ const initialForm: Omit<Notice, 'id'> = {
   fullContent: '',
 };
 
-export default function NoticesPage(): JSX.Element {
+export default function NoticesPage(): React.ReactElement {
   const { t, lang } = useI18n();
   const confirmDialog = useConfirmDialog();
   const locale = lang === 'bn' ? 'bn-BD' : lang === 'ar' ? 'ar-SA' : 'en-US';

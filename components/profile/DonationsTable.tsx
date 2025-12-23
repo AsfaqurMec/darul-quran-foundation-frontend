@@ -29,7 +29,7 @@ function PaginationControls({
 	totalPages: number;
 	totalItems: number;
 	onPageChange: (page: number) => void;
-}): JSX.Element {
+}): React.ReactElement {
 	const { t } = useI18n();
 	const getPageNumbers = () => {
 		const pages: (number | string)[] = [];
@@ -164,7 +164,7 @@ export default function DonationsTable({
 }: {
 	donations: Donation[];
 	loading: boolean;
-}): JSX.Element {
+}): React.ReactElement {
 	const { t, lang } = useI18n();
 	const locale = lang === 'bn' ? 'bn-BD' : lang === 'ar' ? 'ar-SA' : 'en-US';
 	const [currentPage, setCurrentPage] = useState(1);

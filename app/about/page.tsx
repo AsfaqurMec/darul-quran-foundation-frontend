@@ -3,7 +3,7 @@ import AboutIntro from '../../components/about/AboutIntro';
 import PolicyTabs from '../../components/about/PolicyTabs';
 import FinancePolicy from '../../components/about/FinancePolicy';
 
-export default function AboutPage(): JSX.Element {
+export default function AboutPage() {
   return (
     <div className="space-y-10">
       <TranslatablePageHero translationKey="about" />

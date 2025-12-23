@@ -11,10 +11,10 @@ import Link from 'next/link';
 type Feature = {
   titleKey: keyof ReturnType<typeof useI18n>['t'];
   bodyKey: keyof ReturnType<typeof useI18n>['t'];
-  icon: JSX.Element;
+  icon: React.ReactElement;
 };
 
-function FeatureCard({ titleKey, bodyKey, icon }: Feature): JSX.Element {
+function FeatureCard({ titleKey, bodyKey, icon }: Feature) {
   const { t } = useI18n();
   return (
     <div className="text-center px-4 flex flex-col items-center justify-center ">
@@ -25,7 +25,7 @@ function FeatureCard({ titleKey, bodyKey, icon }: Feature): JSX.Element {
   );
 }
 
-export default function MissionTriplet(): JSX.Element {
+export default function MissionTriplet() {
   const { t } = useI18n();
   const features: ReadonlyArray<Feature> = [
     {

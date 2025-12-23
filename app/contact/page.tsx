@@ -6,7 +6,7 @@ import ContactFaq from '../../components/contact/ContactFaq';
 import TranslatablePageHero from '../../components/common/TranslatablePageHero';
 import { useI18n } from '../../components/i18n/LanguageProvider';
 
-export default function ContactPage(): JSX.Element {
+export default function ContactPage() {
   const { t } = useI18n();
   
   return (

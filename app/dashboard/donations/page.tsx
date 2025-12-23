@@ -1,12 +1,13 @@
 'use client';
 
+import React from 'react';
 import { useEffect, useState, useCallback, Fragment } from 'react';
 import Button from '../../../components/ui/button';
 import { Donation, getAllDonations } from '../../../services/donations';
 import { toast } from 'sonner';
 import { useI18n } from '../../../components/i18n/LanguageProvider';
 
-export default function DonationsPage(): JSX.Element {
+export default function DonationsPage(): React.ReactElement {
   const { t, lang } = useI18n();
   const locale = lang === 'bn' ? 'bn-BD' : lang === 'ar' ? 'ar-SA' : 'en-US';
   const [donations, setDonations] = useState<Donation[]>([]);

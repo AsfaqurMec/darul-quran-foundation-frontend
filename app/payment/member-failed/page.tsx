@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { useRouter } from 'next/navigation';
 
-export default function MemberPaymentFailedPage(): JSX.Element {
+export default function MemberPaymentFailedPage(): React.ReactElement {
   const router = useRouter();
 
   return (

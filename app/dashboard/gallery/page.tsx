@@ -43,7 +43,7 @@ const normalizeSingle = (value: MediaValue | MediaValue[] | '' | undefined): Med
   return (value ?? '') as MediaValue;
 };
 
-function GalleryPageContent(): JSX.Element {
+function GalleryPageContent(): React.ReactElement {
   const { t } = useI18n();
   const searchParams = useSearchParams();
   const confirmDialog = useConfirmDialog();
@@ -493,7 +493,7 @@ function GalleryPageContent(): JSX.Element {
   );
 }
 
-export default function GalleryPage(): JSX.Element {
+export default function GalleryPage(): React.ReactElement {
   return (
     <Suspense fallback={
       <div className="space-y-6">

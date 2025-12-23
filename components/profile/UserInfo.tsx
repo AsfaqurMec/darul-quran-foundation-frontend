@@ -23,7 +23,7 @@ export default function UserInfo({
 	formData, 
 	onChange, 
 	loading = false 
-}: UserInfoProps): JSX.Element {
+}: UserInfoProps): React.ReactElement {
 	const { t, lang } = useI18n();
 	const locale = lang === 'bn' ? 'bn-BD' : lang === 'ar' ? 'ar-SA' : 'en-US';
 

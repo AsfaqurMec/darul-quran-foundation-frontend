@@ -8,7 +8,7 @@ import { useI18n } from '../../components/i18n/LanguageProvider';
 import { FaLinkedinIn } from "react-icons/fa";
 import { toast } from 'sonner';
 
-function SocialLink({ href, label, icon }: { href: string; label: string; icon: JSX.Element }): JSX.Element {
+function SocialLink({ href, label, icon }: { href: string; label: string; icon: React.ReactElement }) {
   return (
     <a href={href} aria-label={label} className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition">
       {icon}
@@ -29,7 +29,7 @@ const formatFoundationName = (text: string) => {
   );
 };
 
-export default function Footer(): JSX.Element {
+export default function Footer() {
   const { t } = useI18n();
   const [email, setEmail] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);

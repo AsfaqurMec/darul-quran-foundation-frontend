@@ -4,7 +4,7 @@ import * as React from 'react';
 import MemberApplication from '../../components/get-involved/MemberApplication';
 import { useI18n } from '../../components/i18n/LanguageProvider';
 
-function YouTube({ id, title }: { id: string; title: string }): JSX.Element {
+function YouTube({ id, title }: { id: string; title: string }): React.ReactElement {
 	return (
 		<div className="rounded-2xl overflow-hidden bg-gray-200">
 			<div className="relative aspect-video w-full">
@@ -20,7 +20,7 @@ function YouTube({ id, title }: { id: string; title: string }): JSX.Element {
 	);
 }
 
-export default function LifetimeMemberTab(): JSX.Element {
+export default function LifetimeMemberTab(): React.ReactElement {
 	const { t } = useI18n();
 
 	return (

@@ -20,7 +20,7 @@ export default function GalleryCategorySidebar({
   selectedYear,
   type,
   allCategory,
-}: Props): JSX.Element {
+}: Props): React.ReactElement {
   const { t, lang } = useI18n();
   const [translatedCategories, setTranslatedCategories] = useState<Record<string, string>>({});
   const [isTranslating, setIsTranslating] = useState(false);

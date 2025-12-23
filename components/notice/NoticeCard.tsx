@@ -1,7 +1,7 @@
 'use client';
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useI18n, Lang } from "../../components/i18n/LanguageProvider";
 import { translateText } from "../../lib/translate";
 
@@ -31,7 +31,7 @@ function formatDateParts(iso: string, locale: Lang) {
   return { day, weekday, monthYear };
 }
 
-export default function NoticeCard({ notice }: { notice: Notice }): JSX.Element {
+export default function NoticeCard({ notice }: { notice: Notice }): React.ReactElement {
   const { lang, t } = useI18n();
   const [translatedTitle, setTranslatedTitle] = useState(notice.title);
   const [translatedExcerpt, setTranslatedExcerpt] = useState(notice.excerpt?.slice(0,150) || '');

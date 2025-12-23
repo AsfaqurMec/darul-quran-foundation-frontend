@@ -55,7 +55,7 @@ const sections: Section[] = [
   },
 ];
 
-export default function TermsAndConditionPage(): JSX.Element {
+export default function TermsAndConditionPage(): React.ReactElement {
   const { t } = useI18n();
 
   return (

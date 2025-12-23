@@ -28,7 +28,7 @@ const normalizeSingle = (value: MediaValue | MediaValue[] | '' | undefined): Med
   return (value ?? '') as MediaValue;
 };
 
-export default function ActivitiesPage(): JSX.Element {
+export default function ActivitiesPage() {
   const { t } = useI18n();
   const confirmDialog = useConfirmDialog();
   const [activities, setActivities] = useState<Activity[]>([]);

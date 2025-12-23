@@ -1,3 +1,4 @@
+import React from 'react';
 import Container from '../../../components/layout/Container';
 import NoticeDetail from '../../../components/notice/NoticeDetail';
 import { getNoticeById } from '../../../services/notices';
@@ -6,7 +7,7 @@ export default async function NoticeDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>;
-}): Promise<JSX.Element> {
+}): Promise<React.ReactElement> {
   const { id } = await params;
 
   // Fetch from backend

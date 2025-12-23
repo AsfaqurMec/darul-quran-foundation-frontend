@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import Button from '../../components/ui/button';
 import { removeClientToken } from '../../lib/tokenUtils';
 import { useRouter } from 'next/navigation';
@@ -14,7 +15,7 @@ type AdminHeaderProps = {
   };
 };
 
-export default function AdminHeader({ user }: AdminHeaderProps): JSX.Element {
+export default function AdminHeader({ user }: AdminHeaderProps): React.ReactElement {
   const { lang, setLang, t } = useI18n();
   const [open, setOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);

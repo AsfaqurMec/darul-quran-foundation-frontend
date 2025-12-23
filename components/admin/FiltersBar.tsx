@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import Button from '../../components/ui/button';
 import { useState } from 'react';
 import { useI18n } from '../../components/i18n/LanguageProvider';
@@ -8,7 +9,7 @@ type Props = {
   onChange?: (val: { preset: 'today' | 'week' | 'month' | 'year' | 'range'; from?: string; to?: string }) => void;
 };
 
-export default function FiltersBar({ onChange }: Props): JSX.Element {
+export default function FiltersBar({ onChange }: Props): React.ReactElement {
   const { t } = useI18n();
   const [preset, setPreset] = useState<'today' | 'week' | 'month' | 'year' | 'range'>('month');
   const [from, setFrom] = useState('');

@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 
 type MediaValue = string | File;
 
@@ -12,7 +12,7 @@ type Props = {
   label?: string;
 };
 
-export default function MediaUploader({ multiple, value, onChange, accept = 'image/*', label = 'Upload media' }: Props): JSX.Element {
+export default function MediaUploader({ multiple, value, onChange, accept = 'image/*', label = 'Upload media' }: Props): React.ReactElement {
   const inputRef = useRef<HTMLInputElement>(null);
   const [previews, setPreviews] = useState<string[]>([]);
 

@@ -7,7 +7,7 @@ import { updateUser, User } from '../../../services/Users';
 import { getCurrentUserProfile } from '../../../services/Users/me';
 import { toast } from 'sonner';
 
-export default function AdminProfile(): JSX.Element {
+export default function AdminProfile(): React.ReactElement {
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [formData, setFormData] = useState({

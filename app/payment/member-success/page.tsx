@@ -5,7 +5,7 @@ import { Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { submitMemberAfterPayment } from '../../../services/memberApplication';
 
-function MemberPaymentSuccessContent(): JSX.Element {
+function MemberPaymentSuccessContent(): React.ReactElement {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [status, setStatus] = React.useState<'loading' | 'success' | 'error'>('loading');
@@ -171,7 +171,7 @@ function MemberPaymentSuccessContent(): JSX.Element {
   );
 }
 
-export default function MemberPaymentSuccessPage(): JSX.Element {
+export default function MemberPaymentSuccessPage(): React.ReactElement {
   return (
     <Suspense fallback={
       <div className="min-h-[60vh] flex items-center justify-center px-4">

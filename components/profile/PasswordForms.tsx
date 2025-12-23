@@ -10,7 +10,7 @@ import { useI18n } from '../../components/i18n/LanguageProvider';
 
 type Mode = 'change' | 'forgot';
 
-export default function PasswordForms({ mode }: { mode: Mode }): JSX.Element {
+export default function PasswordForms({ mode }: { mode: Mode }): React.ReactElement {
 	const { t } = useI18n();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [message, setMessage] = useState<string | null>(null);
