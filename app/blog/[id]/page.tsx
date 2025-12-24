@@ -7,7 +7,7 @@ import { getImageUrl } from '../../../lib/imageUtils';
 import type { BlogPost } from '../../../components/blog/BlogCard';
 
 export default async function BlogDetailPage({ params }: { params: { id: string } }): Promise<React.ReactElement> {
-  const { id } = params;
+  const { id } = await params;
   const blogRes = await SingleBlog(id);
   const blog = blogRes?.data;
 
