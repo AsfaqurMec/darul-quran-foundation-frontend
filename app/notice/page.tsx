@@ -11,7 +11,7 @@ export default async function NoticePage({ searchParams }: { searchParams?: Prom
 
   // Fetch from backend
   const { data: allNotices = [] } = await getAllNotices();
-  console.log(allNotices);
+  //console.log("allNotices", allNotices);
   // Map backend notices to card-friendly shape
   const mapped = allNotices.map((n) => ({
     id: n.id ?? '',
