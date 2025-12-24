@@ -44,7 +44,7 @@ export const getAllNotices = async (params?: NoticeQueryParams): Promise<NoticeR
     // Determine the origin for server-side requests
     const isServerSide = typeof window === 'undefined';
     const origin = isServerSide 
-      ? (process.env.NEXT_PUBLIC_APP_URL || app.url || 'http://localhost:3000')
+      ? (process.env.NEXT_PUBLIC_APP_URL || app.url || 'http://localhost:3000' || 'https://darulquranfoundation.org')
       : undefined;
     
     const query: Record<string, string | number> = {};
