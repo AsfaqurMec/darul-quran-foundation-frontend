@@ -302,6 +302,10 @@ export async function translateText(
     // Use Google Translate web interface
     const translateUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLangCode}&tl=${targetLangCode}&dt=t&q=${encodedText}`;
     
+    // Create an AbortController for timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+    
     // Try each proxy until one works
     let lastError: Error | null = null;
     for (let i = 0; i < PROXIES.length; i++) {
@@ -315,7 +319,10 @@ export async function translateText(
           headers: {
             'Accept': 'application/json',
           },
+          signal: controller.signal,
         });
+        
+        clearTimeout(timeoutId);
         
         if (!response.ok) {
           throw new Error(`Translation failed: ${response.status}`);
@@ -327,7 +334,6 @@ export async function translateText(
           data = JSON.parse(responseBody);
         } catch (parseError) {
           // If JSON parsing fails, try to extract from text response
-          console.warn('Failed to parse JSON, trying text extraction');
           throw new Error('Invalid response format');
         }
         
@@ -350,7 +356,7 @@ export async function translateText(
         
         // Verify we got a translation (not just the original)
         if (translatedText === text && text.length > 10) {
-          console.warn('Translation returned same text, might be an error');
+          // Silently return original text if translation seems wrong
         }
         
         // Cache the result
@@ -361,16 +367,35 @@ export async function translateText(
         
         return translatedText;
       } catch (error: any) {
+        // Suppress CORS and network errors silently
+        if (error?.name === 'AbortError' || error?.message?.includes('CORS') || error?.message?.includes('Failed to fetch')) {
+          lastError = error;
+          // Silently continue to next proxy
+          continue;
+        }
         lastError = error;
-        console.warn(`Proxy "${PROXIES[(currentProxyIndex + i) % PROXIES.length].name}" failed, trying next...`, error?.message || error);
+        // Only log non-CORS errors in development
+        if (process.env.NODE_ENV === 'development') {
+          console.warn(`Proxy "${PROXIES[(currentProxyIndex + i) % PROXIES.length].name}" failed, trying next...`);
+        }
         // Continue to next proxy
       }
     }
     
+    clearTimeout(timeoutId);
+    
     // Final attempt without proxy (may fail due to CORS but worth trying for native apps)
     try {
-      console.warn('All proxies failed, attempting direct fetch...');
-      const response = await fetch(translateUrl, { method: 'GET' });
+      const directController = new AbortController();
+      const directTimeoutId = setTimeout(() => directController.abort(), 3000);
+      
+      const response = await fetch(translateUrl, { 
+        method: 'GET',
+        signal: directController.signal,
+      });
+      
+      clearTimeout(directTimeoutId);
+      
       if (response.ok) {
         const data = await response.json();
         let translatedText = text;
@@ -386,14 +411,23 @@ export async function translateText(
         return translatedText;
       }
     } catch (directError) {
+      // Silently ignore direct fetch errors (expected CORS failures)
       lastError = directError as Error;
     }
 
-    // If all proxies and direct fetch failed, throw the last error
-    throw lastError || new Error('All translation routes failed');
+    // If all proxies and direct fetch failed, return original text silently
+    // Cache the original text to avoid retrying immediately
+    translationCache.set(cacheKey, text);
+    return text;
   } catch (error) {
-    console.error('Translation error:', error);
-    // Return original text on error
+    // Silently return original text on any error
+    // Only log in development mode
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('Translation error (returning original text):', error);
+    }
+    // Cache the original text to avoid retrying
+    const cacheKey = `${text}|${sourceLang || 'auto'}|${targetLang}`;
+    translationCache.set(cacheKey, text);
     return text;
   }
 }
@@ -412,12 +446,22 @@ export async function detectLanguage(text: string): Promise<Lang | null> {
     const encodedText = encodeURIComponent(text);
     const detectUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=en&dt=t&q=${encodedText}`;
 
+    // Create an AbortController for timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+
     for (const proxy of PROXIES) {
       try {
-        const response = await fetch(proxy.buildUrl(detectUrl));
+        const response = await fetch(proxy.buildUrl(detectUrl), {
+          signal: controller.signal,
+        });
+        
         if (!response.ok) {
           continue;
         }
+        
+        clearTimeout(timeoutId);
+        
         const data = await response.json();
 
         if (Array.isArray(data) && data[2]) {
@@ -426,16 +470,30 @@ export async function detectLanguage(text: string): Promise<Lang | null> {
           if (detectedLang === 'ar' || detectedLang === 'ara') return 'ar';
           if (detectedLang === 'en' || detectedLang === 'eng') return 'en';
         }
-      } catch (proxyError) {
-        console.warn(`Language detection proxy "${proxy.name}" failed`, proxyError);
+      } catch (proxyError: any) {
+        // Suppress CORS and network errors silently
+        if (proxyError?.name === 'AbortError' || proxyError?.message?.includes('CORS') || proxyError?.message?.includes('Failed to fetch')) {
+          // Silently continue to next proxy
+          continue;
+        }
+        // Only log non-CORS errors in development
+        if (process.env.NODE_ENV === 'development') {
+          console.warn(`Language detection proxy "${proxy.name}" failed`);
+        }
       }
     }
+
+    clearTimeout(timeoutId);
 
     // Extract detected language from response
     // Response includes language detection info
     return null;
   } catch (error) {
-    console.error('Language detection error:', error);
+    // Silently return null on any error
+    // Only log in development mode
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('Language detection error:', error);
+    }
     return null;
   }
 }
