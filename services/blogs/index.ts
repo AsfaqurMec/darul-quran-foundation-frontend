@@ -18,8 +18,12 @@ export const GetAllBlog = async () => {
     
     // Server-side requests need Origin/Referer headers
     const origin = process.env.NEXT_PUBLIC_APP_URL || app.url || 'https://darulquranfoundation.org' || 'http://localhost:3000';
+    const apiUrl = `${api.baseUrl}/blogs`;
     
-    const response = await fetch(`${api.baseUrl}/blogs`, {
+    console.log('🔍 GetAllBlog - Fetching from:', apiUrl);
+    console.log('🔍 GetAllBlog - Origin:', origin);
+    
+    const response = await fetch(apiUrl, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -31,6 +35,8 @@ export const GetAllBlog = async () => {
         tags: ["blogs"],
       },
     });
+
+    console.log('🔍 GetAllBlog - Response status:', response.status, response.statusText);
 
     if (!response.ok) {
       // Handle 403 Forbidden (likely origin validation issue)
@@ -58,13 +64,14 @@ export const GetAllBlog = async () => {
         console.error('Status:', response.status);
         console.error('Error Message:', errorMessage);
         console.error('Origin:', origin);
-        console.error('API URL:', `${api.baseUrl}/blogs`);
+        console.error('API URL:', apiUrl);
         
         return { success: false, data: [], message: errorMessage };
       }
       
       // If endpoint unavailable, serve fallback static data
       if (response.status === 404) {
+        console.warn('⚠️ GetAllBlog - Endpoint not found (404), returning empty data');
         return { success: true, data: [] };
       }
       
@@ -84,13 +91,47 @@ export const GetAllBlog = async () => {
         // Ignore parsing errors
       }
       
+      console.error('❌ GetAllBlog - Request failed:', errorMessage);
       throw new Error(errorMessage);
     }
 
-    return await response.json();
-  } catch (error) {
-    console.error("Error fblog get:", error);
+    const jsonData = await response.json();
+    console.log('✅ GetAllBlog - Response received:', {
+      hasData: !!jsonData?.data,
+      dataType: Array.isArray(jsonData?.data) ? 'array' : typeof jsonData?.data,
+      dataLength: Array.isArray(jsonData?.data) ? jsonData.data.length : 'N/A',
+      responseKeys: Object.keys(jsonData || {}),
+    });
+
+    // Validate and normalize response structure
+    // Handle different possible response formats:
+    // 1. { success: true, data: [...] }
+    // 2. { data: [...] }
+    // 3. [...] (direct array)
+    if (Array.isArray(jsonData)) {
+      return { success: true, data: jsonData };
+    }
+    
+    if (jsonData && typeof jsonData === 'object') {
+      if (Array.isArray(jsonData.data)) {
+        return { success: jsonData.success !== false, data: jsonData.data, ...jsonData };
+      }
+      // If data exists but is not an array, wrap it
+      if ('data' in jsonData) {
+        return { success: jsonData.success !== false, data: Array.isArray(jsonData.data) ? jsonData.data : [], ...jsonData };
+      }
+    }
+
+    // If response structure is unexpected, log it and return empty
+    console.warn('⚠️ GetAllBlog - Unexpected response structure:', jsonData);
     return { success: true, data: [] };
+  } catch (error) {
+    console.error("❌ GetAllBlog - Error:", error);
+    if (error instanceof Error) {
+      console.error("❌ GetAllBlog - Error message:", error.message);
+      console.error("❌ GetAllBlog - Error stack:", error.stack);
+    }
+    return { success: false, data: [], message: error instanceof Error ? error.message : 'Unknown error' };
   }
 };
 export const GetAllPersonalBlog = async () => {
