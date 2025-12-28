@@ -195,7 +195,7 @@ export default function Header(): React.ReactElement {
           <Link href="/donation">
             <Button className="rounded-lg bg-brand hover:bg-brand-dark text-white px-4 py-2 font-semibold transition-all hover:shadow-lg text-md md:text-lg">{t('donate')}</Button>
           </Link>
-          <button className="sm:hidden inline-flex items-center justify-center p-2 rounded-md border border-gray-300" onClick={() => setOpen(true)} aria-label="Open menu">
+          <button className="lg:hidden inline-flex items-center justify-center p-2 rounded-md border border-gray-300" onClick={() => setOpen(true)} aria-label="Open menu">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6"><path fillRule="evenodd" d="M3.75 5.25a.75.75 0 0 1 .75-.75h15a.75.75 0 0 1 0 1.5h-15a.75.75 0 0 1-.75-.75Zm0 6a.75.75 0 0 1 .75-.75h15a.75.75 0 0 1 0 1.5h-15a.75.75 0 0 1-.75-.75Zm.75 5.25a.75.75 0 0 0 0 1.5h15a.75.75 0 0 0 0-1.5h-15Z" clipRule="evenodd" /></svg>
           </button>
         </div>
