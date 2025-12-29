@@ -46,7 +46,7 @@ type BlogQueryParams = {
   searchTerm?: string;
   category?: string;
 };
-const FIXED_TOKEN = "f3a1d9c6b87e4f209ad4c0c8c1f5e92e3b6a7c4de2af41b0c8f5a6d2c917eb3a"
+
 export const getAllBlogs = async (params?: BlogQueryParams): Promise<BlogResponse<Blog[]>> => {
   const lang = typeof window !== 'undefined'
     ? document.cookie.match(/(?:^|; )lang=([^;]*)/)?.[1]
@@ -63,7 +63,6 @@ export const getAllBlogs = async (params?: BlogQueryParams): Promise<BlogRespons
     //headers: lang ? { 'Accept-Language': decodeURIComponent(lang) } : undefined,
     headers: {
       ...(lang ? { 'Accept-Language': decodeURIComponent(lang) } : {}),
-      Authorization: FIXED_TOKEN,
     },
   });
 
@@ -77,11 +76,7 @@ export const getAllBlogs = async (params?: BlogQueryParams): Promise<BlogRespons
 };
 
 export const getBlogById = async (id: string): Promise<BlogResponse<Blog>> => {
-  const { data } = await apiClient.get(`/blogs/${id}`, {
-    headers: {
-      Authorization: FIXED_TOKEN,
-    },
-  });
+  const { data } = await apiClient.get(`/blogs/${id}`);
   return unwrap<Blog>(data);
 };
 

@@ -593,6 +593,7 @@ export const SingleBlog = async (id: string) => {
       headers: {
         "Content-Type": "application/json",
         ...(lang ? { "Accept-Language": lang } : {}),
+        Authorization: FIXED_TOKEN,
       },
     });
 
