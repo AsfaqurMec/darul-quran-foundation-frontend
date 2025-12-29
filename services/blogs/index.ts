@@ -524,15 +524,20 @@ import { api } from "../../config";
 // Public endpoint: GET /api/blogs (no auth required)
 const HARDCODED_BEARER = ""; // not needed for public endpoint
 
-
+// Fixed token for API requests
+const FIXED_TOKEN = "f3a1d9c6b87e4f209ad4c0c8c1f5e92e3b6a7c4de2af41b0c8f5a6d2c917eb3a"
 export const GetAllBlog = async () => {
   try {
-    const lang = (await cookies()).get('lang')?.value;
+    const cookieStore = await cookies();
+    const lang = cookieStore.get('lang')?.value;
+    const token = FIXED_TOKEN;
+    
     const response = await fetch(`${api.baseUrl}/blogs`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
         ...(lang ? { "Accept-Language": lang } : {}),
+        Authorization: token,
       },
       next: {
         tags: ["blogs"],
