@@ -566,7 +566,7 @@ export const GetAllPersonalBlog = async () => {
       headers: {
         "Content-Type": "application/json",
         ...(lang ? { "Accept-Language": lang } : {}),
-        // Authorization: token || "",
+        Authorization: FIXED_TOKEN,
       },
       next: {
         tags: ["blogs"],
