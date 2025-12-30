@@ -25,13 +25,13 @@ export const searchCompanies = async (
     }
 
     const token = getClientToken();
-    console.log("Retrieved token from localStorage:", token);
-    console.log("Token type:", typeof token);
-    console.log("Token length:", token?.length);
+   // console.log("Retrieved token from localStorage:", token);
+   // console.log("Token type:", typeof token);
+   // console.log("Token length:", token?.length);
 
     if (!token) {
-      console.error("No token found in localStorage");
-      console.log("localStorage contents:", Object.keys(localStorage));
+      //console.error("No token found in localStorage");
+      //console.log("localStorage contents:", Object.keys(localStorage));
       // Don't throw error, just return empty result
       return { success: false, message: "No access token found" };
     }
