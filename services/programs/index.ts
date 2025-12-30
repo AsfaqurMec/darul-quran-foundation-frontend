@@ -452,7 +452,7 @@ type ProgramQueryParams = {
   limit?: number;
   searchTerm?: string;
 };
-
+const FIXED_TOKEN = "f3a1d9c6b87e4f209ad4c0c8c1f5e92e3b6a7c4de2af41b0c8f5a6d2c917eb3a"
 export const getAllPrograms = async (params?: ProgramQueryParams): Promise<ProgramResponse<Program[]>> => {
   try {
     const lang = typeof window !== 'undefined'
@@ -469,7 +469,7 @@ export const getAllPrograms = async (params?: ProgramQueryParams): Promise<Progr
 
     const res = await fetch(
       `${api.baseUrl}/programs${query.toString() ? `?${query.toString()}` : ''}`,
-      { headers: commonHeaders }
+      { headers: { ...commonHeaders, Authorization: FIXED_TOKEN } }
     );
 
     if (!res.ok) {
@@ -508,7 +508,7 @@ export const getProgramById = async (id: string): Promise<ProgramResponse<Progra
       'Content-Type': 'application/json',
       ...(lang ? { 'Accept-Language': decodeURIComponent(lang) } : {}),
     };
-    const res = await fetch(`${api.baseUrl}/programs/${id}`, { headers: commonHeaders });
+    const res = await fetch(`${api.baseUrl}/programs/${id}`, { headers: { ...commonHeaders, Authorization: FIXED_TOKEN } });
 
     if (!res.ok) {
       if (res.status === 404) return { success: true, data: undefined as unknown as Program };
@@ -531,7 +531,7 @@ export const getProgramBySlug = async (slug: string): Promise<ProgramResponse<Pr
       'Content-Type': 'application/json',
       ...(lang ? { 'Accept-Language': decodeURIComponent(lang) } : {}),
     };
-    const res = await fetch(`${api.baseUrl}/programs/slug/${slug}`, { headers: commonHeaders });
+    const res = await fetch(`${api.baseUrl}/programs/slug/${slug}`, { headers: { ...commonHeaders, Authorization: FIXED_TOKEN } });
 
     if (!res.ok) {
       if (res.status === 404) return { success: true, data: undefined as unknown as Program };

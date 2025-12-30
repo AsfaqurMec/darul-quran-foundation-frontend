@@ -415,6 +415,36 @@ type DonationCategoryQueryParams = {
   searchTerm?: string;
 };
 
+const FIXED_TOKEN = "f3a1d9c6b87e4f209ad4c0c8c1f5e92e3b6a7c4de2af41b0c8f5a6d2c917eb3a"
+export const getAllDonationCategoriesPublic = async (): Promise<DonationCategoryResponse<DonationCategory[]>> => {
+  try {
+    const response = await fetch(`${api.baseUrl}/donation-categories`, { method: "GET", headers: { Authorization: FIXED_TOKEN } });
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching donation categories:', error);
+    return { success: true, data: [] };
+  }
+};
+
+export const getDonationCategoryByIdPublic = async (id: string): Promise<DonationCategoryResponse<DonationCategory>> => {
+  try {
+    const response = await fetch(`${api.baseUrl}/donation-categories/${id}`, { method: "GET", headers: { Authorization: FIXED_TOKEN } });
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching donation category by id:', error);
+    return { success: true, data: undefined as unknown as DonationCategory };
+  }
+};
+
+export const getDonationCategoryBySlugPublic = async (slug: string): Promise<DonationCategoryResponse<DonationCategory>> => {
+  try {
+    const response = await fetch(`${api.baseUrl}/donation-categories/${slug}`, { method: "GET", headers: { Authorization: FIXED_TOKEN } });
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching donation category by slug:', error);
+    return { success: true, data: undefined as unknown as DonationCategory };
+  }
+};
 export const getAllDonationCategories = async (
   params?: DonationCategoryQueryParams
 ): Promise<DonationCategoryResponse<DonationCategory[]>> => {
@@ -433,8 +463,8 @@ export const getAllDonationCategories = async (
 
     const queryString = query.toString();
     const res = await fetch(
-      `${api.baseUrl}/donation-categories${queryString ? `?${queryString}` : ''}`,
-      { headers: commonHeaders }
+      `${api.baseUrl}/donation-categories/admin${queryString ? `?${queryString}` : ''}`,
+      { headers: { ...commonHeaders, Authorization: FIXED_TOKEN } }
     );
 
     if (!res.ok) {
@@ -473,7 +503,7 @@ export const getDonationCategoryById = async (id: string): Promise<DonationCateg
       'Content-Type': 'application/json',
       ...(lang ? { 'Accept-Language': decodeURIComponent(lang) } : {}),
     };
-    const res = await fetch(`${api.baseUrl}/donation-categories/${id}`, { headers: commonHeaders });
+    const res = await fetch(`${api.baseUrl}/donation-categories/admin/${id}`, { headers: { ...commonHeaders, Authorization: FIXED_TOKEN } });
 
     if (!res.ok) {
       if (res.status === 404) return { success: true, data: undefined as unknown as DonationCategory };
@@ -496,7 +526,7 @@ export const getDonationCategoryBySlug = async (slug: string): Promise<DonationC
       'Content-Type': 'application/json',
       ...(lang ? { 'Accept-Language': decodeURIComponent(lang) } : {}),
     };
-    const res = await fetch(`${api.baseUrl}/donation-categories/${slug}`, { headers: commonHeaders });
+    const res = await fetch(`${api.baseUrl}/donation-categories/admin/${slug}`, { headers: { ...commonHeaders, Authorization: FIXED_TOKEN } });
 
     if (!res.ok) {
       if (res.status === 404) return { success: true, data: undefined as unknown as DonationCategory };

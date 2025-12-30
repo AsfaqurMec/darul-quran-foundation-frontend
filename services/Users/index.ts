@@ -132,7 +132,7 @@ export const createUser = async (
    // console.log("createUser called with data:", userData);
 
     const token = getClientToken();
-    console.log("Token retrieved:", token ? "Token exists" : "No token found");
+   // console.log("Token retrieved:", token ? "Token exists" : "No token found");
 
     if (!token) {
       return { success: false, message: "No access token found" };

@@ -58,7 +58,7 @@ export const getAllBlogs = async (params?: BlogQueryParams): Promise<BlogRespons
   if (params?.searchTerm) query.searchTerm = params.searchTerm;
   if (params?.category) query.category = params.category;
 
-  const { data } = await apiClient.get('/blogs', {
+  const { data } = await apiClient.get('/blogs/admin', {
     params: Object.keys(query).length ? query : undefined,
     //headers: lang ? { 'Accept-Language': decodeURIComponent(lang) } : undefined,
     headers: {
@@ -76,7 +76,7 @@ export const getAllBlogs = async (params?: BlogQueryParams): Promise<BlogRespons
 };
 
 export const getBlogById = async (id: string): Promise<BlogResponse<Blog>> => {
-  const { data } = await apiClient.get(`/blogs/${id}`);
+  const { data } = await apiClient.get(`/blogs/admin/${id}`);
   return unwrap<Blog>(data);
 };
 

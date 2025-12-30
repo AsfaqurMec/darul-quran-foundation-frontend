@@ -173,10 +173,12 @@
 //   if (data?.success !== undefined) return data;
 //   return { success: true, data: null, message: 'Notice deleted' };
 // };
-
+// "use server";
+import { api } from '@/config';
 import apiClient from '../../lib/apiClient';
 import { ensurePagination } from '../../lib/pagination';
 import { PaginationInfo } from '../../types/pagination';
+// import { cookies } from 'next/headers';
 
 export interface Notice {
   id?: string;
@@ -210,6 +212,63 @@ type NoticeQueryParams = {
   category?: string;
 };
 
+
+
+// Fixed token for API requests
+const FIXED_TOKEN = "f3a1d9c6b87e4f209ad4c0c8c1f5e92e3b6a7c4de2af41b0c8f5a6d2c917eb3a"
+export const getAllNoticesPublic = async () => {
+  try {
+   // const cookieStore = await cookies();
+   // const lang = cookieStore.get('lang')?.value;
+    const token = FIXED_TOKEN;
+    
+    const response = await fetch(`${api.baseUrl}/notices`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        // ...(lang ? { "Accept-Language": lang } : {}),
+        Authorization: token,
+      },
+      next: {
+        tags: ["notices"],
+      },
+    });
+
+    if (!response.ok) {
+      // If endpoint unavailable, serve fallback static data
+      if (response.status === 404) {
+        return { success: true, data: [] };
+      }
+      throw new Error(`Request failed with status: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fblog get:", error);
+    return { success: true, data: [] };
+  }
+};
+
+export const getNoticeByIdPublic = async (id: string): Promise<NoticeResponse<Notice>> => {
+  try {
+    const token = FIXED_TOKEN;
+    const response = await fetch(`${api.baseUrl}/notices/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      next: {
+        tags: ["notices"],
+      },
+    });
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching notice by id:", error);
+    return { success: true, data: undefined as unknown as Notice };
+  }
+};
+
 export const getAllNotices = async (params?: NoticeQueryParams): Promise<NoticeResponse<Notice[]>> => {
   const lang = typeof window !== 'undefined'
     ? document.cookie.match(/(?:^|; )lang=([^;]*)/)?.[1]
@@ -220,7 +279,7 @@ export const getAllNotices = async (params?: NoticeQueryParams): Promise<NoticeR
   if (params?.searchTerm) query.searchTerm = params.searchTerm;
   if (params?.category) query.category = params.category;
 
-  const { data } = await apiClient.get('/notices', {
+  const { data } = await apiClient.get('/notices/admin', {
     params: Object.keys(query).length ? query : undefined,
     headers: lang ? { 'Accept-Language': decodeURIComponent(lang) } : undefined,
   });
@@ -242,7 +301,7 @@ export const getNoticeById = async (id: string): Promise<NoticeResponse<Notice>>
   const lang = typeof window !== 'undefined'
     ? document.cookie.match(/(?:^|; )lang=([^;]*)/)?.[1]
     : undefined;
-  const { data } = await apiClient.get(`/notices/${id}`, {
+  const { data } = await apiClient.get(`/notices/admin/${id}`, {
     headers: lang ? { 'Accept-Language': decodeURIComponent(lang) } : undefined,
   });
   return unwrap<Notice>(data);

@@ -2,7 +2,7 @@ import Container from '../../components/layout/Container';
 import Pagination from '../../components/ui/Pagination';
 import NoticeCard from '../../components/notice/NoticeCard';
 import TranslatablePageHero from '../../components/common/TranslatablePageHero';
-import { getAllNotices } from '../../services/notices';
+import { getAllNoticesPublic } from '../../services/notices';
 
 export default async function NoticePage({ searchParams }: { searchParams?: Promise<{ page?: string }> }): Promise<React.JSX.Element> {
   const perPage = 10;
@@ -10,10 +10,10 @@ export default async function NoticePage({ searchParams }: { searchParams?: Prom
   const current = Math.max(1, Number(params?.page || '1'));
 
   // Fetch from backend
-  const { data: allNotices = [] } = await getAllNotices();
+  const { data: allNotices = [] } = await getAllNoticesPublic();
   //console.log("allNotices", allNotices);
   // Map backend notices to card-friendly shape
-  const mapped = allNotices.map((n) => ({
+  const mapped = allNotices.map((n: any) => ({
     id: n.id ?? '',
     title: n.title,
     date: n.date,
@@ -33,7 +33,7 @@ export default async function NoticePage({ searchParams }: { searchParams?: Prom
       <Container>
         <div className="py-12 md:py-16">
           <div className="space-y-6  mx-auto">
-            {items.map((n) => (
+            {items.map((n: any) => (
               <NoticeCard key={n.id} notice={n} />
             ))}
           </div>

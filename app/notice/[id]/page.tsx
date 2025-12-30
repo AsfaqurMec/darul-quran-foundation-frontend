@@ -1,7 +1,7 @@
 import React from 'react';
 import Container from '../../../components/layout/Container';
 import NoticeDetail from '../../../components/notice/NoticeDetail';
-import { getNoticeById } from '../../../services/notices';
+import { getNoticeByIdPublic } from '../../../services/notices';
 
 export default async function NoticeDetailPage({
   params,
@@ -11,7 +11,7 @@ export default async function NoticeDetailPage({
   const { id } = await params;
 
   // Fetch from backend
-  const { data } = await getNoticeById(id);
+  const { data } = await getNoticeByIdPublic(id);
 
   const notice = data
     ? {

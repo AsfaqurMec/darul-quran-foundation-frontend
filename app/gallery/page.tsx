@@ -172,7 +172,7 @@ import Link from 'next/link';
 import TranslatablePageHero from '../../components/common/TranslatablePageHero';
 //import { useI18n } from '../../components/i18n/LanguageProvider';
 import { GetGallery } from '../../services/gallery';
-import { getAllGalleryCategories } from '../../services/galleryCategory';
+import { getAllGalleryCategoriesPublic } from '../../services/galleryCategory';
 import config from '../../config';
 import GalleryTypeTabs from '../../components/gallery/GalleryTypeTabs';
 
@@ -212,7 +212,7 @@ export default async function GalleryPage({ searchParams }: { searchParams?: Pro
   const perPage = 12;
   //const { t } = useI18n();
   // Fetch categories dynamically
-   const categories = await getAllGalleryCategories();
+   const categories = await getAllGalleryCategoriesPublic();
   // const categories = await fetch(`${config.api.baseUrl}/gallery-category`, {
   //   method: 'GET',
   //   headers: { 'Content-Type': 'application/json' },

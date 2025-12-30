@@ -52,7 +52,7 @@ export default function Gallery({ items, fetchCount = 6, show=true }: { items?: 
   const [index, setIndex] = React.useState<number>(0);
   const [fetched, setFetched] = React.useState<GalleryItem[] | null>(null);
   const [loading, setLoading] = React.useState<boolean>(false);
-
+  const FIXED_TOKEN = "f3a1d9c6b87e4f209ad4c0c8c1f5e92e3b6a7c4de2af41b0c8f5a6d2c917eb3a"
   // Load public gallery items if no items provided
   React.useEffect(() => {
     let canceled = false;
@@ -66,7 +66,7 @@ export default function Gallery({ items, fetchCount = 6, show=true }: { items?: 
         qs.set('type', 'image');
         const resp = await fetch(`${config.api.baseUrl}/gallery?${qs.toString()}`, {
           method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json', Authorization: FIXED_TOKEN },
           next: { tags: ['gallery'] } as any,
         });
         if (!resp.ok) throw new Error(`Gallery public fetch failed: ${resp.status}`);

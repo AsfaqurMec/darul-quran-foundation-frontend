@@ -1,3 +1,4 @@
+import { api } from '@/config';
 import apiClient from '../../lib/apiClient';
 import { buildRequestPayload } from '../../lib/formData';
 import { ensurePagination } from '../../lib/pagination';
@@ -43,6 +44,38 @@ type HeroQueryParams = {
   isActive?: boolean;
 };
 
+const FIXED_TOKEN = "f3a1d9c6b87e4f209ad4c0c8c1f5e92e3b6a7c4de2af41b0c8f5a6d2c917eb3a"
+
+export const getAllHeroImagesPublic = async (): Promise<HeroImageResponse<HeroImage[]>> => {
+  try {
+    const response = await fetch(`${api.baseUrl}/hero-images`, { method: "GET", headers: { Authorization: FIXED_TOKEN } });
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching hero images:', error);
+    return { success: true, data: [] };
+  }
+};
+
+export const getHeroImageByIdPublic = async (id: string): Promise<HeroImageResponse<HeroImage>> => {
+  try {
+    const response = await fetch(`${api.baseUrl}/hero-images/${id}`, { method: "GET", headers: { Authorization: FIXED_TOKEN } });
+  return await response.json();
+  } catch (error) {
+    console.error('Error fetching hero image by id:', error);
+    return { success: true, data: undefined as unknown as HeroImage };
+  }
+};
+
+export const getActiveHeroImagesPublic = async (): Promise<HeroImageResponse<HeroImage[]>> => {
+  try {
+    const response = await fetch(`${api.baseUrl}/hero-images?isActive=true`, { method: "GET", headers: { Authorization: FIXED_TOKEN } });
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching active hero images:', error);
+    return { success: true, data: [] };
+    }
+};
+
 export const getAllHeroImages = async (params?: HeroQueryParams): Promise<HeroImageResponse<HeroImage[]>> => {
   const lang = typeof window !== 'undefined'
     ? document.cookie.match(/(?:^|; )lang=([^;]*)/)?.[1]
@@ -53,7 +86,7 @@ export const getAllHeroImages = async (params?: HeroQueryParams): Promise<HeroIm
   if (params?.searchTerm) query.searchTerm = params.searchTerm;
   if (typeof params?.isActive === 'boolean') query.isActive = params.isActive;
 
-  const { data } = await apiClient.get('/hero-images', {
+  const { data } = await apiClient.get('/hero-images/admin', {
     params: Object.keys(query).length ? query : undefined,
     headers: lang ? { 'Accept-Language': decodeURIComponent(lang) } : undefined,
   });
@@ -75,7 +108,7 @@ export const getHeroImageById = async (id: string): Promise<HeroImageResponse<He
   const lang = typeof window !== 'undefined'
     ? document.cookie.match(/(?:^|; )lang=([^;]*)/)?.[1]
     : undefined;
-  const { data } = await apiClient.get(`/hero-images/${id}`, {
+  const { data } = await apiClient.get(`/hero-images/admin/${id}`, {
     headers: lang ? { 'Accept-Language': decodeURIComponent(lang) } : undefined,
   });
   return unwrap<HeroImage>(data);
@@ -85,7 +118,7 @@ export const getActiveHeroImages = async (): Promise<HeroImageResponse<HeroImage
   const lang = typeof window !== 'undefined'
     ? document.cookie.match(/(?:^|; )lang=([^;]*)/)?.[1]
     : undefined;
-  const { data } = await apiClient.get('/hero-images?isActive=true', {
+  const { data } = await apiClient.get('/hero-images/admin?isActive=true', {
     headers: lang ? { 'Accept-Language': decodeURIComponent(lang) } : undefined,
   });
   return unwrap<HeroImage[]>(data);

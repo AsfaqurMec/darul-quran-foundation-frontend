@@ -3,7 +3,7 @@ import Container from '../../components/layout/Container';
 import DonationCard, { type DonationItem } from '../../components/donation/DonationCard';
 import Pagination from '../../components/ui/Pagination';
 import TranslatablePageHero from '../../components/common/TranslatablePageHero';
-import { getAllDonationCategories, type DonationCategory } from '../../services/donationCategories';
+import { getAllDonationCategoriesPublic, type DonationCategory } from '../../services/donationCategories';
 import { getImageUrl } from '../../lib/imageUtils';
 
 export default async function DonationCategoriesPage({ searchParams }: { searchParams?: Promise<{ page?: string }> }): Promise<React.ReactElement> {
@@ -11,7 +11,7 @@ export default async function DonationCategoriesPage({ searchParams }: { searchP
   const params = await searchParams;
   const current = Math.max(1, Number(params?.page || '1'));
 
-  const res = await getAllDonationCategories();
+  const res = await getAllDonationCategoriesPublic();
   const list: DonationCategory[] = Array.isArray(res?.data) ? (res.data as DonationCategory[]) : [];
   const all: DonationItem[] = list.map((d) => ({
     id: String(d.id ?? d.slug ?? ''),

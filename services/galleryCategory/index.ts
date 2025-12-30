@@ -1,3 +1,4 @@
+import { api } from '@/config';
 import apiClient from '@/lib/apiClient';
 import { PaginationInfo } from '@/types/pagination';
 
@@ -38,6 +39,30 @@ type GalleryCategoryQueryParams = {
   searchTerm?: string;
 };
 
+const FIXED_TOKEN = "f3a1d9c6b87e4f209ad4c0c8c1f5e92e3b6a7c4de2af41b0c8f5a6d2c917eb3a"
+
+
+export const getAllGalleryCategoriesPublic = async (): Promise<GalleryCategoryResponse<GalleryCategory[]>> => {
+  try {
+    const response = await fetch(`${api.baseUrl}/gallery-category`, { method: "GET", headers: { Authorization: FIXED_TOKEN } });
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching gallery categories:', error);
+    return { success: true, data: [] };
+  }
+};
+
+export const getGalleryCategoryByIdPublic = async (id: string): Promise<GalleryCategoryResponse<GalleryCategory>> => {
+  try {
+    const response = await fetch(`${api.baseUrl}/gallery-category/${id}`, { method: "GET", headers: { Authorization: FIXED_TOKEN } });
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching gallery category by id:', error);
+    return { success: true, data: undefined as unknown as GalleryCategory };
+  }
+};
+
+
 export const getAllGalleryCategories = async (
   params?: GalleryCategoryQueryParams
 ): Promise<GalleryCategoryResponse<GalleryCategory[]>> => {
@@ -46,7 +71,7 @@ export const getAllGalleryCategories = async (
   if (params?.limit) query.limit = params.limit;
   if (params?.searchTerm) query.searchTerm = params.searchTerm;
 
-  const { data } = await apiClient.get('/gallery-category', {
+  const { data } = await apiClient.get('/gallery-category/admin', {
     params: Object.keys(query).length ? query : undefined,
   });
 
@@ -61,7 +86,7 @@ export const getAllGalleryCategories = async (
 };
 
 export const getGalleryCategoryById = async (id: string): Promise<GalleryCategoryResponse<GalleryCategory>> => {
-  const { data } = await apiClient.get(`/gallery-category/${id}`);
+  const { data } = await apiClient.get(`/gallery-category/admin/${id}`);
   return unwrap<GalleryCategory>(data);
 };
 

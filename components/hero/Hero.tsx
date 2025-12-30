@@ -72,7 +72,7 @@ import * as React from 'react';
 import DonationForm from '../../components/donation/DonationForm';
 import Container from '../../components/layout/Container';
 import { useI18n } from '../../components/i18n/LanguageProvider';
-import { getAllActiveHeroImages, HeroImage } from '../../services/hero';
+import { getActiveHeroImagesPublic, HeroImage } from '../../services/hero';
 import { getImageUrl } from '../../lib/imageUtils';
 import heroimage from '../../public/img/hero.png';
 
@@ -86,7 +86,7 @@ export default function Hero(): React.ReactElement {
   React.useEffect(() => {
     const loadHeroImages = async () => {
       try {
-        const response = await getAllActiveHeroImages();
+        const response = await getActiveHeroImagesPublic();
         if (response.success && response.data) {
           const images = Array.isArray(response.data) ? response.data : [response.data];
           // Filter only active images and sort by order

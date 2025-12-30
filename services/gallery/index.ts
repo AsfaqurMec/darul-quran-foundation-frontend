@@ -48,7 +48,7 @@ type FetchParams = {
   category?: string;
   type?: GalleryMediaType;
 };
-
+const FIXED_TOKEN = "f3a1d9c6b87e4f209ad4c0c8c1f5e92e3b6a7c4de2af41b0c8f5a6d2c917eb3a";
 export async function GetGallery(params: FetchParams = {}): Promise<PublicGalleryResponse> {
   const { page = 1, limit = 12, year, category, type = "image" } = params;
 
@@ -74,6 +74,7 @@ export async function GetGallery(params: FetchParams = {}): Promise<PublicGaller
         "Content-Type": "application/json",
         ...(tokenHeader ? { Authorization: tokenHeader } : {}),
         ...(lang ? { "Accept-Language": lang } : {}),
+        Authorization: FIXED_TOKEN ?? "",
       },
       next: { tags: ["gallery"] },
     };
@@ -251,7 +252,7 @@ export const getAllGalleryItems = async (
   if (params?.limit) query.limit = params.limit;
   if (params?.searchTerm) query.searchTerm = params.searchTerm;
 
-  const { data } = await apiClient.get('/gallery', {
+  const { data } = await apiClient.get('/gallery/admin', {
     params: Object.keys(query).length ? query : undefined,
   });
 

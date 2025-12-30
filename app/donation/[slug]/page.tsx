@@ -1,6 +1,6 @@
 import React from 'react';
 import Container from '../../../components/layout/Container';
-import { getDonationCategoryBySlug } from '../../../services/donationCategories';
+import { getDonationCategoryBySlugPublic } from '../../../services/donationCategories';
 import { getImageUrl } from '../../../lib/imageUtils';
 import DonationDetail, { type DonationDetailData } from '../../../components/donation/DonationDetail';
 
@@ -11,7 +11,7 @@ export default async function DonationCategoryDetailPage({
 }): Promise<React.ReactElement> {
   const { slug } = await params;
 
-  const res = await getDonationCategoryBySlug(slug);
+  const res = await getDonationCategoryBySlugPublic(slug);
   const d: any = res?.data ?? null;
 
   if (!d) {
